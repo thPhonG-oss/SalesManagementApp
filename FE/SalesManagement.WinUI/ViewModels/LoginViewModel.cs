@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SalesManagement.WinUI.Services.Interfaces;
-using System;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace SalesManagement.WinUI.ViewModels;
 
