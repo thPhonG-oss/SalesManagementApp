@@ -33,13 +33,13 @@ public class Order {
     String orderCode;
 
     @Column(name = "order_date", nullable = false)
-    LocalDate orderDate;
+    LocalDateTime orderDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     OrderStatus status;
 
-    @Column(name = "sub_total", nullable = false)
+    @Column(name = "subtotal", nullable = false)
     Double subTotal;
 
     @Column(name = "discount_amount")

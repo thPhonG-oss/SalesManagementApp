@@ -23,7 +23,7 @@ public class OrderResponse {
     CustomerResponse customer;
     PromotionResponse promotion;
     String orderCode;
-    LocalDate orderDate;
+    LocalDateTime orderDate;
     OrderStatus status;
     Double subTotal;
     Double discountAmount;
