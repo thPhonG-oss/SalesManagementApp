@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SalesManagement.WinUI.Models
 {
-    public class LoginRequest
+    public class UserResponse
     {
-        [JsonPropertyName("username")]
+        public long Id { get; set; }
         public string Username { get; set; } = string.Empty;
-        [JsonPropertyName("password")]
-        public string Password { get; set; } = string.Empty;
+        public string AccessToken { get; set; } = string.Empty;
     }
 }

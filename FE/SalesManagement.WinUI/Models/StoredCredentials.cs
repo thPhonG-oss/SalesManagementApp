@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace SalesManagement.WinUI.Models
 {
-    public class UserResponseDTO
+    public class StoredCredentials
     {
-        public long Id { get; set; }
         public string Username { get; set; } = string.Empty;
-        public string AccessToken { get; set; } = string.Empty;
+        public string EncryptedPassword { get; set; } = string.Empty;
+        public bool RememberMe { get; set; }
+        public DateTime LastLoginTime { get; set; }
     }
 }
