@@ -19,9 +19,11 @@ public sealed partial class MainPage : Page
 
     private async void OnLogoutClick(object sender, RoutedEventArgs e)
     {
-        // Logout
+        // Logout (this clears tokens on server and in memory)
         await _authService.LogoutAsync();
-        await _storageService.ClearCredentialsAsync();
+
+        // DON'T clear credentials if user chose Remember Me
+        // await _storageService.ClearCredentialsAsync(); // REMOVED
 
         // Navigate back to login using root frame
         if (App.MainWindow.Content is Frame rootFrame)
