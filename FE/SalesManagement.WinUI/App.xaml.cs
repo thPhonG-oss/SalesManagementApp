@@ -1,78 +1,87 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
+using SalesManagement.WinUI.Services.Implementations;
+using SalesManagement.WinUI.Services.Interfaces;
+using SalesManagement.WinUI.ViewModels;
+using SalesManagement.WinUI.Views;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Net.Http;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+namespace SalesManagement.WinUI;
 
-namespace SalesManagement.WinUI
+public partial class App : Application
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
-    public partial class App : Application
+    private static Window? s_mainWindow;
+    private static IServiceProvider? s_serviceProvider;
+
+    public static IServiceProvider Services => s_serviceProvider!;
+    public static Window MainWindow => s_mainWindow!;
+
+    public App()
     {
-        private Window? _window;
+        InitializeComponent();
+        s_serviceProvider = ConfigureServices();
+    }
 
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
-        public App()
+    private static IServiceProvider ConfigureServices()
+    {
+        var services = new ServiceCollection();
+
+        // Configuration
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+        services.AddSingleton<IConfiguration>(configuration);
+
+        // HttpClient with cookie support
+        services.AddHttpClient("API", (serviceProvider, client) =>
         {
-            InitializeComponent();
-        }
+            var config = serviceProvider.GetRequiredService<IConfiguration>();
+            var baseUrl = config["ApiSettings:BaseUrl"] ?? "http://localhost:8080";
 
-        private static IServiceProvider ConfigureServices()
+            client.BaseAddress = new Uri(baseUrl);
+            client.Timeout = TimeSpan.FromSeconds(30);
+        })
+        .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
         {
-            var services = new ServiceCollection();
+            UseCookies = true,
+            CookieContainer = new System.Net.CookieContainer()
+        });
 
-            // Configuration
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
-            services.AddSingleton<IConfiguration>(configuration);
+        // Services
+        services.AddSingleton<IAuthService, AuthService>();
+        services.AddSingleton<IStorageService, StorageService>();
 
-            // HttpClient
-            services.AddHttpClient("API", client =>
-            {
-                client.BaseAddress = new Uri(configuration["ApiSettings:BaseUrl"]!);
-                client.Timeout = TimeSpan.FromSeconds(30);
-            });
+        // ViewModels
+        services.AddTransient<LoginViewModel>();
 
-            // Services
-            // TODO: Add your services here
+        // Views
+        services.AddTransient<LoginPage>();
 
-            // ViewModels
-            // TODO: Add your viewmodels here
+        return services.BuildServiceProvider();
+    }
 
-            return services.BuildServiceProvider();
-        }
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        s_mainWindow = new MainWindow();
 
-        /// <summary>
-        /// Invoked when the application is launched.
-        /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
-        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
-        {
-            _window = new MainWindow();
-            _window.Activate();
-        }
+        // Create root frame
+        var rootFrame = new Microsoft.UI.Xaml.Controls.Frame();
+        s_mainWindow.Content = rootFrame;
+
+        // Navigate to login page
+        rootFrame.Navigate(typeof(LoginPage));
+
+        s_mainWindow.Activate();
+    }
+}
+
+// Extension method to get services easily
+public static class ServiceProviderExtensions
+{
+    public static T? GetService<T>(this IServiceProvider provider) where T : class
+    {
+        return provider.GetService(typeof(T)) as T;
     }
 }
