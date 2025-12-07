@@ -27,10 +27,10 @@ public class User {
     @Column(name = "password", nullable = false)
     String password;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email")
     String email;
 
-    @Column(name = "full_name", nullable = false)
+    @Column(name = "full_name")
     String fullName;
 
     @Column(name = "created_at")

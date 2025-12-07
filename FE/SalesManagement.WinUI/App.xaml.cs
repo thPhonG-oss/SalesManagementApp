@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -11,6 +8,11 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -35,6 +37,32 @@ namespace SalesManagement.WinUI
         public App()
         {
             InitializeComponent();
+        }
+
+        private static IServiceProvider ConfigureServices()
+        {
+            var services = new ServiceCollection();
+
+            // Configuration
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+            services.AddSingleton<IConfiguration>(configuration);
+
+            // HttpClient
+            services.AddHttpClient("API", client =>
+            {
+                client.BaseAddress = new Uri(configuration["ApiSettings:BaseUrl"]!);
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
+
+            // Services
+            // TODO: Add your services here
+
+            // ViewModels
+            // TODO: Add your viewmodels here
+
+            return services.BuildServiceProvider();
         }
 
         /// <summary>
