@@ -27,10 +27,10 @@ jwt:
   access-token-validity-seconds: 3600
   refresh-token-validity-seconds: 86400
 
-imageKit:
-    publicKey: ${IMAGE_KIT_PUBLIC_KEY}
-    privateKey: ${IMAGE_KIT_PRIVATE_KEY}
-    urlEndpoint: ${IMAGE_KIT_URL_ENDPOINT}
+cloudinary:
+  cloud-name: ${CLOUD_NAME}
+  api-key: ${CLOUD_API_KEY}
+  api-secret: ${CLOUD_API_SECRET}
 
 logging:
   level:
