@@ -1,5 +1,6 @@
 package com.project.sales_management.services.Impl;
 
+import com.project.sales_management.mappers.PromotionMapper;
 import com.project.sales_management.repositories.PromotionRepository;
 import com.project.sales_management.services.PromotionService;
 import lombok.AccessLevel;
@@ -12,4 +13,5 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PromotionServiceImpl implements PromotionService {
     PromotionRepository promotionRepository;
+    PromotionMapper promotionMapper;
 }

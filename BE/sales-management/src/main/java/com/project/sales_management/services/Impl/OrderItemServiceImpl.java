@@ -1,5 +1,6 @@
 package com.project.sales_management.services.Impl;
 
+import com.project.sales_management.mappers.OrderItemMapper;
 import com.project.sales_management.models.OrderItem;
 import com.project.sales_management.repositories.OrderItemRepository;
 import com.project.sales_management.services.OrderItemService;
@@ -12,4 +13,5 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class OrderItemServiceImpl implements OrderItemService {
     OrderItemRepository orderItemRepository;
+    OrderItemMapper orderItemMapper;
 }

@@ -1,5 +1,6 @@
 package com.project.sales_management.services.Impl;
 
+import com.project.sales_management.mappers.CustomerMapper;
 import com.project.sales_management.repositories.CustomerRepository;
 import com.project.sales_management.services.CustomerService;
 import lombok.AccessLevel;
@@ -12,4 +13,5 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CustomerServiceImpl implements CustomerService {
     CustomerRepository customerRepository;
+    CustomerMapper customerMapper;
 }

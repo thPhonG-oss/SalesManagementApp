@@ -1,5 +1,6 @@
 package com.project.sales_management.services.Impl;
 
+import com.project.sales_management.mappers.ProductMapper;
 import com.project.sales_management.repositories.ProductRepository;
 import com.project.sales_management.services.ProductService;
 import lombok.AccessLevel;
@@ -12,4 +13,5 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
+    ProductMapper productMapper;
 }
