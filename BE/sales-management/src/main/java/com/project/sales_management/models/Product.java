@@ -76,5 +76,6 @@ public class Product {
         cascade = {CascadeType.PERSIST, CascadeType.MERGE},
         orphanRemoval = true
     )
+    @ToString.Exclude
     List<ProductImage> productImages = new ArrayList<>();
 }

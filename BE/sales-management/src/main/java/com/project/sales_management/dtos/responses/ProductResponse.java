@@ -16,8 +16,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductResponse {
     Long productId;
-    Long categoryId;
-    String categoryName;
+    CategoryResponse category;
     String productName;
     String description;
     String author;
