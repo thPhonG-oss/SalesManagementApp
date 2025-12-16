@@ -15,8 +15,9 @@ public enum ErrorCode {
     CATEGORY_EXISTED("1004","Category existed.",HttpStatus.BAD_REQUEST),
     CATEGORY_NOT_EXIST("1005","The category does not exist.",HttpStatus.BAD_REQUEST),
     CATEDORY_DELETED("1006","The category has been deleted.",HttpStatus.BAD_REQUEST),
-
-
+    EMAIL_EXIST("1007", "Email already exists", HttpStatus.BAD_REQUEST),
+    PHONE_EXIST("1008", "Phone already exists", HttpStatus.BAD_REQUEST),
+    CUSTOMER_NOT_FOUND("1009", "CUSTOMER_NOT_FOUND", HttpStatus.BAD_REQUEST),
 
     ;
     ErrorCode(String code, String message, HttpStatus httpStatusCode) {
