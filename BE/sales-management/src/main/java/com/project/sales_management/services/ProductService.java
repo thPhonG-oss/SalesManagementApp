@@ -15,4 +15,6 @@ public interface ProductService {
     ListProductResponseDTO getAllProducts(int page, int size, String sortBy, String sortDir);
 
     ListProductResponseDTO searchProducts(String keyword, Double maxPrice, Double minPrice, int page, int size, String sortBy, String sortDir);
+
+    void deleteProduct(Long productId);
 }

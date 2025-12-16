@@ -1,6 +1,10 @@
 package com.project.sales_management.services.Impl;
 
 
+import com.project.sales_management.dtos.requests.CustomerRequest;
+import com.project.sales_management.dtos.requests.CustomerUpdateRequest;
+import com.project.sales_management.dtos.responses.CustomerResponse;
+import com.project.sales_management.mappers.CustomerMapper;
 import com.project.sales_management.repositories.CustomerRepository;
 import com.project.sales_management.services.CustomerService;
 import lombok.AccessLevel;
@@ -21,4 +25,28 @@ public class CustomerServiceImpl implements CustomerService {
     CustomerRepository customerRepository;
     CustomerMapper customerMapper;
 
+    @Override
+    public CustomerResponse createCustomer(CustomerRequest customerRequest) {
+        return null;
+    }
+
+    @Override
+    public List<CustomerResponse> getAllCustomer() {
+        return List.of();
+    }
+
+    @Override
+    public CustomerResponse getCustomerById(Long customerId) {
+        return null;
+    }
+
+    @Override
+    public CustomerResponse updateCustomer(CustomerUpdateRequest customerUpdateRequest, Long customerId) {
+        return null;
+    }
+
+    @Override
+    public CustomerResponse deleteCustomer(Long customerId) {
+        return null;
+    }
 }
