@@ -129,10 +129,12 @@ public class AuthService : IAuthService
             }
 
             var response = await client.PostAsync("/api/v1/auth/logout", null);
+            
+
 
             _currentUser = null;
             _accessToken = null;
-
+            
             return response.IsSuccessStatusCode;
         }
         catch
