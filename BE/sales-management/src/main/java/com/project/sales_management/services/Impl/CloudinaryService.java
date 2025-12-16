@@ -31,6 +31,20 @@ public class CloudinaryService {
         }
     }
 
+    public String uploadFileWithoutFolder(MultipartFile file) throws IOException {
+        try {
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "auto")
+            );
+
+            return uploadResult.get("secure_url").toString();
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Upload file failed", e);
+        }
+    }
+
     public void deleteFile(String publicId) {
         try {
             cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());

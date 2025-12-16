@@ -17,4 +17,19 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     "AND p.price BETWEEN :minPrice AND :maxPrice"
     )
     Page<Product> findByProductNameContainingIgnoreCase(String keyword,Double maxPrice, Double minPrice, Pageable pageable);
+
+    @Query(
+            value = "SELECT p FROM Product p WHERE " +
+                    "p.category.categoryId = :categoryId " +
+                    "AND p.price BETWEEN :minPrice AND :maxPrice"
+    )
+    Page<Product> findByCategory_CategoryIdAndPriceBetween(Long categoryId, int minPrice, int maxPrice, Pageable pageable);
+
+    @Query(
+            value = "SELECT p FROM Product p WHERE " +
+                    "p.category.categoryId = :categoryId " +
+                    "AND p.price BETWEEN :minPrice AND :maxPrice " +
+                    "AND LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%'))"
+    )
+    Page<Product> findByCategory_CategoryIdAndPriceBetweenAndProductNameContainingIgnoreCase(Long categoryId, int minPrice, int maxPrice, String keyword, Pageable pageable);
 }
