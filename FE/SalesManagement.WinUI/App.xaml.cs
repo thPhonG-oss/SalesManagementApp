@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using SalesManagement.WinUI.Services;
 using SalesManagement.WinUI.Services.Implementations;
 using SalesManagement.WinUI.Services.Interfaces;
 using SalesManagement.WinUI.ViewModels;
@@ -52,12 +53,16 @@ public partial class App : Application
         // Services
         services.AddSingleton<IAuthService, AuthService>();
         services.AddSingleton<IStorageService, StorageService>();
+        services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<ILoadingService, LoadingService>();
 
         // ViewModels
         services.AddTransient<LoginViewModel>();
+        services.AddTransient<MainViewModel>();
 
         // Views
         services.AddTransient<LoginPage>();
+        services.AddTransient<MainPage>();
 
         return services.BuildServiceProvider();
     }
@@ -71,7 +76,7 @@ public partial class App : Application
         s_mainWindow.Content = rootFrame;
 
         // Navigate to login page
-        rootFrame.Navigate(typeof(LoginPage));
+        rootFrame.Navigate(typeof(MainPage));
 
         s_mainWindow.Activate();
     }
