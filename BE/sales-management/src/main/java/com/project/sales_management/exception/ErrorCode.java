@@ -12,6 +12,10 @@ public enum ErrorCode {
     UNAUTHENTICATED ("1001","UNAUTHENTICATED", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED("1002", "You do not have permission", HttpStatus.FORBIDDEN),
     INVALID_KEY("1003", "Uncategorized error", HttpStatus.BAD_REQUEST),
+    CATEGORY_EXISTED("1004","Category existed.",HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_EXIST("1005","The category does not exist.",HttpStatus.BAD_REQUEST),
+    CATEDORY_DELETED("1006","The category has been deleted.",HttpStatus.BAD_REQUEST),
+
 
 
     ;
