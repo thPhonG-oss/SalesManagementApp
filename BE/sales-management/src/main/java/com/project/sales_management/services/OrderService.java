@@ -1,4 +1,13 @@
 package com.project.sales_management.services;
 
+import com.project.sales_management.dtos.requests.OrderUpdateRequest;
+import com.project.sales_management.dtos.responses.OrderResponse;
+import org.springframework.data.domain.Page;
+
 public interface OrderService {
+
+    Page<OrderResponse> getAllOrders(Integer pageNumber, Integer pageSize);
+    OrderResponse getOrderById(Long orderId);
+    OrderResponse updateOrder(Long orderId, OrderUpdateRequest orderUpdateRequest);
+    OrderResponse deleteOrder(Long orderId);
 }
