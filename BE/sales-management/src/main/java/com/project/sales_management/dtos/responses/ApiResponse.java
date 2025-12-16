@@ -13,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class ApiResponse<T> {
     Boolean success = true;
+    String code="1000";
     String message;
     T data;
     T errorsDetails;
