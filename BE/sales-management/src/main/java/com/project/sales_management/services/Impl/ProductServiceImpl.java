@@ -168,4 +168,31 @@ public class ProductServiceImpl implements ProductService {
 
         return productImageMapper.toProductImageResponse(savedImage);
     }
+
+    @Override
+    public ListProductResponseDTO getProductsByCategory(Long categoryId, int minPrice, int maxPrice, String keyword, int page, int size, String sortBy, String sortDir) {
+        Pageable pageable = PageRequest.of(page -1, size, sortDir.equalsIgnoreCase("asc") ?
+                org.springframework.data.domain.Sort.by(sortBy).ascending() :
+                org.springframework.data.domain.Sort.by(sortBy).descending());
+
+        Page<Product> productPage;
+        if(keyword.isEmpty()) {
+            productPage = productRepository.findByCategory_CategoryIdAndPriceBetween(categoryId, minPrice, maxPrice, pageable);
+        } else {
+            productPage = productRepository.findByCategory_CategoryIdAndPriceBetweenAndProductNameContainingIgnoreCase(categoryId, minPrice, maxPrice, keyword, pageable);
+        }
+
+        List<Product>  products = productPage.getContent();
+
+        List<ProductResponse> listProductResponseDTO = products.stream().map(productMapper::toProductResponse).collect(Collectors.toList());
+
+        return ListProductResponseDTO.builder()
+                .products(listProductResponseDTO)
+                .page(productPage.getNumber())
+                .size(productPage.getSize())
+                .totalElements(productPage.getTotalElements())
+                .totalPages(productPage.getTotalPages())
+                .isLastPage(productPage.isLast())
+                .build();
+    }
 }

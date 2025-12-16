@@ -119,4 +119,24 @@ public class ProductController {
         );
     }
 
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<ApiResponse<ListProductResponseDTO>> getProductsByCategory(
+            @PathVariable Long categoryId,
+            @RequestParam(defaultValue = "0", required = false) int minPrice,
+            @RequestParam(defaultValue = "10000", required = false) int maxPrice,
+            @RequestParam(required = false, defaultValue = "") String keyword,
+            @RequestParam(defaultValue = "1", required = false) int page,
+            @RequestParam(defaultValue = "20", required = false) int size,
+            @RequestParam(defaultValue = "productName", required = false) String sortBy,
+            @RequestParam(defaultValue = "asc", required = false) String sortDir
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.<ListProductResponseDTO>builder()
+                        .success(true)
+                        .message("Products retrieved successfully")
+                        .data(productService.getProductsByCategory(categoryId, minPrice, maxPrice, keyword,page, size, sortBy, sortDir))
+                        .build()
+        );
+    }
+
 }
