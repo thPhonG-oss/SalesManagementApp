@@ -5,9 +5,11 @@ import com.project.sales_management.dtos.requests.ProductUpdateRequestDTO;
 import com.project.sales_management.dtos.responses.ListProductResponseDTO;
 import com.project.sales_management.dtos.responses.ProductImageResponse;
 import com.project.sales_management.dtos.responses.ProductResponse;
+import com.project.sales_management.mappers.ProductImageMapper;
 import com.project.sales_management.mappers.ProductMapper;
 import com.project.sales_management.models.Category;
 import com.project.sales_management.models.Product;
+import com.project.sales_management.models.ProductImage;
 import com.project.sales_management.repositories.CategoryRepository;
 import com.project.sales_management.repositories.ProductImageRepository;
 import com.project.sales_management.repositories.ProductRepository;
@@ -21,7 +23,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +39,8 @@ public class ProductServiceImpl implements ProductService {
     ProductMapper productMapper;
     CategoryRepository categoryRepository;
     ProductImageRepository productImageRepository;
+    CloudinaryService cloudinaryService;
+    ProductImageMapper productImageMapper;
 
     // CRUD methods to be implemented
     @Transactional
@@ -143,13 +150,22 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.toProductResponse(updatedProduct);
     }
 
+    @Transactional
     @Override
-    public List<ProductImageResponse> updateProductImages(Long productId, List<String> imageUrls) {
+    public ProductImageResponse updateProductImages(Long productId, MultipartFile file) throws IOException {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        String image_url =  cloudinaryService.uploadFileWithoutFolder(file);
 
+        ProductImage productImage = ProductImage.builder()
+                .imageUrl(image_url)
+                .product(product)
+                .createdAt(LocalDateTime.now())
+                .build();
 
-        return null;
+        ProductImage savedImage = productImageRepository.save(productImage);
+
+        return productImageMapper.toProductImageResponse(savedImage);
     }
 }

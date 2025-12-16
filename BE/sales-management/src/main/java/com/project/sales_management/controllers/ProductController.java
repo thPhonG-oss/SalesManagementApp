@@ -1,6 +1,7 @@
 package com.project.sales_management.controllers;
 
 import com.project.sales_management.dtos.requests.ProductCreationRequestDTO;
+import com.project.sales_management.dtos.requests.ProductUpdateRequestDTO;
 import com.project.sales_management.dtos.responses.ApiResponse;
 import com.project.sales_management.dtos.responses.ListProductResponseDTO;
 import com.project.sales_management.dtos.responses.ProductResponse;
@@ -11,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -79,5 +83,40 @@ public class ProductController {
         );
     }
 
+    @PostMapping("/{productId}/images")
+    public ResponseEntity<ApiResponse<?>> uploadProductImage(@PathVariable Long productId,@RequestParam("file") MultipartFile file) throws IOException {
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .success(true)
+                        .message("Product image uploaded successfully")
+                        .data(productService.updateProductImages(productId, file))
+                        .build()
+        );
+    }
+
+    @PutMapping("/{productId}")
+    public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(
+            @PathVariable Long productId,
+            @RequestBody @Valid ProductUpdateRequestDTO productUpdateRequestDTO
+    ) {
+        return ResponseEntity.ok(
+                ApiResponse.<ProductResponse>builder()
+                        .success(true)
+                        .message("Product updated successfully")
+                        .data(productService.updateProduct(productId, productUpdateRequestDTO))
+                        .build()
+        );
+    }
+
+    @PatchMapping("/{productId}" )
+    public ResponseEntity<ApiResponse<?>> deleteProduct(@PathVariable Long productId) {
+        productService.deleteProduct(productId);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .success(true)
+                        .message("Product deleted successfully")
+                        .build()
+        );
+    }
 
 }

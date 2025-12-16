@@ -6,7 +6,9 @@ import com.project.sales_management.dtos.responses.ListProductResponseDTO;
 import com.project.sales_management.dtos.responses.ProductImageResponse;
 import com.project.sales_management.dtos.responses.ProductResponse;
 import jakarta.transaction.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface ProductService {
@@ -24,5 +26,5 @@ public interface ProductService {
 
     ProductResponse updateProduct(Long productId, ProductUpdateRequestDTO productUpdateRequestDTO);
 
-    List<ProductImageResponse> updateProductImages(Long productId, List<String> imageUrls);
+    ProductImageResponse updateProductImages(Long productId, MultipartFile file) throws IOException;
 }
