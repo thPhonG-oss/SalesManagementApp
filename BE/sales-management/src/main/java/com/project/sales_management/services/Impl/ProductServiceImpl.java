@@ -1,12 +1,15 @@
 package com.project.sales_management.services.Impl;
 
 import com.project.sales_management.dtos.requests.ProductCreationRequestDTO;
+import com.project.sales_management.dtos.requests.ProductUpdateRequestDTO;
 import com.project.sales_management.dtos.responses.ListProductResponseDTO;
+import com.project.sales_management.dtos.responses.ProductImageResponse;
 import com.project.sales_management.dtos.responses.ProductResponse;
 import com.project.sales_management.mappers.ProductMapper;
 import com.project.sales_management.models.Category;
 import com.project.sales_management.models.Product;
 import com.project.sales_management.repositories.CategoryRepository;
+import com.project.sales_management.repositories.ProductImageRepository;
 import com.project.sales_management.repositories.ProductRepository;
 import com.project.sales_management.services.ProductService;
 import jakarta.transaction.Transactional;
@@ -30,6 +33,7 @@ public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
     ProductMapper productMapper;
     CategoryRepository categoryRepository;
+    ProductImageRepository productImageRepository;
 
     // CRUD methods to be implemented
     @Transactional
@@ -116,5 +120,36 @@ public class ProductServiceImpl implements ProductService {
         product.setIsActive(false);
         productRepository.save(product);
         log.info("Deleted product: {}", product.getProductName());
+    }
+
+    @Override
+    public ProductResponse updateProduct(Long productId, ProductUpdateRequestDTO productUpdateRequestDTO) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        Category category = categoryRepository.findById(productUpdateRequestDTO.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        product.setCategory(category);
+        product.setProductName(productUpdateRequestDTO.getProductName());
+        product.setDescription(productUpdateRequestDTO.getDescription());
+        product.setAuthor(productUpdateRequestDTO.getAuthor());
+        product.setPublisher(productUpdateRequestDTO.getPublisher());
+        product.setPublicationYear(productUpdateRequestDTO.getPublicationYear());
+        product.setPrice(productUpdateRequestDTO.getPrice());
+        product.setStockQuantity(productUpdateRequestDTO.getStockQuantity());
+        product.setMinStockQuantity(productUpdateRequestDTO.getMinStockQuantity());
+        Product updatedProduct = productRepository.save(product);
+        log.info("Updated product: {}", updatedProduct.getProductName());
+        return productMapper.toProductResponse(updatedProduct);
+    }
+
+    @Override
+    public List<ProductImageResponse> updateProductImages(Long productId, List<String> imageUrls) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+
+
+        return null;
     }
 }
