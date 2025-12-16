@@ -1,5 +1,6 @@
 package com.project.sales_management.controllers;
 
+import com.project.sales_management.dtos.requests.OrderStatusUpdateRequest;
 import com.project.sales_management.dtos.requests.OrderUpdateRequest;
 import com.project.sales_management.dtos.responses.OrderResponse;
 import com.project.sales_management.services.OrderService;
@@ -47,4 +48,15 @@ public class OrderServiceController {
         OrderResponse orderResponse = orderService.deleteOrder(orderId);
         return ResponseEntity.ok(orderResponse);
     }
+
+    @PatchMapping("/{orderId}/status")
+    public ResponseEntity<OrderResponse> updateOrderStatus(
+            @PathVariable Long orderId,
+            @Valid @RequestBody OrderStatusUpdateRequest request) {
+
+        OrderResponse orderResponse = orderService.updateOrderStatus(orderId, request);
+        return ResponseEntity.ok(orderResponse);
+    }
+
+
 }

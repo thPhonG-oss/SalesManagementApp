@@ -1,5 +1,6 @@
 package com.project.sales_management.services.Impl;
 
+import com.project.sales_management.dtos.requests.OrderStatusUpdateRequest;
 import com.project.sales_management.dtos.requests.OrderUpdateRequest;
 import com.project.sales_management.dtos.responses.OrderResponse;
 import com.project.sales_management.exception.AppException;
@@ -139,5 +140,16 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.delete(order);
 
         return response;
+    }
+
+    @Override
+    public OrderResponse updateOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        order.setStatus(request.getStatus());
+
+        return orderMapper.toOrderResponse(order);
     }
 }
