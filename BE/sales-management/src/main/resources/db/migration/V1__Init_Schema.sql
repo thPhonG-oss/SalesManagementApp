@@ -29,7 +29,6 @@ CREATE TABLE products (
     stock_quantity INT NOT NULL,
     min_stock_quantity INT DEFAULT 1,
     sold_quantity INT DEFAULT 0,
-    image_url VARCHAR(255),
     is_active BOOLEAN DEFAULT TRUE,
     discount_percentage DECIMAL(5, 2) DEFAULT 0,
     is_discounted BOOLEAN DEFAULT FALSE,
