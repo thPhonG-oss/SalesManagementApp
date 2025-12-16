@@ -33,7 +33,7 @@ public class Customer {
     @Column(name = "address")
     String address;
 
-    @Column(name = "total_order")
+    @Column(name = "total_orders")
     Integer totalOrder;
 
     @Column(name = "total_spent")
