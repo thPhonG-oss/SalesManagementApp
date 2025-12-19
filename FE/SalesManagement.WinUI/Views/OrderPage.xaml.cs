@@ -1,31 +1,69 @@
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using Microsoft.UI.Xaml.Controls;
+using SalesManagement.WinUI.ViewModels;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+
+
+
 
 namespace SalesManagement.WinUI.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class OrderPage : Page
     {
+        
+        public OrderViewModel ViewModel { get; }
+
+        private bool _isDialogOpen = false;
+
         public OrderPage()
         {
-            InitializeComponent();
+            ViewModel = ViewModel = App.Services.GetService<OrderViewModel>()!;
+            this.InitializeComponent();
+
+
+           
+
+
+            ViewModel.OpenDetailRequested += OnOpenDetailRequested;
+
+           
+            this.DataContext = ViewModel;
+        }
+
+       
+        private async void OnOpenDetailRequested(OrderItemViewModel orderVM)
+        {
+            
+            if (_isDialogOpen) return;
+
+            
+            _isDialogOpen = true;
+
+            try
+            {
+                var dialog = new OrderDetailDialog(orderVM);
+
+                if (this.Content != null && this.Content.XamlRoot != null)
+                {
+                    dialog.XamlRoot = this.Content.XamlRoot;
+                }
+                else
+                {
+                    dialog.XamlRoot = this.XamlRoot;
+                }
+
+                
+                await dialog.ShowAsync();
+            }
+            catch (Exception ex)
+            {
+                
+                System.Diagnostics.Debug.WriteLine($"Lỗi Dialog: {ex.Message}");
+            }
+            finally
+            {
+                
+                _isDialogOpen = false;
+            }
         }
     }
 }

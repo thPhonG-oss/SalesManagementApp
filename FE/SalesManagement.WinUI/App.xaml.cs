@@ -55,10 +55,12 @@ public partial class App : Application
         services.AddSingleton<IStorageService, StorageService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ILoadingService, LoadingService>();
+        services.AddSingleton<IOrderService, MockOrderService>();
 
         // ViewModels
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainViewModel>();
+        services.AddTransient<OrderViewModel>();
 
         // Views
         services.AddTransient<LoginPage>();
