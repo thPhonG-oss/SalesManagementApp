@@ -78,4 +78,16 @@ public class ProductController {
                         .build()
         );
     }
+
+    @PostMapping("/import")
+    public ResponseEntity<ApiResponse<?>> importProducts(@RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        // Implementation goes here
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .success(true)
+                        .message("Products imported successfully")
+                        .data(null)
+                        .build()
+        );
+    }
 }
