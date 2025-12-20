@@ -17,7 +17,7 @@ public enum ErrorCode {
     CATEDORY_DELETED("1006","The category has been deleted.",HttpStatus.BAD_REQUEST),
     CUSTOMER_NOT_EXIST("1007","Customer not exist.",HttpStatus.BAD_REQUEST),
     PROMOTION_NOT_EXIST("1008","promotion not exist.",HttpStatus.BAD_REQUEST),
-    PRODUCT_NOT_EXIST("1008","product not exist.",HttpStatus.BAD_REQUEST)
+    PRODUCT_NOT_EXIST("1008","product not exist.",HttpStatus.BAD_REQUEST),
 
 
     EMAIL_EXIST("1007", "Email already exists", HttpStatus.BAD_REQUEST),
