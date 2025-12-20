@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using SalesManagement.WinUI.Services;
 using SalesManagement.WinUI.Services.Implementations;
 using SalesManagement.WinUI.Services.Interfaces;
 using SalesManagement.WinUI.ViewModels;
 using SalesManagement.WinUI.Views;
-using System;
+
 using System.Net.Http;
 
 namespace SalesManagement.WinUI;
@@ -39,7 +38,7 @@ public partial class App : Application
         services.AddHttpClient("API", (serviceProvider, client) =>
         {
             var config = serviceProvider.GetRequiredService<IConfiguration>();
-            var baseUrl = config["ApiSettings:BaseUrl"] ?? "http://localhost:8080";
+            var baseUrl = config["ApiSettings:BaseUrl"] ?? "http://localhost:8081";
 
             client.BaseAddress = new Uri(baseUrl);
             client.Timeout = TimeSpan.FromSeconds(30);
@@ -50,19 +49,28 @@ public partial class App : Application
             CookieContainer = new System.Net.CookieContainer()
         });
 
-        // Services
+        // ================= SERVICES =================
         services.AddSingleton<IAuthService, AuthService>();
         services.AddSingleton<IStorageService, StorageService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ILoadingService, LoadingService>();
 
-        // ViewModels
+        // ⭐ CATEGORY
+        services.AddSingleton<ICategoryService, CategoryService>();
+
+        // ================= VIEWMODELS =================
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainViewModel>();
 
-        // Views
+        // ⭐ PRODUCT
+        services.AddTransient<ProductViewModel>();
+
+        // ================= VIEWS =================
         services.AddTransient<LoginPage>();
         services.AddTransient<MainPage>();
+
+        // ⭐ PRODUCT PAGE
+        //services.AddTransient<ProductPage>();
 
         return services.BuildServiceProvider();
     }
@@ -76,7 +84,9 @@ public partial class App : Application
         s_mainWindow.Content = rootFrame;
 
         // Navigate to login page
-        rootFrame.Navigate(typeof(MainPage));
+        rootFrame.Navigate(typeof(LoginPage));
+
+        //rootFrame.Navigate(typeof(MainPage));
 
         s_mainWindow.Activate();
     }

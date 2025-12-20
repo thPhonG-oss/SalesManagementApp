@@ -8,7 +8,143 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid>
-        <TextBlock>Muốn hiện header vào MainViewModel bỏ thuộc tính ShowHeader = False </TextBlock>
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===== TOP ACTION BAR ===== -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Search -->
+            <TextBox
+                PlaceholderText="Tìm kiếm"
+                Width="320"
+                Height="36"
+                Padding="12,0"
+                VerticalContentAlignment="Center"/>
+
+            <!-- Thêm -->
+            <Button
+                Grid.Column="1"
+                Content="Thêm"
+                Margin="12,0"
+                Height="36"/>
+
+            <!-- Import -->
+            <Button
+                Grid.Column="2"
+                Content="Import"
+                Height="36"/>
+        </Grid>
+
+        <!-- ===== FILTER BAR ===== -->
+        <StackPanel
+            Grid.Row="1"
+            Orientation="Horizontal"
+            Spacing="12"
+            Margin="0,0,0,16">
+
+            <ComboBox
+                Width="140"
+                PlaceholderText="Giá 0đ - 100k"/>
+
+            <ComboBox
+                Width="180"
+                PlaceholderText="Lọc theo loại"
+                ItemsSource="{Binding Categories}"
+                DisplayMemberPath="CategoryName"
+                SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
+
+            <ComboBox
+                Width="160"
+                PlaceholderText="Sắp xếp theo"/>
+        </StackPanel>
+
+        <!-- ===== PRODUCT LIST ===== -->
+        <ListView
+            Grid.Row="2"
+            ItemsSource="{Binding Products}"
+            SelectionMode="None">
+
+            <!-- Header -->
+            <ListView.Header>
+                <Grid Padding="0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="120"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Sách" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Column="1" Text="Tiêu đề" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Column="2" Text="Thao tác" FontWeight="SemiBold"
+                               HorizontalAlignment="Center"/>
+                </Grid>
+            </ListView.Header>
+
+            <!-- Item -->
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="120"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Image -->
+                        <Border Width="60" Height="80" CornerRadius="4">
+                            <Image
+                                Source="{Binding ImageUrl}"
+                                Stretch="UniformToFill"/>
+                        </Border>
+
+                        <!-- Title -->
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="{Binding Title}"
+                            TextWrapping="Wrap"
+                            FontWeight="SemiBold"/>
+
+                        <!-- Actions -->
+                        <StackPanel
+                            Grid.Column="2"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="8">
+
+                            <Button Content="＋" Width="32" Height="32"/>
+                            <Button Content="✎" Width="32" Height="32"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- ===== PAGINATION ===== -->
+        <StackPanel
+            Grid.Row="3"
+            Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            Spacing="8"
+            Margin="0,16,0,0">
+
+            <Button Content="‹"/>
+            <Button Content="1"/>
+            <Button Content="2"/>
+            <Button Content="3"/>
+            <Button Content="4"/>
+            <Button Content="›"/>
+        </StackPanel>
+
     </Grid>
 </Page>
