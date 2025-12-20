@@ -20,6 +20,10 @@ public enum ErrorCode {
     PRODUCT_NOT_EXIST("1008","product not exist.",HttpStatus.BAD_REQUEST)
 
 
+    EMAIL_EXIST("1007", "Email already exists", HttpStatus.BAD_REQUEST),
+    PHONE_EXIST("1008", "Phone already exists", HttpStatus.BAD_REQUEST),
+    CUSTOMER_NOT_FOUND("1009", "CUSTOMER_NOT_FOUND", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_FOUND("1010", "ORDER_NOT_FOUND", HttpStatus.BAD_REQUEST),
 
     ;
     ErrorCode(String code, String message, HttpStatus httpStatusCode) {

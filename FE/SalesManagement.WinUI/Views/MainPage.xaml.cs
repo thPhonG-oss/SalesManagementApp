@@ -1,34 +1,49 @@
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using SalesManagement.WinUI.Services;
+
 using SalesManagement.WinUI.Services.Interfaces;
+using SalesManagement.WinUI.ViewModels;
 
 namespace SalesManagement.WinUI.Views;
 
 public sealed partial class MainPage : Page
 {
-    private readonly IAuthService _authService;
-    private readonly IStorageService _storageService;
+    public MainViewModel ViewModel { get; }
+
 
     public MainPage()
     {
-        InitializeComponent();
+     
+        ViewModel = App.Services.GetService<MainViewModel>()!;
 
-        _authService = App.Services.GetService<IAuthService>()!;
-        _storageService = App.Services.GetService<IStorageService>()!;
+
+        this.InitializeComponent();
+
+       
+        var navService = App.Services.GetService<INavigationService>() as NavigationService;
+        navService?.SetFrame(ContentFrame);
+        navService?.SetNavView(NavView);
+
+        
     }
 
-    private async void OnLogoutClick(object sender, RoutedEventArgs e)
+    private void NavView_Loaded(object sender, RoutedEventArgs e)
     {
-        // Logout (this clears tokens on server and in memory)
-        await _authService.LogoutAsync();
 
-        // DON'T clear credentials if user chose Remember Me
-        // await _storageService.ClearCredentialsAsync(); // REMOVED
-
-        // Navigate back to login using root frame
-        if (App.MainWindow.Content is Frame rootFrame)
+        if (this.XamlRoot != null)
         {
-            rootFrame.Navigate(typeof(LoginPage));
+            var loadingService = App.Services.GetService<ILoadingService>();
+            loadingService?.SetXamlRoot(this.XamlRoot);
+        }
+
+
+        if (ViewModel.SelectedMenuItem != null && ViewModel.SelectedMenuItem.PageType != null)
+        {
+            ContentFrame.Navigate(ViewModel.SelectedMenuItem.PageType);
+            NavView.Header = ViewModel.SelectedMenuItem.Title;
         }
     }
+
+
 }

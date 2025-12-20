@@ -67,7 +67,7 @@ CREATE TABLE promotions (
     discount_type ENUM('PERCENTAGE', 'FIXED_AMOUNT') NOT NULL,
     discount_value DECIMAL(15, 2),
     min_order_value DECIMAL(15, 2) DEFAULT 0,
-    max_discount_amount DECIMAL(15, 2),
+    max_discount_value DECIMAL(15, 2),
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP NOT NULL,
     usage_limit INT,
