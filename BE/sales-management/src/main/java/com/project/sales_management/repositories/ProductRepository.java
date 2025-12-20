@@ -20,7 +20,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     )
     Page<Product> findByProductNameContainingIgnoreCase(String keyword,Double maxPrice, Double minPrice, Pageable pageable);
 
-
     long countByIsActiveTrue();
 
     // 2.Top 5 sản phẩm sắp hết hàng (stock < )
@@ -43,4 +42,19 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     LIMIT 5
     """, nativeQuery = true)
     List<Product> findTop5SellingProducts();
+
+    @Query(
+            value = "SELECT p FROM Product p WHERE " +
+                    "p.category.categoryId = :categoryId " +
+                    "AND p.price BETWEEN :minPrice AND :maxPrice"
+    )
+    Page<Product> findByCategory_CategoryIdAndPriceBetween(Long categoryId, int minPrice, int maxPrice, Pageable pageable);
+
+    @Query(
+            value = "SELECT p FROM Product p WHERE " +
+                    "p.category.categoryId = :categoryId " +
+                    "AND p.price BETWEEN :minPrice AND :maxPrice " +
+                    "AND LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%'))"
+    )
+    Page<Product> findByCategory_CategoryIdAndPriceBetweenAndProductNameContainingIgnoreCase(Long categoryId, int minPrice, int maxPrice, String keyword, Pageable pageable);
 }

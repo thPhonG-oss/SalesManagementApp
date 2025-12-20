@@ -6,10 +6,10 @@
       <env name="CLOUD_API_KEY" value="minhchiendeptrai" />
       <env name="CLOUD_API_SECRET" value="daonuthuydung" />
       <env name="CLOUD_NAME" value="chienminhdao" />
-      <env name="DATABASE_URL" value="jdbc:mysql://localhost:3306/sale_management_1" />
-      <env name="DB_PASSWORD" value="chien1207" />
+      <env name="DATABASE_URL" value="jdbc:mysql://localhost:3306/sale_management" />
+      <env name="DB_PASSWORD" value="112233" />
       <env name="DB_USERNAME" value="root" />
-      <env name="PORT" value="8081" />
+      <env name="PORT" value="8080" />
       <env name="SECRET_KEY" value="SalesManagementJwtSecretKey2025BackendSecureForProductionUseOnly" />
       <env name="SPRING_PROFILES_ACTIVE" value="dev" />
     </envs>

@@ -12,6 +12,14 @@ public enum ErrorCode {
     UNAUTHENTICATED ("1001","UNAUTHENTICATED", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED("1002", "You do not have permission", HttpStatus.FORBIDDEN),
     INVALID_KEY("1003", "Uncategorized error", HttpStatus.BAD_REQUEST),
+    CATEGORY_EXISTED("1004","Category existed.",HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_EXIST("1005","The category does not exist.",HttpStatus.BAD_REQUEST),
+    CATEDORY_DELETED("1006","The category has been deleted.",HttpStatus.BAD_REQUEST),
+    CUSTOMER_NOT_EXIST("1007","Customer not exist.",HttpStatus.BAD_REQUEST),
+    PROMOTION_NOT_EXIST("1008","promotion not exist.",HttpStatus.BAD_REQUEST),
+    PRODUCT_NOT_EXIST("1008","product not exist.",HttpStatus.BAD_REQUEST)
+
+
     EMAIL_EXIST("1007", "Email already exists", HttpStatus.BAD_REQUEST),
     PHONE_EXIST("1008", "Phone already exists", HttpStatus.BAD_REQUEST),
     CUSTOMER_NOT_FOUND("1009", "CUSTOMER_NOT_FOUND", HttpStatus.BAD_REQUEST),
