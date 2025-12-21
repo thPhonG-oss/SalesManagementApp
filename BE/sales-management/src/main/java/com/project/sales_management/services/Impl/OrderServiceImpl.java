@@ -9,9 +9,7 @@ import com.project.sales_management.exception.AppException;
 import com.project.sales_management.exception.ErrorCode;
 import com.project.sales_management.mappers.OrderMapper;
 import com.project.sales_management.models.Order;
-import com.project.sales_management.repositories.CustomerRepository;
-import com.project.sales_management.repositories.OrderRepository;
-import com.project.sales_management.repositories.PromotionRepository;
+import com.project.sales_management.repositories.*;
 import com.project.sales_management.services.CustomerService;
 import com.project.sales_management.services.OrderItemService;
 import com.project.sales_management.models.*;
@@ -43,6 +41,7 @@ public class OrderServiceImpl implements OrderService {
     CustomerRepository customerRepository;
     PromotionRepository promotionRepository;
     OrderItemService orderItemService;
+    ProductRepository productRepository;
 
     @Override
     public OrderResponse createOrder(OrderRequest orderRequest) {
@@ -55,6 +54,14 @@ public class OrderServiceImpl implements OrderService {
         Order newOrder = orderRepository.save(order);
         orderRequest.getOrderItems().forEach(i -> {
             orderItemService.createOrderItem(i,newOrder);
+            Product product=productRepository.findById(i.getProductId()).orElseThrow(()->new AppException(ErrorCode.PRODUCT_NOT_EXIST));
+            Integer stockQuantity=product.getStockQuantity()- i.getQuantity();
+            Integer soldQuantity= product.getSoldQuantity()+i.getQuantity();
+            if(stockQuantity<0)
+                throw new AppException(ErrorCode.OUT_OF_STOCK);
+            product.setStockQuantity(stockQuantity);
+            product.setSoldQuantity(soldQuantity);
+            productRepository.save(product);
         });
 
         return orderMapper.toOrderResponse(newOrder);
