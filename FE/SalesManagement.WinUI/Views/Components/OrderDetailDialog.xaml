@@ -7,49 +7,102 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:SalesManagement.WinUI.ViewModels"
     mc:Ignorable="d"
-    Title="Chi tiết đơn hàng"
+    Title="{x:Bind OrderVM.DialogTitle, Mode=OneWay, FallbackValue='Chi tiết đơn hàng ORD001'}"
     PrimaryButtonText="Đóng"
-    DefaultButton="Primary">
+    DefaultButton="Primary"
+    Style="{StaticResource DefaultContentDialogStyle}"
+
+    
+    >
 
     <ContentDialog.Resources>
+       
         <Style TargetType="TextBlock" x:Key="LabelStyle">
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Width" Value="100"/>
             <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="ValueStyle">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
     </ContentDialog.Resources>
 
-    <StackPanel Spacing="16" Padding="0,10">
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Mã đơn:" Style="{StaticResource LabelStyle}"/>
-            <TextBlock Text="{x:Bind OrderVM.OrderId, Mode=OneWay}" FontWeight="Bold"/>
-        </StackPanel>
+    <Grid Padding="10" RowSpacing="24" Width="500">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Ngày tạo:" Style="{StaticResource LabelStyle}"/>
-            <TextBlock Text="{x:Bind OrderVM.DateDisplay, Mode=OneWay}"/>
-        </StackPanel>
+        <Grid RowSpacing="20" ColumnSpacing="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Số lượng:" Style="{StaticResource LabelStyle}"/>
-            <TextBlock Text="{x:Bind OrderVM.ItemsCountDisplay, Mode=OneWay}"/>
-        </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="0">
+                <TextBlock Text="Mã đơn hàng" Style="{StaticResource LabelStyle}"/>
+                <TextBlock Text="{x:Bind OrderVM.OrderId, Mode=OneWay}" Style="{StaticResource ValueStyle}"/>
+            </StackPanel>
 
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Tổng tiền:" Style="{StaticResource LabelStyle}"/>
-            <TextBlock Text="{x:Bind OrderVM.AmountDisplay, Mode=OneWay}" 
-                       Foreground="{ThemeResource SystemAccentColor}" FontWeight="Bold" FontSize="16"/>
-        </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1">
+                <TextBlock Text="Ngày tạo" Style="{StaticResource LabelStyle}"/>
+                <TextBlock Text="{x:Bind OrderVM.DateDisplay, Mode=OneWay}" Style="{StaticResource ValueStyle}"/>
+            </StackPanel>
 
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Trạng thái:" Style="{StaticResource LabelStyle}" VerticalAlignment="Center"/>
-            <Border Background="{x:Bind OrderVM.StatusColor, Mode=OneWay}" 
-                    BorderBrush="{x:Bind OrderVM.StatusBorder, Mode=OneWay}"
-                    BorderThickness="1" CornerRadius="4" Padding="8,4">
-                <TextBlock Text="{x:Bind OrderVM.Status, Mode=OneWay}" 
-                           Foreground="{x:Bind OrderVM.StatusBorder, Mode=OneWay}" 
-                           FontSize="12" FontWeight="SemiBold"/>
-            </Border>
-        </StackPanel>
-    </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="0">
+                <TextBlock Text="Tổng tiền" Style="{StaticResource LabelStyle}"/>
+                <TextBlock Text="{x:Bind OrderVM.AmountDisplay, Mode=OneWay}" 
+                           Style="{StaticResource ValueStyle}" FontSize="20"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Grid.Column="1">
+                <TextBlock Text="Trạng thái" Style="{StaticResource LabelStyle}"/>
+                <Border Background="{x:Bind OrderVM.StatusColor, Mode=OneWay}" 
+                        HorizontalAlignment="Left"
+                        CornerRadius="4" Padding="8,4">
+                    <TextBlock Text="{x:Bind OrderVM.Status, Mode=OneWay}" 
+                               Foreground="{x:Bind OrderVM.StatusBorder, Mode=OneWay}" 
+                               FontSize="12" FontWeight="SemiBold"/>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <TextBlock Grid.Row="2" Text="Chi tiết mặt hàng" 
+                   FontWeight="SemiBold" FontSize="16" Margin="0,12,0,8"/>
+
+        <Border Grid.Row="3" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" 
+                CornerRadius="8" Padding="16">
+
+            <ItemsControl ItemsSource="{x:Bind OrderVM.OrderItems, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{Binding ProductName}" FontWeight="SemiBold"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                    <TextBlock Text="{Binding Quantity}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12"/>
+                                    <TextBlock Text=" × " Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12"/>
+                                    <TextBlock Text="{Binding PriceDisplay}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <TextBlock Grid.Column="1" Text="{Binding TotalDisplay}" 
+                                       VerticalAlignment="Top" FontWeight="SemiBold"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+    </Grid>
 </ContentDialog>

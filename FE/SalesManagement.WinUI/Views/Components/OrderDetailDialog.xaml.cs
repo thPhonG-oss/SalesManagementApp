@@ -3,7 +3,7 @@ using SalesManagement.WinUI.ViewModels;
 
 namespace SalesManagement.WinUI.Views
 {
-    // 1. ??I T? 'UserControl' SANG 'ContentDialog'
+   
     public sealed partial class OrderDetailDialog : ContentDialog
     {
         public OrderItemViewModel OrderVM { get; }

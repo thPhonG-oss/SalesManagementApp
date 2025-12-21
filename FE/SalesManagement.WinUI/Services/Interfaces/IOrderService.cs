@@ -10,5 +10,6 @@ namespace SalesManagement.WinUI.Services.Interfaces
     public interface IOrderService
     {
         Task<List<Order>> GetOrdersAsync();
+        Task<List<OrderDetail>> GetOrderDetailsAsync(string orderId);
     }
 }
