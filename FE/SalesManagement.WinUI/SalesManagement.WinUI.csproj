@@ -62,7 +62,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Helpers\" />
 		<Folder Include="Converters\" />
 		<Folder Include="Config\" />
 		<Folder Include="Resources\Images\" />

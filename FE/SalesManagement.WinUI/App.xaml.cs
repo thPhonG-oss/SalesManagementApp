@@ -63,6 +63,7 @@ public partial class App : Application
         services.AddTransient<MainViewModel>();
 
         // ⭐ PRODUCT
+        services.AddSingleton<IProductService, ProductService>();
         services.AddTransient<ProductViewModel>();
 
         // ================= VIEWS =================
@@ -70,7 +71,7 @@ public partial class App : Application
         services.AddTransient<MainPage>();
 
         // ⭐ PRODUCT PAGE
-        //services.AddTransient<ProductPage>();
+        services.AddTransient<ProductPage>();
 
         return services.BuildServiceProvider();
     }
