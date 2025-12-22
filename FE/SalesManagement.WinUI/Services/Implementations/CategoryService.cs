@@ -36,7 +36,7 @@ namespace SalesManagement.WinUI.Services.Implementations
                         ApiResponse<List<Category>>
                     >("/api/categories");
 
-                System.Diagnostics.Debug.WriteLine(response);
+                //System.Diagnostics.Debug.WriteLine(response);
 
 
                 if (response == null || !response.Success)
