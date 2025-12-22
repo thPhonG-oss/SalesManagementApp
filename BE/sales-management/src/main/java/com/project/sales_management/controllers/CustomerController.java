@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +32,11 @@ public class CustomerController {
     }
 
     @GetMapping("")
-    ResponseEntity<List<CustomerResponse>> getAllCustomer(){
-        List<CustomerResponse> customerResponses = customerService.getAllCustomer();
+    ResponseEntity<Page<CustomerResponse>> getAllCustomer(
+            @RequestParam(defaultValue = "0") Integer pageNumber,
+            @RequestParam(defaultValue = "10") Integer pageSize
+    ){
+        Page<CustomerResponse> customerResponses = customerService.getAllCustomer(pageNumber, pageSize);
         return  ResponseEntity.ok().body(customerResponses);
     }
 

@@ -15,6 +15,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -55,12 +59,10 @@ public class CustomerServiceImpl implements CustomerService {
         return customerMapper.toCustomerResponse(savedCustomer);
     }
 
-    @Override
-    public List<CustomerResponse> getAllCustomer() {
-        List<Customer> customers = customerRepository.findAll();
-        return customers.stream()
-                .map(customerMapper::toCustomerResponse)
-                .collect(Collectors.toList());
+    public Page<CustomerResponse> getAllCustomer(Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("customerId").descending());
+        Page<Customer> customers = customerRepository.findAll(pageable);
+        return customers.map(customerMapper::toCustomerResponse);
     }
 
     @Override
