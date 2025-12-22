@@ -56,6 +56,7 @@ public partial class App : Application
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ILoadingService, LoadingService>();
         services.AddSingleton<IOrderService, MockOrderService>();
+        services.AddSingleton<IDialogService, DialogService>();
 
         // ViewModels
         services.AddTransient<LoginViewModel>();

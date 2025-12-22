@@ -11,5 +11,10 @@ namespace SalesManagement.WinUI.Services.Interfaces
     {
         Task<List<Order>> GetOrdersAsync();
         Task<List<OrderDetail>> GetOrderDetailsAsync(string orderId);
+        Task<bool> DeleteOrderAsync(string orderId);
+        Task<bool> UpdateOrderAsync(Order order);
+
+        Task<List<Product>> GetProductsAsync();
+        Task<bool> CreateOrderAsync(Order order, List<OrderDetail> details);
     }
 }

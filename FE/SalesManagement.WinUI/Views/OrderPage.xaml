@@ -35,6 +35,7 @@
                     <TextBlock Text="Quản lý, tạo và theo dõi các đơn hàng của bạn" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                 </StackPanel>
                 <Button Content="+ Tạo đơn hàng mới" Style="{StaticResource AccentButtonStyle}" 
+                        Command="{x:Bind ViewModel.CreateNewOrderCommand}"
                         RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True"/>
             </RelativePanel>
 
@@ -124,6 +125,7 @@
                     <controls:DataGrid Grid.Row="1" x:Name="OrderGrid" 
                                        ItemsSource="{x:Bind ViewModel.DisplayOrders, Mode=OneWay}"
                                        SelectedItem="{x:Bind ViewModel.SelectedOrder, Mode=TwoWay}"
+                                       SelectionChanged="OrderGrid_SelectionChanged"
                                        AutoGenerateColumns="False" 
                                        GridLinesVisibility="Horizontal"
                                        RowHeight="52"
@@ -163,22 +165,26 @@
                                 </controls:DataGridTemplateColumn.CellTemplate>
                             </controls:DataGridTemplateColumn>
 
-                            <controls:DataGridTemplateColumn Header="Thao tác" Width="120">
-                                <controls:DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate x:DataType="viewmodels:OrderItemViewModel">
-                                        <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                            
-                                            <FontIcon Glyph="&#xE70F;" FontSize="14" Foreground="Gray"/>
-                                            <Button Padding="0" Background="Transparent" BorderThickness="0"
-                                                    Command="{Binding ElementName=OrderGrid, Path=DataContext.DeleteOrderCommand}"
-                                                    CommandParameter="{x:Bind}">
-                                                <FontIcon Glyph="&#xE74D;" FontSize="14" Foreground="{ThemeResource SystemFillColorCriticalBrush}"/>
-                                            </Button>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </controls:DataGridTemplateColumn.CellTemplate>
-                            </controls:DataGridTemplateColumn>
-                        </controls:DataGrid.Columns>
+                                <controls:DataGridTemplateColumn Header="Thao tác" Width="120">
+                                    <controls:DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate x:DataType="viewmodels:OrderItemViewModel">
+                                            <StackPanel Orientation="Horizontal" Spacing="16" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                                                <Button Padding="4" Background="Transparent" BorderThickness="0"
+                                                        Command="{x:Bind EditCommand }">
+                                                    <FontIcon Glyph="&#xE70F;" FontSize="14" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                                </Button>
+
+                                                <Button Padding="4" Background="Transparent" BorderThickness="0"
+                                                        Command="{x:Bind DeleteCommand}">
+                                                    <FontIcon Glyph="&#xE74D;" FontSize="14" Foreground="{ThemeResource SystemFillColorCriticalBrush}"/>
+                                                </Button>
+
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </controls:DataGridTemplateColumn.CellTemplate>
+                                </controls:DataGridTemplateColumn>
+                            </controls:DataGrid.Columns>
                     </controls:DataGrid>
 
                     <RelativePanel Grid.Row="2" Padding="20,16">

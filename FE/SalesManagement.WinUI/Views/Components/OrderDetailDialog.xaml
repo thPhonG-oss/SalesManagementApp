@@ -28,11 +28,11 @@
         </Style>
     </ContentDialog.Resources>
 
-    <Grid Padding="10" RowSpacing="24" Width="500">
+    <Grid Padding="10" RowSpacing="24" Width="600">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Grid RowSpacing="20" ColumnSpacing="20">
@@ -77,32 +77,34 @@
                    FontWeight="SemiBold" FontSize="16" Margin="0,12,0,8"/>
 
         <Border Grid.Row="3" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" 
-                CornerRadius="8" Padding="16">
+                CornerRadius="8" Padding="16" MaxHeight="400">
 
-            <ItemsControl ItemsSource="{x:Bind OrderVM.OrderItems, Mode=OneWay}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Margin="0,8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{x:Bind OrderVM.OrderItems, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                            <StackPanel Grid.Column="0">
-                                <TextBlock Text="{Binding ProductName}" FontWeight="SemiBold"/>
-                                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                                    <TextBlock Text="{Binding Quantity}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12"/>
-                                    <TextBlock Text=" × " Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12"/>
-                                    <TextBlock Text="{Binding PriceDisplay}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12"/>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding ProductName}" FontWeight="SemiBold"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                        <TextBlock Text="{Binding Quantity}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12"/>
+                                        <TextBlock Text=" × " Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12"/>
+                                        <TextBlock Text="{Binding PriceDisplay}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="12"/>
+                                    </StackPanel>
                                 </StackPanel>
-                            </StackPanel>
 
-                            <TextBlock Grid.Column="1" Text="{Binding TotalDisplay}" 
+                                <TextBlock Grid.Column="1" Text="{Binding TotalDisplay}" 
                                        VerticalAlignment="Top" FontWeight="SemiBold"/>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
         </Border>
     </Grid>
 </ContentDialog>

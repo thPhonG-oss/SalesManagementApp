@@ -16,8 +16,10 @@
 
 	<ItemGroup>
 		<None Remove="appsettings.json" />
+		<None Remove="Views\Components\CreateOrderDialog.xaml" />
 		<None Remove="Views\Components\LoadingDialog.xaml" />
 		<None Remove="Views\Components\OrderDetailDialog.xaml" />
+		<None Remove="Views\Components\OrderEditDialog.xaml" />
 		<None Remove="Views\DashboardPage.xaml" />
 		<None Remove="Views\OrderPage.xaml" />
 		<None Remove="Views\ProductPage.xaml" />
@@ -64,11 +66,24 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Behaviors\" />
 		<Folder Include="Helpers\" />
 		<Folder Include="Converters\" />
 		<Folder Include="Config\" />
 		<Folder Include="Resources\Images\" />
 		<Folder Include="Resources\Styles\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\Components\CreateOrderDialog.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\Components\OrderEditDialog.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

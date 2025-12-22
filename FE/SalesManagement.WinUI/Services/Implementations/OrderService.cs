@@ -11,7 +11,7 @@ namespace SalesManagement.WinUI.Services.Implementations
         // API 1: Giả lập lấy danh sách đơn hàng (Nhẹ, không có chi tiết sản phẩm)
         public async Task<List<Order>> GetOrdersAsync()
         {
-            await Task.Delay(1000); // Giả lập mạng chậm
+            await Task.Delay(500); // Giả lập mạng chậm
 
             return new List<Order>
             {
@@ -45,12 +45,12 @@ namespace SalesManagement.WinUI.Services.Implementations
             };
         }
 
-        // API 2: Giả lập lấy chi tiết dựa trên ID (Khi người dùng bấm vào mới gọi)
+        
         public async Task<List<OrderDetail>> GetOrderDetailsAsync(string orderId)
         {
-            await Task.Delay(500); // Giả lập delay tải chi tiết
+            await Task.Delay(500); 
 
-            // Trả về dữ liệu khác nhau tùy theo ID
+            
             return orderId switch
             {
                 "ORD001" => new List<OrderDetail>
@@ -157,8 +157,38 @@ namespace SalesManagement.WinUI.Services.Implementations
                 {
                     new OrderDetail { ProductName = "Combo PC văn phòng", Quantity = 1, Price = 6890000 }
                 },
-                _ => new List<OrderDetail>() // Mặc định trả về rỗng nếu không tìm thấy
+                _ => new List<OrderDetail>() 
             };
+        }
+
+        public Task<bool> DeleteOrderAsync(string orderId)
+        {
+            return Task.FromResult(true); 
+        }
+
+        public Task<bool> UpdateOrderAsync(Order order)
+        {
+            return Task.FromResult(true);
+        }
+
+        public Task<List<Product>> GetProductsAsync()
+        {
+            return Task.FromResult(new List<Product>
+        {
+            new Product { Id = "P01", Name = "Laptop Dell XPS 13", Price = 1000000 }, // Giá demo thấp để dễ tính
+            new Product { Id = "P02", Name = "Chuột Logitech", Price = 250000 },
+            new Product { Id = "P03", Name = "Màn hình LG 24 inch", Price = 1500000 },
+            new Product { Id = "P04", Name = "Bàn phím cơ", Price = 1800000 },
+            new Product { Id = "P05", Name = "Tai nghe Sony", Price = 900000 }
+        });
+        }
+
+        // MỚI: Xử lý tạo đơn hàng
+        public async Task<bool> CreateOrderAsync(Order order, List<OrderDetail> details)
+        {
+            await Task.Delay(800); // Giả lập delay mạng
+                                   // Trong thực tế: Lưu order và details vào DB
+            return true;
         }
     }
 }
