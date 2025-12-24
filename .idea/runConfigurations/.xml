@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="23" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <envs>
+      <env name="CLOUD_API_KEY" value="minhchiendeptrai" />
+      <env name="CLOUD_API_SECRET" value="daonuthuydung" />
+      <env name="CLOUD_NAME" value="chienminhdao" />
+      <env name="DATABASE_URL" value="jdbc:mysql://localhost:3306/sale_management" />
+      <env name="DB_PASSWORD" value="112233" />
+      <env name="DB_USERNAME" value="root" />
+      <env name="PORT" value="8080" />
+      <env name="SECRET_KEY" value="SalesManagementJwtSecretKey2025BackendSecureForProductionUseOnly" />
+      <env name="SPRING_PROFILES_ACTIVE" value="dev" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.project.sales_management.SalesManagementBackendApplication" />
+    <module name="sales-management" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
