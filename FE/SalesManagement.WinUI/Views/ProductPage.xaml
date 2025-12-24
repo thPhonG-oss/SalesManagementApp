@@ -32,16 +32,11 @@
 
             <Button
                 Grid.Column="1"
-                Content="＋ Thêm"
+                Content="＋ Thêm sản phẩm"
                 Margin="12,0"
                 Height="36"
                 Command="{Binding OpenAddProductCommand}"
                 />
-
-            <Button
-                Grid.Column="2"
-                Content="⬆ Import"
-                Height="36"/>
         </Grid>
 
         <!-- ===== CONTENT CARD ===== -->
@@ -71,7 +66,7 @@
                         SelectedValue="{Binding SelectedPriceFilter, Mode=TwoWay}"
                         SelectedValuePath="Tag">
 
-                        <ComboBoxItem Content="Tất cả" Tag="0-999999999" />
+                        <ComboBoxItem Content="Lọc theo giá" Tag="0-999999999" />
                         <ComboBoxItem Content="0đ - 100,000đ" Tag="0-100000" />
                         <ComboBoxItem Content="100,000đ - 300,000đ" Tag="100000-300000" />
                         <ComboBoxItem Content="300,000đ - 1,000,000đ" Tag="300000-1000000" />
@@ -135,10 +130,15 @@
                                     <!-- IMAGE -->
                                     <Border Width="72" Height="96"
                                                 CornerRadius="8"
-                                                Background="{ThemeResource SubtleFillColorSecondaryBrush}">
+                                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
                                         <Image Source="{Binding ImageUrl}"
-                                                   Stretch="UniformToFill"/>
+                                                   Stretch="Uniform"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
                                     </Border>
+
 
                                     <!-- INFO -->
                                     <StackPanel Grid.Column="1" Spacing="6">
@@ -173,9 +173,15 @@
                                         </StackPanel>
 
                                         <!-- Stock -->
-                                        <TextBlock FontSize="11"
-                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                       Text="{Binding StockText}"/>
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <TextBlock  Text="Sản phẩm có sẵn:"/>
+                                            <TextBlock
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Text="{Binding StockText}"/>
+
+                                        </StackPanel>
+
                                     </StackPanel>
 
                                     <!-- ACTIONS -->
@@ -183,9 +189,10 @@
                                                     Orientation="Vertical"
                                                     Spacing="6"
                                                     VerticalAlignment="Center">
+                                        <TextBlock FontSize="14"
+                                                       FontWeight="SemiBold"
+                                                       Text="Xem chi tiết→"/>
 
-                                        <Button Content="＋" Width="32" Height="32"/>
-                                        <Button Content="✎" Width="32" Height="32"/>
                                     </StackPanel>
 
                                 </Grid>

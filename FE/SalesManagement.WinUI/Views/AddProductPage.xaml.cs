@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SalesManagement.WinUI.ViewModels;
@@ -12,16 +13,19 @@ namespace SalesManagement.WinUI.Views;
 /// </summary>
 public sealed partial class AddProductPage : Page
 {
+    private readonly INavigationService _navigationService;
     public AddProductPage()
     {
         this.InitializeComponent();
         DataContext = App.Services.GetService<AddProductViewModel>();
+        _navigationService = App.Services.GetRequiredService<INavigationService>();
     }
 
     private void BackButton_Click(object sender, RoutedEventArgs e)
     {
-        var nav = App.Services.GetService<INavigationService>();
-        nav?.GoBack();
+        //var nav = App.Services.GetService<INavigationService>();
+        //nav?.GoBack();
+        _navigationService.GoBack();
     }
 
 }

@@ -46,24 +46,40 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- IMAGE -->
-                    <Border Width="260"
-                            Height="360"
-                            CornerRadius="16"
-                            Background="{ThemeResource SubtleFillColorSecondaryBrush}"
-                            >
-                        <Image Source="{Binding ImageUrl}"
-                               Stretch="UniformToFill"/>
-                    </Border>
+                    <StackPanel>
+                        <Border Width="260"
+                                Height="360"
+                                CornerRadius="16"
+                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                >
+                            <Image Source="{Binding ImageUrl}"
+                                   Stretch="Uniform"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                        </Border>
+
+
+                        <Button Content="Thay đổi ảnh"
+                                Margin="0,12,0,0"
+                                HorizontalAlignment="Center"
+                                Click="ChangeImage_Click"/>
+                    </StackPanel>
+
 
                     <!-- INFO -->
                     <StackPanel Grid.Column="1" Spacing="14">
 
                         <TextBlock Text="{Binding ProductName}"
                                    FontSize="24"
-                                   FontWeight="SemiBold"/>
+                                   FontWeight="Bold"/>
 
-                        <TextBlock Text="{Binding Category.CategoryName}"
-                                   FontSize="18"/>
+                        <StackPanel>
+                            <TextBlock Text="Danh mục: "/>
+                            <TextBlock Text="{Binding Category.CategoryName}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"/>
+                        </StackPanel>
+
 
                         <TextBlock Text="{Binding Author}"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>

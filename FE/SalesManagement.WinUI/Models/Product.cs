@@ -92,12 +92,10 @@ namespace SalesManagement.WinUI.Models
 
         // ================= UI HELPER =================
 
-        public string ImageUrl =>
-            Images != null && Images.Count > 0
-                ? Images[0].ImageUrl
-                : "https://bookbuy.vn/kcfinder/upload/files/thao-tung-tam-ly-nhan-dien-thuc-tinh-va-chua-lanh-nhung-ton-thuong-tiem-an.jpeg";
+        public string ImageUrl { get; set; } =
+            "https://res.cloudinary.com/dznocieoi/image/upload/v1766487761/istockphoto-1396814518-612x612_upvria.jpg";
 
-        public string StockText => $"Có sẵn: {StockQuantity}";
+        public string StockText => $"{StockQuantity}";
 
         public string PriceText => Price.ToString("N0") + " đ";
 
@@ -116,6 +114,18 @@ namespace SalesManagement.WinUI.Models
             IsDiscounted
                 ? new SolidColorBrush(Windows.UI.Color.FromArgb(255, 150, 150, 150))
                 : new SolidColorBrush(Colors.Black);
+
+        public double PriceValue
+        {
+            get => (double)Price;
+            set
+            {
+                Price = (decimal)value;
+                OnPropertyChanged(nameof(Price));
+                OnPropertyChanged();
+            }
+        }
+
 
         public string DiscountText => "-" + DiscountPercentage.ToString("0") + "%";
     }

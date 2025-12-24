@@ -24,7 +24,7 @@ namespace SalesManagement.WinUI.ViewModels
         private int selectedCategoryId = -1;
 
         [ObservableProperty] private string message = string.Empty;
-
+        [ObservableProperty] private string messageTrue = string.Empty;
         // THÊM MỚI ĐỂ KHỚP CreateProductRequest
         [ObservableProperty] private string author = string.Empty;
         [ObservableProperty] private string publisher = string.Empty;
@@ -71,10 +71,56 @@ namespace SalesManagement.WinUI.ViewModels
             SelectedCategory = Categories.First();
         }
 
-
-
         private async Task CreateProductAsync()
         {
+
+            if (string.IsNullOrWhiteSpace(ProductName))
+            {
+                Message = "Vui lòng nhập tên sản phẩm!";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(Description))
+            {
+                Message = "Vui lòng nhập mô tả sản phẩm!";
+                return;
+            }
+
+            if (Price == null || Price <= 0)
+            {
+                Message = "Giá sản phẩm phải lớn hơn 0!";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(author))
+            {
+                Message = "Vui lòng nhập tên tác giả!";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(publisher))
+            {
+                Message = "Vui lòng nhập nhà xuất bản!";
+                return;
+            }
+
+            if (publicationYear == null || publicationYear <= 0)
+            {
+                Message = "Vui lòng nhập năm xuất bản hợp lệ!";
+                return;
+            }
+
+            if (stockQuantity == null || stockQuantity < 0)
+            {
+                Message = "Số lượng tồn kho không hợp lệ!";
+                return;
+            }
+
+            if (minStockQuantity == null || minStockQuantity < 0)
+            {
+                Message = "Số lượng tối thiểu không hợp lệ!";
+                return;
+            }
 
             if (SelectedCategoryId == -1)
             {
@@ -101,13 +147,14 @@ namespace SalesManagement.WinUI.ViewModels
 
             if (ok)
             {
-                Message = "Thêm sản phẩm thành công!";
+                MessageTrue = "Thêm sản phẩm thành công!";
                 await Task.Delay(800);
                 _navigationService.GoBack();
             }
             else
             {
-                Message = "Lỗi khi thêm sản phẩm!";
+                Debug.WriteLine(ok);
+                Message = "Tên sách bị trùng!";
             }
         }
     }

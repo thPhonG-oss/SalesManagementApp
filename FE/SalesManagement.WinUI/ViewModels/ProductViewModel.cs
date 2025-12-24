@@ -124,7 +124,6 @@ namespace SalesManagement.WinUI.ViewModels
         // ================= OPEN ADD PRODUCT PAGE =================
         private void OpenAddProduct()
         {
-            _navigationService.SetHeader("Thêm sản phẩm");
             _navigationService.NavigateTo(typeof(Views.AddProductPage));
         }
 
@@ -157,7 +156,12 @@ namespace SalesManagement.WinUI.ViewModels
             _allProducts.Clear();
 
             foreach (var product in result.Products)
-                _allProducts.Add(product);
+            {
+                if (product.IsActive)
+                {
+                    _allProducts.Add(product);
+                }
+            }
 
             Page = 1;
             ApplyFilterAndPaging();
