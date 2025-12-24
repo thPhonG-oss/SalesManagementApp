@@ -9,5 +9,7 @@ namespace SalesManagement.WinUI.Services.Interfaces
             int size = 200,
             string sortBy = "productName",
             string sortDir = "asc");
+        Task<bool> CreateProductAsync(CreateProductRequest request);
+
     }
 }

@@ -2,7 +2,6 @@
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace SalesManagement.WinUI.ViewModels
 {
@@ -10,6 +9,7 @@ namespace SalesManagement.WinUI.ViewModels
     {
         private readonly ICategoryService _categoryService;
         private readonly IProductService _productService;
+        private readonly INavigationService _navigationService; // ⭐ THÊM
 
         // ================= CATEGORY =================
         public ObservableCollection<Category> Categories { get; } = new();
@@ -81,13 +81,17 @@ namespace SalesManagement.WinUI.ViewModels
         public RelayCommand NextPageCommand { get; }
         public RelayCommand PrevPageCommand { get; }
 
+        public RelayCommand OpenAddProductCommand { get; }   // ⭐ THÊM
+
         // ================= CTOR =================
         public ProductViewModel(
             ICategoryService categoryService,
-            IProductService productService)
+            IProductService productService,
+            INavigationService navigationService)   // ⭐ THÊM
         {
             _categoryService = categoryService;
             _productService = productService;
+            _navigationService = navigationService; // ⭐ THÊM
 
             PrevPageCommand = new RelayCommand(
                 () => Page--,
@@ -97,8 +101,17 @@ namespace SalesManagement.WinUI.ViewModels
                 () => Page++,
                 () => Page < TotalPages);
 
+            OpenAddProductCommand = new RelayCommand(OpenAddProduct); // ⭐ THÊM
+
             _ = LoadCategoriesAsync();
             _ = LoadProductsAsync();
+        }
+
+        // ================= MỞ TRANG THÊM SẢN PHẨM =================
+        private void OpenAddProduct()
+        {
+            _navigationService.SetHeader("Thêm sản phẩm");
+            //_navigationService.NavigateTo(typeof(Views.AddProductPage));
         }
 
         // ================= LOAD CATEGORY =================
@@ -116,9 +129,7 @@ namespace SalesManagement.WinUI.ViewModels
             });
 
             foreach (var item in data)
-            {
                 Categories.Add(item);
-            }
 
             SelectedCategory = Categories.First();
         }
@@ -132,14 +143,10 @@ namespace SalesManagement.WinUI.ViewModels
             _allProducts.Clear();
 
             foreach (var product in result.Products)
-            {
                 _allProducts.Add(product);
-            }
 
             Page = 1;
             ApplyFilterAndPaging();
-
-            Debug.WriteLine($"[VM] Loaded {_allProducts.Count} products");
         }
 
         // ================= FILTER + PAGING =================
@@ -147,46 +154,25 @@ namespace SalesManagement.WinUI.ViewModels
         {
             IEnumerable<Product> query = _allProducts;
 
-            // CATEGORY FILTER
             if (SelectedCategory != null && SelectedCategory.CategoryId != -1)
-            {
-                query = query.Where(p =>
-                    p.Category?.CategoryId == SelectedCategory.CategoryId);
-            }
+                query = query.Where(p => p.Category?.CategoryId == SelectedCategory.CategoryId);
 
-            // SEARCH FILTER
             if (!string.IsNullOrWhiteSpace(SearchText))
-            {
                 query = query.Where(p =>
                     p.ProductName != null &&
-                    p.ProductName.Contains(
-                        SearchText,
-                        StringComparison.OrdinalIgnoreCase));
-            }
+                    p.ProductName.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
 
-            // TOTAL PAGE
             var count = query.Count();
-            TotalPages = Math.Max(1,
-                (int)Math.Ceiling(count / (double)_pageSize));
-            Debug.WriteLine(TotalPages);
-
-
+            TotalPages = Math.Max(1, (int)Math.Ceiling(count / (double)_pageSize));
 
             if (Page > TotalPages)
                 Page = 1;
 
-            // APPLY PAGING
             Products.Clear();
-
             foreach (var item in query
                 .Skip((Page - 1) * _pageSize)
                 .Take(_pageSize))
-            {
                 Products.Add(item);
-            }
-
-            Debug.WriteLine(
-                $"[VM] Page={Page}/{TotalPages}, Products={Products.Count}");
         }
 
         private void UpdatePagingCommandState()

@@ -3,6 +3,7 @@ using SalesManagement.WinUI.Services.Interfaces;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 public class ProductService : IProductService
@@ -57,12 +58,27 @@ public class ProductService : IProductService
         Debug.WriteLine($"Products: {apiResponse?.Data?.Products?.Count}");
 
 
-
-
-
         if (apiResponse == null || !apiResponse.Success)
             return null;
 
         return apiResponse.Data;
     }
+
+    public async Task<bool> CreateProductAsync(CreateProductRequest request)
+    {
+        var token = _authService.GetAccessToken();
+        if (!string.IsNullOrEmpty(token))
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        var res = await _client.PostAsJsonAsync("/api/v1/products", request);
+
+        Debug.WriteLine($"[CREATE PRODUCT] {res.StatusCode}");
+
+        return res.IsSuccessStatusCode;
+    }
+
+
 }

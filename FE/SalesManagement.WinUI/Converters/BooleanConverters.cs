@@ -1,10 +1,9 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
-using System;
 
 namespace SalesManagement.WinUI.Converters;
 
-public class BoolToVisibilityConverter : IValueConverter
+public class BooleanConverters : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
