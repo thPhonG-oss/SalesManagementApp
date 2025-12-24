@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using SalesManagement.WinUI.Services;
 using SalesManagement.WinUI.Services.Implementations;
 using SalesManagement.WinUI.Services.Interfaces;
 using SalesManagement.WinUI.ViewModels;
@@ -97,7 +98,7 @@ public partial class App : Application
         navService.SetFrame(rootFrame);
 
         // Mở trang Login
-        navService.NavigateTo(typeof(LoginPage));
+        navService.NavigateTo(typeof(MainPage));
     }
 
 }
