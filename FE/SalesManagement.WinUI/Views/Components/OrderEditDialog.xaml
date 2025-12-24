@@ -119,7 +119,6 @@
                 <ComboBox SelectedItem="{x:Bind TempStatus, Mode=TwoWay}"
                           HorizontalAlignment="Stretch" Margin="0,0,0,12">
                     <x:String>Mới tạo</x:String>
-                    <x:String>Đang xử lý</x:String>
                     <x:String>Đã thanh toán</x:String>
                     <x:String>Đã hủy</x:String>
                 </ComboBox>

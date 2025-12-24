@@ -105,8 +105,8 @@ namespace SalesManagement.WinUI.ViewModels
 
                     Model.Status = value;
                     OnPropertyChanged(nameof(Status));
-                    OnPropertyChanged(nameof(StatusColor)); // Cập nhật màu nền
-                    OnPropertyChanged(nameof(StatusBorder)); // Cập nhật màu viền
+                    OnPropertyChanged(nameof(StatusColor)); 
+                    OnPropertyChanged(nameof(StatusBorder)); 
                 }
             }
         }
@@ -119,7 +119,7 @@ namespace SalesManagement.WinUI.ViewModels
             {
                 if (Status == "Đã thanh toán") return new SolidColorBrush(Color.FromArgb(40, 34, 197, 94));
                 if (Status == "Đã hủy") return new SolidColorBrush(Color.FromArgb(40, 239, 68, 68));
-                return new SolidColorBrush(Color.FromArgb(40, 234, 179, 8));
+                return new SolidColorBrush(Color.FromArgb(40, 33, 150, 243));
             }
         }
 
@@ -129,7 +129,7 @@ namespace SalesManagement.WinUI.ViewModels
             {
                 if (Status == "Đã thanh toán") return new SolidColorBrush(Color.FromArgb(255, 21, 128, 61));
                 if (Status == "Đã hủy") return new SolidColorBrush(Color.FromArgb(255, 185, 28, 28));
-                return new SolidColorBrush(Color.FromArgb(255, 161, 98, 7));
+                return new SolidColorBrush(Color.FromArgb(255, 30, 136, 229));
             }
         }
 
@@ -139,14 +139,14 @@ namespace SalesManagement.WinUI.ViewModels
             get => new DateTimeOffset(Model.Date);
             set
             {
-                // Chỉ cập nhật nếu giá trị thực sự thay đổi
+               
                 if (Model.Date != value.DateTime)
                 {
                     Model.Date = value.DateTime;
 
-                    // Thông báo cho UI biết rằng giá trị đã đổi
+                    
                     OnPropertyChanged(nameof(DateOffset));
-                    OnPropertyChanged(nameof(DateDisplay)); // Cập nhật cả dòng text hiển thị bên ngoài list
+                    OnPropertyChanged(nameof(DateDisplay)); 
                 }
             }
         }
@@ -156,7 +156,7 @@ namespace SalesManagement.WinUI.ViewModels
             get => (double)Model.Amount;
             set
             {
-                // Ép kiểu từ double về decimal
+               
                 var decimalValue = (decimal)value;
 
                 if (Model.Amount != decimalValue)
@@ -164,7 +164,7 @@ namespace SalesManagement.WinUI.ViewModels
                     Model.Amount = decimalValue;
 
                     OnPropertyChanged(nameof(AmountDouble));
-                    OnPropertyChanged(nameof(AmountDisplay)); // Cập nhật text hiển thị tổng tiền
+                    OnPropertyChanged(nameof(AmountDisplay)); 
                    
                 }
             }
@@ -174,12 +174,12 @@ namespace SalesManagement.WinUI.ViewModels
         {
             try
             {
-                // 1. Cập nhật vào Model gốc (chỉ khi bấm Save mới cập nhật)
+               
                 this.AmountDouble = tempAmount;
                 this.Status = tempStatus;
                 this.DateOffset = tempDate;
 
-                // 2. Gọi Service để lưu xuống DB
+               
                 return await _orderService.UpdateOrderAsync(this.Model);
             }
             catch (Exception ex)
@@ -216,29 +216,48 @@ namespace SalesManagement.WinUI.ViewModels
         private bool _isProcessingAction = false; // Thêm flag để tránh xử lý SelectedOrder khi đang Edit/Delete
 
 
+        // Data Sources
         [ObservableProperty] private ObservableCollection<OrderItemViewModel> _displayOrders = new();
+
+        // Pagination Properties
         [ObservableProperty] private int _currentPage = 1;
+        [ObservableProperty] private int _totalCount = 0; // Tổng số bản ghi server báo về
         [ObservableProperty] private string _paginationStatusText = string.Empty;
         [ObservableProperty] private bool _canGoNext;
         [ObservableProperty] private bool _canGoPrevious;
-        [ObservableProperty] private OrderItemViewModel? _selectedOrder;
-        [ObservableProperty] private bool _isLoading;
 
-        // Stats
+        // Stats Properties
         [ObservableProperty] private int _totalOrdersCount;
         [ObservableProperty] private string _totalRevenueDisplay = "0 đ";
         [ObservableProperty] private int _pendingOrdersCount;
+
+        // Filter Properties (MỚI)
+        public ObservableCollection<string> StatusFilters { get; } = new() { "Tất cả", "Mới tạo", "Đã thanh toán", "Đã hủy" };
+
+        [ObservableProperty] private string _selectedStatusFilter = "Tất cả";
+        [ObservableProperty] private DateTimeOffset? _filterFromDate;
+        [ObservableProperty] private DateTimeOffset? _filterToDate;
+
+        // Selection & Loading
+        [ObservableProperty] private OrderItemViewModel? _selectedOrder;
+        [ObservableProperty] private bool _isLoading;
 
         public OrderViewModel(IOrderService orderService, IDialogService dialogService)
         {
             _orderService = orderService;
             _dialogService = dialogService;
-            LoadDataAsync();
+            LoadDataAsync(1);
         }
+
+        partial void OnSelectedStatusFilterChanged(string value) => LoadDataAsync(1);
+
+       
+        partial void OnFilterFromDateChanged(DateTimeOffset? value) => LoadDataAsync(1);
+        partial void OnFilterToDateChanged(DateTimeOffset? value) => LoadDataAsync(1);
 
         async partial void OnSelectedOrderChanged(OrderItemViewModel? value)
         {
-            // Bỏ qua nếu đang xử lý Edit/Delete
+          
             if (_isProcessingAction || value == null)
             {
                 return;
@@ -246,16 +265,16 @@ namespace SalesManagement.WinUI.ViewModels
 
             try
             {
-                // 1. (Optional) Hiển thị trạng thái Loading nhỏ nếu cần
+              
                 IsLoading = true;
 
-                // 2. GỌI API 2: Lấy chi tiết đơn hàng theo ID
+               
                 var details = await _orderService.GetOrderDetailsAsync(value.OrderId);
 
-                // 3. Đổ dữ liệu vào ViewModel của item đó
+               
                 value.LoadDetails(details);
 
-                // 4. Bắn sự kiện mở Dialog sau khi đã có dữ liệu
+               
                 await _dialogService.ShowOrderDetailDialogAsync(value);
             }
             catch (Exception ex)
@@ -265,20 +284,42 @@ namespace SalesManagement.WinUI.ViewModels
             finally
             {
                 IsLoading = false;
-                // Reset selected item để có thể chọn lại
+               
                 DispatcherQueue.GetForCurrentThread().TryEnqueue(() => { SelectedOrder = null; });
             }
         }
 
-        private async void LoadDataAsync()
+        public async void LoadDataAsync(int pageNumber = 1)
         {
+            if (IsLoading) return;
             IsLoading = true;
+
             try
             {
-                var data = await _orderService.GetOrdersAsync();
-                _allOrders = data.Select(x => new OrderItemViewModel(x,_orderService, EditOrder, DeleteOrder)).ToList();
-                CalculateStats();
-                UpdatePagination();
+                CurrentPage = pageNumber;
+
+                
+                string status = SelectedStatusFilter;
+                DateTime? from = FilterFromDate?.DateTime;
+                DateTime? to = FilterToDate?.DateTime;
+
+                
+                var (items, count, revenue, pending) = await _orderService.GetOrdersAsync(CurrentPage, _pageSize, status, from, to);
+
+               
+                DisplayOrders.Clear();
+                foreach (var item in items)
+                {
+                    DisplayOrders.Add(new OrderItemViewModel(item, _orderService, EditOrder, DeleteOrder));
+                }
+
+                
+                TotalCount = count;
+                TotalOrdersCount = count;
+                TotalRevenueDisplay = revenue.ToString("N0") + " đ";
+                PendingOrdersCount = pending;
+
+                UpdatePaginationUI();
             }
             catch (Exception ex)
             {
@@ -288,6 +329,20 @@ namespace SalesManagement.WinUI.ViewModels
             {
                 IsLoading = false;
             }
+        }
+
+        private void UpdatePaginationUI()
+        {
+            int totalPages = (int)Math.Ceiling((double)TotalCount / _pageSize);
+
+            // Tính toán text hiển thị (Ví dụ: 1 - 7 trong 25)
+            int startCount = TotalCount == 0 ? 0 : (CurrentPage - 1) * _pageSize + 1;
+            int endCount = Math.Min(CurrentPage * _pageSize, TotalCount);
+
+            PaginationStatusText = $"Hiển thị {startCount} - {endCount} trong {TotalCount} đơn hàng";
+
+            CanGoPrevious = CurrentPage > 1;
+            CanGoNext = CurrentPage < totalPages;
         }
 
         private void CalculateStats()
@@ -318,10 +373,27 @@ namespace SalesManagement.WinUI.ViewModels
         }
 
         [RelayCommand]
-        private void NextPage() { if (CanGoNext) { CurrentPage++; UpdatePagination(); } }
+        private void NextPage()
+        {
+            if (CanGoNext) LoadDataAsync(CurrentPage + 1);
+        }
 
         [RelayCommand]
-        private void PreviousPage() { if (CanGoPrevious) { CurrentPage--; UpdatePagination(); } }
+        private void PreviousPage()
+        {
+            if (CanGoPrevious) LoadDataAsync(CurrentPage - 1);
+        }
+
+        [RelayCommand]
+        private void ClearFilter()
+        {
+            // Reset các biến Filter, các hàm OnChanged sẽ tự động gọi LoadDataAsync(1)
+            _isProcessingAction = true; // Chặn reload liên tục nếu muốn, nhưng ở đây để đơn giản cứ để nó chạy
+            SelectedStatusFilter = "Tất cả";
+            FilterFromDate = null;
+            FilterToDate = null;
+            LoadDataAsync(1); // Gọi tường minh để chắc chắn
+        }
 
         [RelayCommand]
         private async Task EditOrder(OrderItemViewModel item)

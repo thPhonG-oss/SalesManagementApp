@@ -9,7 +9,12 @@ namespace SalesManagement.WinUI.Services.Interfaces
 {
     public interface IOrderService
     {
-        Task<List<Order>> GetOrdersAsync();
+        Task<(List<Order> Items, int TotalCount, decimal TotalRevenue, int PendingCount)> GetOrdersAsync(
+            int pageIndex,
+            int pageSize,
+            string status = "",
+            DateTime? fromDate = null,
+            DateTime? toDate = null);
         Task<List<OrderDetail>> GetOrderDetailsAsync(string orderId);
         Task<bool> DeleteOrderAsync(string orderId);
         Task<bool> UpdateOrderAsync(Order order);

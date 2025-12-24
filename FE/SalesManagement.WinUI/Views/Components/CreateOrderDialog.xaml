@@ -80,7 +80,7 @@
 
                                 <NumberBox Grid.Column="2" 
                                            Value="{x:Bind QuantityDouble, Mode=TwoWay}"
-                                           SpinButtonPlacementMode="Compact"
+                                           SpinButtonPlacementMode="Inline"
                                            SmallChange="1" LargeChange="10" Minimum="1"
                                            HorizontalAlignment="Stretch"/>
 
