@@ -346,11 +346,11 @@ namespace SalesManagement.WinUI.Services.Implementations
         {
             return Task.FromResult(new List<Product>
             {
-                new Product { Id = "P01", Name = "Laptop Dell XPS 13", Price = 1000000 },
-                new Product { Id = "P02", Name = "Chuột Logitech", Price = 250000 },
-                new Product { Id = "P03", Name = "Màn hình LG 24 inch", Price = 1500000 },
-                new Product { Id = "P04", Name = "Bàn phím cơ", Price = 1800000 },
-                new Product { Id = "P05", Name = "Tai nghe Sony", Price = 900000 }
+                new Product { ProductId = 1 , ProductName = "Laptop Dell XPS 13", Price = 1000000 },
+                new Product { ProductId =  2, ProductName = "Chuột Logitech", Price = 250000 },
+                new Product { ProductId = 3, ProductName = "Màn hình LG 24 inch", Price = 1500000 },
+                new Product { ProductId = 4, ProductName = "Bàn phím cơ", Price = 1800000 },
+                new Product { ProductId = 5, ProductName = "Tai nghe Sony", Price = 900000 }
             });
         }
 

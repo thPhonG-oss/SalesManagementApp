@@ -161,7 +161,7 @@ namespace SalesManagement.WinUI.ViewModels
 
             var details = validItems.Select(x => new OrderDetail
             {
-                ProductName = x.SelectedProduct!.Name,
+                ProductName = x.SelectedProduct!.ProductName,
                 Quantity = x.Quantity,
                 Price = x.Price
             }).ToList();
