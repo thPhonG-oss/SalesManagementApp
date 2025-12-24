@@ -1,31 +1,33 @@
-using Microsoft.UI.Xaml;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using SalesManagement.WinUI.Models;
+using SalesManagement.WinUI.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SalesManagement.WinUI.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class ProductPage : Page
     {
+        private readonly INavigationService _navigationService;
         public ProductPage()
         {
             InitializeComponent();
+            DataContext = App.Services.GetService<ProductViewModel>();
+
+            // ⭐ DÒNG QUAN TRỌNG BỊ THIẾU
+            _navigationService = App.Services.GetRequiredService<INavigationService>();
         }
+
+
+        private void ProductList_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is Product product)
+            {
+                _navigationService.NavigateTo(typeof(DetailItemPage), product);
+            }
+        }
+
     }
 }

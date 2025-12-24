@@ -17,13 +17,16 @@
 	<ItemGroup>
 		<None Remove="appsettings.json" />
 		<None Remove="Views\Components\CreateOrderDialog.xaml" />
+		<None Remove="Views\AddProductPage.xaml" />
 		<None Remove="Views\Components\LoadingDialog.xaml" />
 		<None Remove="Views\Components\OrderDetailDialog.xaml" />
 		<None Remove="Views\Components\OrderEditDialog.xaml" />
 		<None Remove="Views\DashboardPage.xaml" />
+		<None Remove="Views\DetailItemPage.xaml" />
 		<None Remove="Views\OrderPage.xaml" />
 		<None Remove="Views\ProductPage.xaml" />
 		<None Remove="Views\ReportPage.xaml" />
+		<None Remove="Views\UpdateProductPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -76,18 +79,21 @@
 
 	<ItemGroup>
 	  <Page Update="Views\Components\CreateOrderDialog.xaml">
+	  <Page Update="Views\UpdateProductPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Page Update="Views\Components\OrderEditDialog.xaml">
+	  <Page Update="Views\DetailItemPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Page Update="Views\Components\OrderDetailDialog.xaml">
+	  <Page Update="Views\AddProductPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
