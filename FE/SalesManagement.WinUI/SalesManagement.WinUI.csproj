@@ -79,6 +79,8 @@
 
 	<ItemGroup>
 	  <Page Update="Views\Components\CreateOrderDialog.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	  <Page Update="Views\UpdateProductPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
@@ -86,6 +88,8 @@
 
 	<ItemGroup>
 	  <Page Update="Views\Components\OrderEditDialog.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	  <Page Update="Views\DetailItemPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
