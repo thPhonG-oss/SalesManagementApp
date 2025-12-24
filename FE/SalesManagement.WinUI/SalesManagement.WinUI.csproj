@@ -16,8 +16,11 @@
 
 	<ItemGroup>
 		<None Remove="appsettings.json" />
+		<None Remove="Views\Components\CreateOrderDialog.xaml" />
 		<None Remove="Views\AddProductPage.xaml" />
 		<None Remove="Views\Components\LoadingDialog.xaml" />
+		<None Remove="Views\Components\OrderDetailDialog.xaml" />
+		<None Remove="Views\Components\OrderEditDialog.xaml" />
 		<None Remove="Views\DashboardPage.xaml" />
 		<None Remove="Views\DetailItemPage.xaml" />
 		<None Remove="Views\OrderPage.xaml" />
@@ -48,6 +51,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+		<PackageReference Include="CommunityToolkit.WinUI.UI.Controls.DataGrid" Version="7.1.2" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
@@ -65,24 +69,30 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Behaviors\" />
+		<Folder Include="Helpers\" />
+		<Folder Include="Converters\" />
 		<Folder Include="Config\" />
 		<Folder Include="Resources\Images\" />
 		<Folder Include="Resources\Styles\" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Views\Components\CreateOrderDialog.xaml">
 	  <Page Update="Views\UpdateProductPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Views\Components\OrderEditDialog.xaml">
 	  <Page Update="Views\DetailItemPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Views\Components\OrderDetailDialog.xaml">
 	  <Page Update="Views\AddProductPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>

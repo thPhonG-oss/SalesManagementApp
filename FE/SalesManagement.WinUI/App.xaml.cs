@@ -54,6 +54,8 @@ public partial class App : Application
         services.AddSingleton<IStorageService, StorageService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ILoadingService, LoadingService>();
+        services.AddSingleton<IOrderService, MockOrderService>();
+        services.AddSingleton<IDialogService, DialogService>();
 
         // ⭐ CATEGORY
         services.AddSingleton<ICategoryService, CategoryService>();
@@ -61,6 +63,7 @@ public partial class App : Application
         // ================= VIEWMODELS =================
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainViewModel>();
+        services.AddTransient<OrderViewModel>();
 
         // ⭐ PRODUCT
         services.AddSingleton<IProductService, ProductService>();
