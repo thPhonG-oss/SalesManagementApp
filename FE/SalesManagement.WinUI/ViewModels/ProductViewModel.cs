@@ -2,7 +2,6 @@
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace SalesManagement.WinUI.ViewModels
 {
@@ -10,6 +9,7 @@ namespace SalesManagement.WinUI.ViewModels
     {
         private readonly ICategoryService _categoryService;
         private readonly IProductService _productService;
+        private readonly INavigationService _navigationService;
 
         // ================= CATEGORY =================
         public ObservableCollection<Category> Categories { get; } = new();
@@ -21,6 +21,21 @@ namespace SalesManagement.WinUI.ViewModels
             set
             {
                 if (SetProperty(ref _selectedCategory, value))
+                {
+                    Page = 1;
+                    ApplyFilterAndPaging();
+                }
+            }
+        }
+
+        // ================= PRICE FILTER =================
+        private string? _selectedPriceFilter = "0-999999999";   // default "Tất cả"
+        public string? SelectedPriceFilter
+        {
+            get => _selectedPriceFilter;
+            set
+            {
+                if (SetProperty(ref _selectedPriceFilter, value))
                 {
                     Page = 1;
                     ApplyFilterAndPaging();
@@ -80,14 +95,17 @@ namespace SalesManagement.WinUI.ViewModels
         // ================= COMMAND =================
         public RelayCommand NextPageCommand { get; }
         public RelayCommand PrevPageCommand { get; }
+        public RelayCommand OpenAddProductCommand { get; }
 
         // ================= CTOR =================
         public ProductViewModel(
             ICategoryService categoryService,
-            IProductService productService)
+            IProductService productService,
+            INavigationService navigationService)
         {
             _categoryService = categoryService;
             _productService = productService;
+            _navigationService = navigationService;
 
             PrevPageCommand = new RelayCommand(
                 () => Page--,
@@ -97,8 +115,16 @@ namespace SalesManagement.WinUI.ViewModels
                 () => Page++,
                 () => Page < TotalPages);
 
+            OpenAddProductCommand = new RelayCommand(OpenAddProduct);
+
             _ = LoadCategoriesAsync();
             _ = LoadProductsAsync();
+        }
+
+        // ================= OPEN ADD PRODUCT PAGE =================
+        private void OpenAddProduct()
+        {
+            _navigationService.NavigateTo(typeof(Views.AddProductPage));
         }
 
         // ================= LOAD CATEGORY =================
@@ -116,9 +142,7 @@ namespace SalesManagement.WinUI.ViewModels
             });
 
             foreach (var item in data)
-            {
                 Categories.Add(item);
-            }
 
             SelectedCategory = Categories.First();
         }
@@ -133,13 +157,14 @@ namespace SalesManagement.WinUI.ViewModels
 
             foreach (var product in result.Products)
             {
-                _allProducts.Add(product);
+                if (product.IsActive)
+                {
+                    _allProducts.Add(product);
+                }
             }
 
             Page = 1;
             ApplyFilterAndPaging();
-
-            Debug.WriteLine($"[VM] Loaded {_allProducts.Count} products");
         }
 
         // ================= FILTER + PAGING =================
@@ -147,46 +172,40 @@ namespace SalesManagement.WinUI.ViewModels
         {
             IEnumerable<Product> query = _allProducts;
 
-            // CATEGORY FILTER
+            // ===== FILTER BY CATEGORY =====
             if (SelectedCategory != null && SelectedCategory.CategoryId != -1)
-            {
-                query = query.Where(p =>
-                    p.Category?.CategoryId == SelectedCategory.CategoryId);
-            }
+                query = query.Where(p => p.Category?.CategoryId == SelectedCategory.CategoryId);
 
-            // SEARCH FILTER
+            // ===== FILTER BY SEARCH TEXT =====
             if (!string.IsNullOrWhiteSpace(SearchText))
-            {
                 query = query.Where(p =>
                     p.ProductName != null &&
-                    p.ProductName.Contains(
-                        SearchText,
-                        StringComparison.OrdinalIgnoreCase));
+                    p.ProductName.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
+
+            // ===== FILTER BY PRICE RANGE =====
+            if (!string.IsNullOrEmpty(SelectedPriceFilter))
+            {
+                var parts = SelectedPriceFilter.Split('-');
+                if (parts.Length == 2 &&
+                    decimal.TryParse(parts[0], out var minP) &&
+                    decimal.TryParse(parts[1], out var maxP))
+                {
+                    query = query.Where(p => p.Price >= minP && p.Price <= maxP);
+                }
             }
 
-            // TOTAL PAGE
+            // ===== PAGING =====
             var count = query.Count();
-            TotalPages = Math.Max(1,
-                (int)Math.Ceiling(count / (double)_pageSize));
-            Debug.WriteLine(TotalPages);
-
-
+            TotalPages = Math.Max(1, (int)Math.Ceiling(count / (double)_pageSize));
 
             if (Page > TotalPages)
                 Page = 1;
 
-            // APPLY PAGING
             Products.Clear();
-
             foreach (var item in query
                 .Skip((Page - 1) * _pageSize)
                 .Take(_pageSize))
-            {
                 Products.Add(item);
-            }
-
-            Debug.WriteLine(
-                $"[VM] Page={Page}/{TotalPages}, Products={Products.Count}");
         }
 
         private void UpdatePagingCommandState()

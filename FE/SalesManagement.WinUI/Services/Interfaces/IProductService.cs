@@ -1,4 +1,5 @@
 ﻿using SalesManagement.WinUI.Models;
+using Windows.Storage;
 
 namespace SalesManagement.WinUI.Services.Interfaces
 {
@@ -9,5 +10,13 @@ namespace SalesManagement.WinUI.Services.Interfaces
             int size = 200,
             string sortBy = "productName",
             string sortDir = "asc");
+        Task<bool> CreateProductAsync(CreateProductRequest request);
+        Task<bool> DeleteProductAsync(int productId);
+
+        // ✅ Upload file ảnh trực tiếp dạng multipart/form-data
+        Task<bool> UploadImageAsync(int productId, StorageFile file);
+
+        Task<bool> UpdateProductAsync(int productId, Product product);
+
     }
 }

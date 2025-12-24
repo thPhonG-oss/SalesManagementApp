@@ -73,6 +73,10 @@ public partial class App : Application
         // ⭐ PRODUCT PAGE
         services.AddTransient<ProductPage>();
 
+        services.AddTransient<AddProductPage>();
+
+        services.AddTransient<AddProductViewModel>();
+
         return services.BuildServiceProvider();
     }
 
@@ -80,17 +84,19 @@ public partial class App : Application
     {
         s_mainWindow = new MainWindow();
 
-        // Create root frame
         var rootFrame = new Microsoft.UI.Xaml.Controls.Frame();
+
         s_mainWindow.Content = rootFrame;
-
-        // Navigate to login page
-        rootFrame.Navigate(typeof(LoginPage));
-
-        //rootFrame.Navigate(typeof(MainPage));
-
         s_mainWindow.Activate();
+
+        // Gán Frame cho NavigationService
+        var navService = Services.GetRequiredService<INavigationService>();
+        navService.SetFrame(rootFrame);
+
+        // Mở trang Login
+        navService.NavigateTo(typeof(LoginPage));
     }
+
 }
 
 // Extension method to get services easily

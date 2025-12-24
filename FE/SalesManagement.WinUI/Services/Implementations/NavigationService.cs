@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 public class NavigationService : INavigationService
 {
     private Frame? _frame;
-    private NavigationView? _navView; 
+    private NavigationView? _navView;
 
     public void SetFrame(Frame frame) => _frame = frame;
     public void SetNavView(NavigationView navView) => _navView = navView;
@@ -18,12 +18,29 @@ public class NavigationService : INavigationService
         return false;
     }
 
+    public bool NavigateTo(Type pageType, object? parameter)
+    {
+        return _frame?.Navigate(pageType, parameter) ?? false;
+    }
+
     public void SetHeader(string? header)
     {
-        
+
         if (_navView != null)
         {
             _navView.Header = header;
         }
     }
+
+    public void GoBack()
+    {
+        if (_frame?.CanGoBack == true)
+        {
+            _frame.GoBack(new SlideNavigationTransitionInfo
+            {
+                Effect = SlideNavigationTransitionEffect.FromLeft
+            });
+        }
+    }
+
 }

@@ -1,9 +1,12 @@
 ﻿using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text.Json;
+using Windows.Storage;
 
 public class ProductService : IProductService
 {
@@ -57,12 +60,120 @@ public class ProductService : IProductService
         Debug.WriteLine($"Products: {apiResponse?.Data?.Products?.Count}");
 
 
-
-
-
         if (apiResponse == null || !apiResponse.Success)
             return null;
 
         return apiResponse.Data;
     }
+
+    public async Task<bool> CreateProductAsync(CreateProductRequest request)
+    {
+        var token = _authService.GetAccessToken();
+        if (!string.IsNullOrEmpty(token))
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        var res = await _client.PostAsJsonAsync("/api/v1/products", request);
+
+        Debug.WriteLine($"[CREATE PRODUCT] {res.StatusCode}");
+
+        return res.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> DeleteProductAsync(int productId)
+    {
+        var token = _authService.GetAccessToken();
+        if (!string.IsNullOrEmpty(token))
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        // Nếu API chỉ cần productId (không cần body)
+        var response = await _client.PatchAsync($"/api/v1/products/{productId}", null);
+
+        Debug.WriteLine($"[DELETE PRODUCT] {response.StatusCode}");
+
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> UploadImageAsync(int productId, StorageFile file)
+    {
+        var token = _authService.GetAccessToken();
+        if (!string.IsNullOrEmpty(token))
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        try
+        {
+            // Đọc stream của file ảnh
+            using var stream = await file.OpenStreamForReadAsync();
+
+            // Tạo form-data body
+            using var content = new MultipartFormDataContent();
+            var fileContent = new StreamContent(stream);
+
+            // Thiết lập header loại ảnh — tự động nhận diện
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(GetMimeType(file.FileType));
+
+            // ⚠️ "file" là tên field BE yêu cầu, có thể thay nếu backend cần "image" hoặc "upload"
+            content.Add(fileContent, "file", file.Name);
+
+            // Gửi POST multipart/form-data
+            var response = await _client.PostAsync($"/api/v1/products/{productId}/images", content);
+
+            Debug.WriteLine($"[UPLOAD IMAGE] {response.StatusCode}");
+
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("UploadImageAsync error: " + ex.Message);
+            return false;
+        }
+    }
+
+    private string GetMimeType(string fileExtension)
+    {
+        return fileExtension.ToLower() switch
+        {
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".png" => "image/png",
+            ".gif" => "image/gif",
+            _ => "application/octet-stream"
+        };
+    }
+
+    public async Task<bool> UpdateProductAsync(int productId, Product product)
+    {
+        var token = _authService.GetAccessToken();
+        if (!string.IsNullOrEmpty(token))
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        var url = $"/api/v1/products/{productId}";
+
+        var response = await _client.PutAsJsonAsync(url, new
+        {
+            categoryId = product.Category.CategoryId,
+            productName = product.ProductName,
+            description = product.Description,
+            author = product.Author,
+            publisher = product.Publisher,
+            publicationYear = product.PublicationYear,
+            price = product.Price,
+            stockQuantity = product.StockQuantity,
+            minStockQuantity = product.MinStockQuantity
+        });
+
+        Debug.WriteLine($"[UPDATE PRODUCT] {response.StatusCode}");
+        return response.IsSuccessStatusCode;
+    }
+
 }
