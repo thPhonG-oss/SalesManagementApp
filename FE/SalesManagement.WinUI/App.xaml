@@ -14,7 +14,7 @@
             <!-- Converters -->
             <converters:BooleanConverters x:Key="BoolToVisibilityConverter"/>
             <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
-
+            <converters:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

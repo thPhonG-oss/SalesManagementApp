@@ -35,6 +35,7 @@
                 Content="＋ Thêm"
                 Margin="12,0"
                 Height="36"
+                Command="{Binding OpenAddProductCommand}"
                 />
 
             <Button
@@ -65,53 +66,64 @@
                     Margin="0,0,0,16">
 
                     <ComboBox
-                        Width="160"
-                        PlaceholderText="Giá 0đ - 100k"/>
+                        Width="180"
+                        PlaceholderText="Lọc theo giá"
+                        SelectedValue="{Binding SelectedPriceFilter, Mode=TwoWay}"
+                        SelectedValuePath="Tag">
+
+                        <ComboBoxItem Content="Tất cả" Tag="0-999999999" />
+                        <ComboBoxItem Content="0đ - 100,000đ" Tag="0-100000" />
+                        <ComboBoxItem Content="100,000đ - 300,000đ" Tag="100000-300000" />
+                        <ComboBoxItem Content="300,000đ - 1,000,000đ" Tag="300000-1000000" />
+                        <ComboBoxItem Content="> 1,000,000đ" Tag="1000000-999999999" />
+                    </ComboBox>
+
+
 
                     <ComboBox
-                        Width="200"
-                        PlaceholderText="Lọc theo loại"
-                        ItemsSource="{Binding Categories}"
-                        DisplayMemberPath="CategoryName"
-                        SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
+                            Width="200"
+                            PlaceholderText="Lọc theo loại"
+                            ItemsSource="{Binding Categories}"
+                            DisplayMemberPath="CategoryName"
+                            SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
 
-                    <ComboBox
-                        Width="160"
-                        PlaceholderText="Sắp xếp theo"/>
                 </StackPanel>
 
                 <!-- ===== PRODUCT LIST ===== -->
                 <ListView
-                    Grid.Row="1"
-                    ItemsSource="{Binding Products}"
-                    SelectionMode="None">
+                        Grid.Row="1"
+                        ItemsSource="{Binding Products}"
+                        IsItemClickEnabled="True"
+                        ItemClick="ProductList_ItemClick">
 
                     <!-- Header -->
                     <ListView.Header>
-                        <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" Padding="8">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="80"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="120"/>
-                                </Grid.ColumnDefinitions>
+                        <Border Background="{ThemeResource SubtleFillColorSecondaryBrush}" Padding="12">
+                            <StackPanel>
+                                <!-- Tiêu đề chính -->
+                                <TextBlock
+                                        Text="Danh sách sản phẩm"
+                                        FontSize="18"
+                                        FontWeight="SemiBold"
+                                        Margin="0,0,0,4"/>
 
-                                <TextBlock Text="Ảnh" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Column="1" Text="Tên sản phẩm" FontWeight="SemiBold"/>
-                                <TextBlock Grid.Column="2" Text="Thao tác"
-                                           HorizontalAlignment="Center"
-                                           FontWeight="SemiBold"/>
-                            </Grid>
+                                <!-- Mô tả -->
+                                <TextBlock
+                                        Text="Tất cả các sản phẩm hiện có của cửa hàng"
+                                        FontSize="14"
+                                        Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"/>
+                            </StackPanel>
                         </Border>
                     </ListView.Header>
+
 
                     <!-- Item -->
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Border Padding="10"
-                                    Margin="6,4"
-                                    CornerRadius="10"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                                        Margin="6,4"
+                                        CornerRadius="10"
+                                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
 
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
@@ -122,10 +134,10 @@
 
                                     <!-- IMAGE -->
                                     <Border Width="72" Height="96"
-                                            CornerRadius="8"
-                                            Background="{ThemeResource SubtleFillColorSecondaryBrush}">
+                                                CornerRadius="8"
+                                                Background="{ThemeResource SubtleFillColorSecondaryBrush}">
                                         <Image Source="{Binding ImageUrl}"
-                                               Stretch="UniformToFill"/>
+                                                   Stretch="UniformToFill"/>
                                     </Border>
 
                                     <!-- INFO -->
@@ -133,44 +145,44 @@
 
                                         <!-- Product name -->
                                         <TextBlock Text="{Binding ProductName}"
-                                                   FontSize="15"
-                                                   FontWeight="SemiBold"
-                                                   TextWrapping="Wrap"
-                                                   MaxLines="2"/>
+                                                       FontSize="15"
+                                                       FontWeight="SemiBold"
+                                                       TextWrapping="Wrap"
+                                                       MaxLines="2"/>
                                         <!-- Author -->
 
                                         <TextBlock Text="{Binding Author}"
-                                                   FontSize="15"
-                                                   TextWrapping="Wrap"
-                                                   MaxLines="2"/>
+                                                       FontSize="15"
+                                                       TextWrapping="Wrap"
+                                                       MaxLines="2"/>
                                         <!-- PRICE ROW -->
                                         <StackPanel Orientation="Horizontal" Spacing="8">
                                             <TextBlock Text="{Binding PriceText}"
-                                                       Foreground="{Binding PriceColor}"
-                                                       TextDecorations="{Binding PriceDecorations}"/>
+                                                           Foreground="{Binding PriceColor}"
+                                                           TextDecorations="{Binding PriceDecorations}"/>
 
                                             <!-- Discount badge -->
                                             <Border Background="Green"
-                                                    Padding="6,2"
-                                                    CornerRadius="6"
-                                                    >
+                                                        Padding="6,2"
+                                                        CornerRadius="6"
+                                                        >
                                                 <TextBlock Text="{Binding DiscountText}"
-                                                           FontSize="11"
-                                                           Foreground="White"/>
+                                                               FontSize="11"
+                                                               Foreground="White"/>
                                             </Border>
                                         </StackPanel>
 
                                         <!-- Stock -->
                                         <TextBlock FontSize="11"
-                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                   Text="{Binding StockText}"/>
+                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                       Text="{Binding StockText}"/>
                                     </StackPanel>
 
                                     <!-- ACTIONS -->
                                     <StackPanel Grid.Column="2"
-                                                Orientation="Vertical"
-                                                Spacing="6"
-                                                VerticalAlignment="Center">
+                                                    Orientation="Vertical"
+                                                    Spacing="6"
+                                                    VerticalAlignment="Center">
 
                                         <Button Content="＋" Width="32" Height="32"/>
                                         <Button Content="✎" Width="32" Height="32"/>
@@ -187,21 +199,21 @@
 
         <!-- ===== PAGINATION ===== -->
         <StackPanel
-            Grid.Row="2"
-            Orientation="Horizontal"
-            HorizontalAlignment="Center"
-            Spacing="12"
-            Margin="0,16,0,0">
+                Grid.Row="2"
+                Orientation="Horizontal"
+                HorizontalAlignment="Center"
+                Spacing="12"
+                Margin="0,16,0,0">
 
             <Button Content="‹"
-                    Command="{Binding PrevPageCommand}" />
+                        Command="{Binding PrevPageCommand}" />
 
             <TextBlock Text="{Binding Page}" FontWeight="SemiBold"/>
             <TextBlock Text="/"/>
             <TextBlock Text="{Binding TotalPages}" />
 
             <Button Content="›"
-                    Command="{Binding NextPageCommand}" />
+                        Command="{Binding NextPageCommand}" />
         </StackPanel>
 
 

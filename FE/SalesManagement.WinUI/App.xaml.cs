@@ -73,9 +73,9 @@ public partial class App : Application
         // ⭐ PRODUCT PAGE
         services.AddTransient<ProductPage>();
 
-        //services.AddTransient<AddProductPage>();
+        services.AddTransient<AddProductPage>();
 
-        //services.AddTransient<AddProductViewModel>();
+        services.AddTransient<AddProductViewModel>();
 
         return services.BuildServiceProvider();
     }

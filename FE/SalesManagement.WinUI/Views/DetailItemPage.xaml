@@ -1,0 +1,110 @@
+<Page
+    x:Class="SalesManagement.WinUI.Views.DetailItemPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="24"
+          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===== HEADER ===== -->
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <Button Width="40"
+                        Height="40"
+                        Content="←"
+                        Click="Back_Click"/>
+
+                <TextBlock Text="Chi tiết sản phẩm"
+                           FontSize="22"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <Rectangle Height="1"
+                       Margin="0,12,0,0"
+                       Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>
+        </StackPanel>
+
+        <!-- ===== CONTENT ===== -->
+        <ScrollViewer Grid.Row="1" Margin="0,16,0,0">
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="16"
+                    Padding="24">
+
+                <Grid ColumnSpacing="32">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="260"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- IMAGE -->
+                    <Border Width="260"
+                            Height="360"
+                            CornerRadius="16"
+                            Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                            >
+                        <Image Source="{Binding ImageUrl}"
+                               Stretch="UniformToFill"/>
+                    </Border>
+
+                    <!-- INFO -->
+                    <StackPanel Grid.Column="1" Spacing="14">
+
+                        <TextBlock Text="{Binding ProductName}"
+                                   FontSize="24"
+                                   FontWeight="SemiBold"/>
+
+                        <TextBlock Text="{Binding Category.CategoryName}"
+                                   FontSize="18"/>
+
+                        <TextBlock Text="{Binding Author}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+
+                        <TextBlock Text="{Binding PriceText}"
+                                   FontSize="22"
+                                   FontWeight="SemiBold"
+                                   Foreground="{ThemeResource SystemFillColorSuccessBrush}"/>
+
+                        <Border Padding="12"
+                                CornerRadius="10"
+                                Background="{ThemeResource SubtleFillColorSecondaryBrush}">
+                            <TextBlock Text="{Binding Description}"
+                                       TextWrapping="Wrap"/>
+                        </Border>
+
+                        <TextBlock Text="{Binding StockText}"
+                                   FontSize="13"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+
+                        <!-- ACTION BUTTONS -->
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="12"
+                                    Margin="0,16,0,0">
+
+                            <Button Content="Cập nhật"
+                                    MinWidth="120"
+                                    Style="{ThemeResource AccentButtonStyle}"
+                                    Click="Update_Click"/>
+
+                            <Button Content="Xóa"
+                                    MinWidth="120"
+                                    Background="{ThemeResource SystemFillColorCriticalBrush}"
+                                    Foreground="White"
+                                    Click="Delete_Click"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </ScrollViewer>
+
+    </Grid>
+</Page>

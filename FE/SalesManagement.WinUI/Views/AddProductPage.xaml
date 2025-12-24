@@ -1,0 +1,70 @@
+<Page
+    x:Class="SalesManagement.WinUI.Views.AddProductPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:SalesManagement.WinUI.ViewModels"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Padding="20" HorizontalAlignment="Center">
+
+            <StackPanel Spacing="16" Width="450">
+
+                <Button Content="← Quay lại"
+                        HorizontalAlignment="Left"
+                        Click="BackButton_Click"/>
+
+                <TextBlock Text="Thêm sản phẩm"
+                           FontSize="24" FontWeight="Bold"/>
+
+                <TextBox Header="Tên sản phẩm"
+                         Text="{Binding ProductName, Mode=TwoWay}"/>
+
+                <TextBox Header="Tác giả"
+                         Text="{Binding Author, Mode=TwoWay}"/>
+
+                <TextBox Header="Nhà xuất bản"
+                         Text="{Binding Publisher, Mode=TwoWay}"/>
+
+                <TextBox Header="Năm xuất bản"
+                         Text="{Binding PublicationYear, Mode=TwoWay}"
+                         InputScope="Number"/>
+
+                <TextBox Header="Mô tả"
+                         Text="{Binding Description, Mode=TwoWay}"
+                         AcceptsReturn="True"
+                         Height="80"/>
+
+                <NumberBox Header="Giá"
+                           Value="{Binding Price, Mode=TwoWay}" />
+
+
+                <TextBox Header="Số lượng tồn kho"
+                         Text="{Binding StockQuantity, Mode=TwoWay}"
+                         InputScope="Number"/>
+
+                <TextBox Header="Số lượng tồn kho tối thiểu"
+                         Text="{Binding MinStockQuantity, Mode=TwoWay}"
+                         InputScope="Number"/>
+
+                <ComboBox Header="Danh mục"
+                          ItemsSource="{Binding Categories}"
+                          SelectedValue="{Binding SelectedCategoryId, Mode=TwoWay}"
+                          SelectedValuePath="CategoryId"
+                          DisplayMemberPath="CategoryName"/>
+
+
+                <Button Content="Thêm sản phẩm"
+                        Command="{Binding CreateProductCommand}"
+                        HorizontalAlignment="Right"
+                        Style="{StaticResource AccentButtonStyle}"/>
+
+                <TextBlock Text="{Binding Message}"
+                           Foreground="Green"
+                           Visibility="{Binding Message, Converter={StaticResource StringNotEmptyToVisibilityConverter}}"/>
+
+            </StackPanel>
+
+        </Grid>
+    </ScrollViewer>
+</Page>
