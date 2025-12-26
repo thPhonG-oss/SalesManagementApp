@@ -53,7 +53,7 @@ public class Order {
 
     @Column(name = "shipping_address", nullable = false)
     String shippingAddress;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
     PaymentMethod paymentMethod;
 

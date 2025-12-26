@@ -1,5 +1,8 @@
 package com.project.sales_management.services.Impl;
 
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 import com.project.sales_management.dtos.requests.OrderItemRequest;
 import com.project.sales_management.dtos.requests.OrderRequest;
 import com.project.sales_management.dtos.requests.OrderStatusUpdateRequest;
@@ -29,8 +32,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +48,7 @@ public class OrderServiceImpl implements OrderService {
     PromotionRepository promotionRepository;
     OrderItemService orderItemService;
     ProductRepository productRepository;
+    OrderItemRepository orderItemRepository;
 
     @Override
     public OrderResponse createOrder(OrderRequest orderRequest) {
@@ -192,4 +199,70 @@ public class OrderServiceImpl implements OrderService {
 
         return orderMapper.toOrderResponse(order);
     }
+
+
+
+
+    public byte[] generateInvoice(Long orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        List<OrderItem> items = orderItemRepository.findByOrder_OrderId(orderId);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4);
+        PdfWriter.getInstance(document, out);
+
+        document.open();
+
+        // ===== FORMAT DATE =====
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String orderDate = order.getOrderDate().format(dateFormatter);
+
+        // ===== TIÊU ĐỀ =====
+        Font titleFont = new Font(Font.HELVETICA, 18, Font.BOLD);
+        Paragraph title = new Paragraph("HÓA ĐƠN BÁN HÀNG", titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+
+        document.add(new Paragraph(" "));
+
+        // ===== THÔNG TIN ĐƠN =====
+        document.add(new Paragraph("Mã đơn: " + order.getOrderCode()));
+        document.add(new Paragraph("Ngày: " + orderDate));
+        document.add(new Paragraph("Khách hàng: " + order.getCustomer().getCustomerName()));
+        document.add(new Paragraph("Địa chỉ giao hàng: " + order.getShippingAddress()));
+
+        document.add(new Paragraph(" "));
+
+        // ===== BẢNG SẢN PHẨM =====
+        PdfPTable table = new PdfPTable(5);
+        table.setWidthPercentage(100);
+
+        table.addCell("Sản phẩm");
+        table.addCell("SL");
+        table.addCell("Đơn giá");
+        table.addCell("Giảm");
+        table.addCell("Thành tiền");
+
+        for (OrderItem item : items) {
+            table.addCell(item.getProduct().getProductName());
+            table.addCell(String.valueOf(item.getQuantity()));
+            table.addCell(String.valueOf(item.getUnitPrice()));
+            table.addCell(String.valueOf(item.getDiscount()));
+            table.addCell(String.valueOf(item.getTotalPrice()));
+        }
+
+        document.add(table);
+
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph("Tổng tiền: " + order.getTotalAmount()));
+
+        document.close();
+
+        return out.toByteArray();
+    }
+
+
 }
