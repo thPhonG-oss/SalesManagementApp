@@ -119,78 +119,31 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() ->new AppException(ErrorCode.ORDER_NOT_FOUND));
 
-        // Chỉ cho phép update order có status PENDING
-        if (order.getStatus() != OrderStatus.CREATED) {
-            throw new IllegalArgumentException("Can only update orders with CREATED status. Current status: " + order.getStatus());
-        }
-
-        // 1. Update Promotion (nếu có)
-        if (orderUpdateRequest.getPromotionId() != null) {
-            Promotion promotion = promotionRepository.findById(orderUpdateRequest.getPromotionId())
-                    .orElseThrow(() -> new IllegalArgumentException("Promotion not found with id: " + orderUpdateRequest.getPromotionId()));
-
-            LocalDate today = LocalDate.now();
-            if (!promotion.getIsActive()
-                    || promotion.getStartDate().isAfter(today)
-                    || promotion.getEndDate().isBefore(today)) {
-                throw new IllegalArgumentException("Promotion is not valid or expired");
-            }
-
-
-            order.setPromotion(promotion);
+        // Chỉ cho phép update order có status
+        if (order.getStatus() != OrderStatus.CREATED && order.getStatus() != OrderStatus.PAID) {
+            throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
         }
 
         orderMapper.updateOrder(order, orderUpdateRequest);
-
-        // 3. Update Order Items (nếu có)
-        if (orderUpdateRequest.getOrderItems() != null && !orderUpdateRequest.getOrderItems().isEmpty()) {
-            orderItemService.updateOrderItems(order, orderUpdateRequest.getOrderItems());
-        }
-
-        // Recalculate totals => tính toán lại
-        recalculateOrderTotals(order);
 
         // 4. Set updatedAt
         order.setUpdatedAt(LocalDateTime.now());
 
         // 5. Save order
         Order updatedOrder = orderRepository.save(order);
-
         return orderMapper.toOrderResponse(updatedOrder);
     }
 
-    private void recalculateOrderTotals(Order order) {
-        double subtotal = order.getOrderItems().stream()
-                .mapToDouble(OrderItem::getTotalPrice)
-                .sum();
-
-        double discountAmount = 0.0;
-        Promotion promotion = order.getPromotion();
-        if (promotion != null) {
-            if ("PERCENTAGE".equals(promotion.getDiscountType())) {
-                discountAmount = subtotal * (promotion.getDiscountValue() / 100.0);
-            } else if ("FIXED".equals(promotion.getDiscountType())) {
-                discountAmount = promotion.getDiscountValue();
-            }
-        }
-
-        double totalAmount = subtotal - discountAmount;
-
-        order.setSubTotal(subtotal);
-        order.setDiscountAmount(discountAmount);
-        order.setTotalAmount(totalAmount);
-    }
 
     @Override
     public OrderResponse deleteOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
-        // Chỉ cho phép xóa order CREATED
-        if (order.getStatus() != OrderStatus.CREATED) {
-            throw new IllegalArgumentException(
-                    "Can only delete orders with CREATED status. Current status: " + order.getStatus()
-            );
+        // Chỉ cho phép xóa order CREATED vaf PAID
+        if (order.getStatus() != OrderStatus.CREATED && order.getStatus() != OrderStatus.PAID) {
+
+            throw new AppException(ErrorCode.INVALID_DELETE_ORDER_STATUS);
         }
 
         // Hoàn lại stock cho product

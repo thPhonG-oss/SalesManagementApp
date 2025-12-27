@@ -24,7 +24,9 @@ public enum ErrorCode {
     PHONE_EXIST("1008", "Phone already exists", HttpStatus.BAD_REQUEST),
     CUSTOMER_NOT_FOUND("1009", "CUSTOMER_NOT_FOUND", HttpStatus.BAD_REQUEST),
     ORDER_NOT_FOUND("1010", "ORDER_NOT_FOUND", HttpStatus.BAD_REQUEST),
-    OUT_OF_STOCK("1011","Current inventory is insufficient to fulfill your order.",HttpStatus.BAD_REQUEST)
+    OUT_OF_STOCK("1011","Current inventory is insufficient to fulfill your order.",HttpStatus.BAD_REQUEST),
+    INVALID_ORDER_STATUS("1012", "Can only update orders with PAID, CREATED status", HttpStatus.BAD_REQUEST),
+    INVALID_DELETE_ORDER_STATUS("1013", "Can only delete orders with PAID, CREATED status", HttpStatus.BAD_REQUEST);
 
     ;
     ErrorCode(String code, String message, HttpStatus httpStatusCode) {

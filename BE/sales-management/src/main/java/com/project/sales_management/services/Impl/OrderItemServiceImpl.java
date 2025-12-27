@@ -63,8 +63,6 @@ public class OrderItemServiceImpl implements OrderItemService {
             // CASE 2: UPDATE
             if (itemRequest.getOrderItemId() != null) {
 
-//
-
                 OrderItem existingItem = orderItemRepository.findById(itemRequest.getOrderItemId())
                         .filter(item -> item.getOrder().getOrderId().equals(order.getOrderId()))
                         .orElseThrow(() -> new IllegalArgumentException("Order item not found in this order"));
@@ -79,6 +77,14 @@ public class OrderItemServiceImpl implements OrderItemService {
                 product.setStockQuantity(product.getStockQuantity() - stockDiff);
                 productRepository.save(product);
                 orderItemMapper.updateOrderItem(existingItem, itemRequest);
+                // Tính totalPrice
+                double totalPrice = calculateTotalPrice(
+                        itemRequest.getQuantity(),
+                        itemRequest.getUnitPrice(),
+                        itemRequest.getDiscount()
+                );
+                existingItem.setTotalPrice(totalPrice);
+                orderItemRepository.save(existingItem);
 
                 continue;
             }
@@ -97,10 +103,53 @@ public class OrderItemServiceImpl implements OrderItemService {
                 newItem.setOrder(order);
                 newItem.setProduct(product);
 
+
+
+
+
+                // Tính totalPrice
+                double totalPrice = calculateTotalPrice(
+                        itemRequest.getQuantity(),
+                        itemRequest.getUnitPrice(),
+                        itemRequest.getDiscount()
+                );
+                newItem.setTotalPrice(totalPrice);
+
                 order.getOrderItems().add(newItem);
                 product.setStockQuantity(product.getStockQuantity() - itemRequest.getQuantity());
                 productRepository.save(product);
             }
         }
     }
+
+    private double calculateTotalPrice(int quantity, Double unitPrice, Double discount) {
+        if (unitPrice == null) {
+            return 0;
+        }
+
+        double subtotal = quantity * unitPrice;
+        double discountAmount = (discount != null && discount > 0) ? discount : 0;
+
+        return subtotal - discountAmount;
+    }
+
+    private double calculateTotalPrice(int quantity, Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXIST));
+
+        double unitPrice;
+        double discount;
+
+        if (product.getIsDiscounted() == false) {
+            unitPrice = product.getPrice() * quantity;
+            discount = 0.0;
+        } else {
+            unitPrice = product.getSpecialPrice() * quantity;
+            discount = (product.getPrice() - product.getSpecialPrice()) * quantity;
+        }
+
+        double totalPrice = unitPrice - discount;
+        return totalPrice;
+    }
+
 }

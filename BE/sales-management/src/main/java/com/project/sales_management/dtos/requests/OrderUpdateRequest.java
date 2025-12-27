@@ -15,12 +15,8 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderUpdateRequest {
-    private Long promotionId;
     private OrderStatus status;
     private String shippingAddress;
     private String notes;
     private PaymentMethod paymentMethod;
-
-    @Valid
-    private List<OrderItemUpdateRequest> orderItems;
 }
