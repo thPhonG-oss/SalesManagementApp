@@ -27,5 +27,10 @@ namespace SalesManagement.WinUI.Views
         {
             InitializeComponent();
         }
+        
+        public void ButtonEvent()
+        {           
+            // To do
+        }
     }
 }
