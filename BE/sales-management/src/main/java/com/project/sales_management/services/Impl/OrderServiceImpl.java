@@ -49,18 +49,21 @@ public class OrderServiceImpl implements OrderService {
     OrderItemService orderItemService;
     ProductRepository productRepository;
     OrderItemRepository orderItemRepository;
+    CustomerService customerService;
 
     @Override
     public OrderResponse createOrder(OrderRequest orderRequest) {
         Order order = orderMapper.toOrder(orderRequest);
-        order.setCustomer(customerRepository.findById(orderRequest.getCustomerId())
-                .orElseThrow(() -> new AppException(ErrorCode.CUSTOMER_NOT_EXIST)));
+        Customer customer=customerRepository.findByEmail(orderRequest.getEmail()).orElseThrow(()->new AppException(ErrorCode.CUSTOMER_NOT_EXIST));
+        order.setCustomer(customer);
         order.setPromotion(promotionRepository.findById(orderRequest.getPromotionId())
                 .orElseThrow(() -> new AppException(ErrorCode.PROMOTION_NOT_EXIST)));
         order.setOrderCode(generateOrderCode());
+        order.setSubTotal(0.0);
+        order.setDiscountAmount(0.0);
+        order.setTotalAmount(0.0);
         Order newOrder = orderRepository.save(order);
         orderRequest.getOrderItems().forEach(i -> {
-            orderItemService.createOrderItem(i,newOrder);
             Product product=productRepository.findById(i.getProductId()).orElseThrow(()->new AppException(ErrorCode.PRODUCT_NOT_EXIST));
             Integer stockQuantity=product.getStockQuantity()- i.getQuantity();
             Integer soldQuantity= product.getSoldQuantity()+i.getQuantity();
@@ -69,8 +72,26 @@ public class OrderServiceImpl implements OrderService {
             product.setStockQuantity(stockQuantity);
             product.setSoldQuantity(soldQuantity);
             productRepository.save(product);
+            Double unitPrice;
+            Double discount;
+            Double totalPrice;
+            if(product.getIsDiscounted()==false){
+                unitPrice=product.getPrice()*i.getQuantity();
+                discount=0.0;
+                totalPrice=unitPrice;
+            }else{
+                unitPrice=product.getPrice()*i.getQuantity();
+                discount=(product.getPrice()-product.getSpecialPrice())*i.getQuantity();
+                totalPrice=unitPrice-discount;
+            }
+            i.setTotalPrice(totalPrice);
+            i.setDiscount(discount);
+            i.setUnitPrice(unitPrice);
+            OrderItem orderItem = orderItemService.createOrderItem(i, newOrder);
+            orderItem.setOrder(newOrder);
+            newOrder.getOrderItems().add(orderItem);
         });
-
+        recalculateOrderTotals(newOrder);
         return orderMapper.toOrderResponse(newOrder);
     }
     public String generateOrderCode() {
@@ -146,18 +167,21 @@ public class OrderServiceImpl implements OrderService {
         double discountAmount = 0.0;
         Promotion promotion = order.getPromotion();
         if (promotion != null) {
-            if ("PERCENTAGE".equals(promotion.getDiscountType())) {
+            if (DiscountType.PERCENTAGE.equals(promotion.getDiscountType())) {
                 discountAmount = subtotal * (promotion.getDiscountValue() / 100.0);
-            } else if ("FIXED".equals(promotion.getDiscountType())) {
+            } else {
                 discountAmount = promotion.getDiscountValue();
             }
         }
+        System.out.println(">>> Discount Amount = " + discountAmount+"           "+promotion.getDiscountType());
 
         double totalAmount = subtotal - discountAmount;
 
         order.setSubTotal(subtotal);
         order.setDiscountAmount(discountAmount);
         order.setTotalAmount(totalAmount);
+        orderRepository.save(order);
+
     }
 
     @Override

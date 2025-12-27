@@ -20,8 +20,6 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderResponse {
     Long orderId;
-    CustomerResponse customer;
-    PromotionResponse promotion;
     String orderCode;
     LocalDateTime orderDate;
     OrderStatus status;

@@ -14,11 +14,8 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderRequest {
-    Long customerId;
+    String email;
     Long promotionId;
-    Double subTotal;
-    Double discountAmount;
-    Double totalAmount;
     String notes;
     String shippingAddress;
     PaymentMethod paymentMethod;
