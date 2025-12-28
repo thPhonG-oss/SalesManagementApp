@@ -18,4 +18,5 @@ public interface OrderService {
     OrderResponse updateOrder(Long orderId, OrderUpdateRequest orderUpdateRequest);
     OrderResponse deleteOrder(Long orderId);
     OrderResponse updateOrderStatus(Long orderId, OrderStatusUpdateRequest request);
+    byte[] generateInvoice(Long orderId);
 }
