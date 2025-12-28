@@ -68,5 +68,6 @@ public class Order {
         cascade = {CascadeType.PERSIST, CascadeType.MERGE},
         orphanRemoval = true
     )
+    @Builder.Default
     List<OrderItem> orderItems = new ArrayList<>();
 }
