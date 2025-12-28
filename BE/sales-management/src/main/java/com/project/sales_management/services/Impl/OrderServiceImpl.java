@@ -1,5 +1,8 @@
 package com.project.sales_management.services.Impl;
 
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 import com.project.sales_management.dtos.requests.OrderItemRequest;
 import com.project.sales_management.dtos.requests.OrderRequest;
 import com.project.sales_management.dtos.requests.OrderStatusUpdateRequest;
@@ -30,8 +33,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,18 +50,22 @@ public class OrderServiceImpl implements OrderService {
     PromotionRepository promotionRepository;
     OrderItemService orderItemService;
     ProductRepository productRepository;
+    OrderItemRepository orderItemRepository;
+    CustomerService customerService;
 
     @Override
     public OrderResponse createOrder(OrderRequest orderRequest) {
         Order order = orderMapper.toOrder(orderRequest);
-        order.setCustomer(customerRepository.findById(orderRequest.getCustomerId())
-                .orElseThrow(() -> new AppException(ErrorCode.CUSTOMER_NOT_EXIST)));
+        Customer customer=customerRepository.findByEmail(orderRequest.getEmail()).orElseThrow(()->new AppException(ErrorCode.CUSTOMER_NOT_EXIST));
+        order.setCustomer(customer);
         order.setPromotion(promotionRepository.findById(orderRequest.getPromotionId())
                 .orElseThrow(() -> new AppException(ErrorCode.PROMOTION_NOT_EXIST)));
         order.setOrderCode(generateOrderCode());
+        order.setSubTotal(0.0);
+        order.setDiscountAmount(0.0);
+        order.setTotalAmount(0.0);
         Order newOrder = orderRepository.save(order);
         orderRequest.getOrderItems().forEach(i -> {
-            orderItemService.createOrderItem(i,newOrder);
             Product product=productRepository.findById(i.getProductId()).orElseThrow(()->new AppException(ErrorCode.PRODUCT_NOT_EXIST));
             Integer stockQuantity=product.getStockQuantity()- i.getQuantity();
             Integer soldQuantity= product.getSoldQuantity()+i.getQuantity();
@@ -65,8 +74,26 @@ public class OrderServiceImpl implements OrderService {
             product.setStockQuantity(stockQuantity);
             product.setSoldQuantity(soldQuantity);
             productRepository.save(product);
+            Double unitPrice;
+            Double discount;
+            Double totalPrice;
+            if(product.getIsDiscounted()==false){
+                unitPrice=product.getPrice()*i.getQuantity();
+                discount=0.0;
+                totalPrice=unitPrice;
+            }else{
+                unitPrice=product.getPrice()*i.getQuantity();
+                discount=(product.getPrice()-product.getSpecialPrice())*i.getQuantity();
+                totalPrice=unitPrice-discount;
+            }
+            i.setTotalPrice(totalPrice);
+            i.setDiscount(discount);
+            i.setUnitPrice(unitPrice);
+            OrderItem orderItem = orderItemService.createOrderItem(i, newOrder);
+            orderItem.setOrder(newOrder);
+            newOrder.getOrderItems().add(orderItem);
         });
-
+        recalculateOrderTotals(newOrder);
         return orderMapper.toOrderResponse(newOrder);
     }
     public String generateOrderCode() {
@@ -167,18 +194,21 @@ public class OrderServiceImpl implements OrderService {
         double discountAmount = 0.0;
         Promotion promotion = order.getPromotion();
         if (promotion != null) {
-            if ("PERCENTAGE".equals(promotion.getDiscountType())) {
+            if (DiscountType.PERCENTAGE.equals(promotion.getDiscountType())) {
                 discountAmount = subtotal * (promotion.getDiscountValue() / 100.0);
-            } else if ("FIXED".equals(promotion.getDiscountType())) {
+            } else {
                 discountAmount = promotion.getDiscountValue();
             }
         }
+        System.out.println(">>> Discount Amount = " + discountAmount+"           "+promotion.getDiscountType());
 
         double totalAmount = subtotal - discountAmount;
 
         order.setSubTotal(subtotal);
         order.setDiscountAmount(discountAmount);
         order.setTotalAmount(totalAmount);
+        orderRepository.save(order);
+
     }
 
     @Override
@@ -220,4 +250,70 @@ public class OrderServiceImpl implements OrderService {
 
         return orderMapper.toOrderResponse(order);
     }
+
+
+
+
+    public byte[] generateInvoice(Long orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        List<OrderItem> items = orderItemRepository.findByOrder_OrderId(orderId);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4);
+        PdfWriter.getInstance(document, out);
+
+        document.open();
+
+        // ===== FORMAT DATE =====
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String orderDate = order.getOrderDate().format(dateFormatter);
+
+        // ===== TIÊU ĐỀ =====
+        Font titleFont = new Font(Font.HELVETICA, 18, Font.BOLD);
+        Paragraph title = new Paragraph("HÓA ĐƠN BÁN HÀNG", titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+
+        document.add(new Paragraph(" "));
+
+        // ===== THÔNG TIN ĐƠN =====
+        document.add(new Paragraph("Mã đơn: " + order.getOrderCode()));
+        document.add(new Paragraph("Ngày: " + orderDate));
+        document.add(new Paragraph("Khách hàng: " + order.getCustomer().getCustomerName()));
+        document.add(new Paragraph("Địa chỉ giao hàng: " + order.getShippingAddress()));
+
+        document.add(new Paragraph(" "));
+
+        // ===== BẢNG SẢN PHẨM =====
+        PdfPTable table = new PdfPTable(5);
+        table.setWidthPercentage(100);
+
+        table.addCell("Sản phẩm");
+        table.addCell("SL");
+        table.addCell("Đơn giá");
+        table.addCell("Giảm");
+        table.addCell("Thành tiền");
+
+        for (OrderItem item : items) {
+            table.addCell(item.getProduct().getProductName());
+            table.addCell(String.valueOf(item.getQuantity()));
+            table.addCell(String.valueOf(item.getUnitPrice()));
+            table.addCell(String.valueOf(item.getDiscount()));
+            table.addCell(String.valueOf(item.getTotalPrice()));
+        }
+
+        document.add(table);
+
+        document.add(new Paragraph(" "));
+        document.add(new Paragraph("Tổng tiền: " + order.getTotalAmount()));
+
+        document.close();
+
+        return out.toByteArray();
+    }
+
+
 }
