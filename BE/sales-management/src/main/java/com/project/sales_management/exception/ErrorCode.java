@@ -15,10 +15,18 @@ public enum ErrorCode {
     CATEGORY_EXISTED("1004","Category existed.",HttpStatus.BAD_REQUEST),
     CATEGORY_NOT_EXIST("1005","The category does not exist.",HttpStatus.BAD_REQUEST),
     CATEDORY_DELETED("1006","The category has been deleted.",HttpStatus.BAD_REQUEST),
+    CUSTOMER_NOT_EXIST("1007","Customer not exist.",HttpStatus.BAD_REQUEST),
+    PROMOTION_NOT_EXIST("1008","promotion not exist.",HttpStatus.BAD_REQUEST),
+    PRODUCT_NOT_EXIST("1008","product not exist.",HttpStatus.BAD_REQUEST),
+
+
     EMAIL_EXIST("1007", "Email already exists", HttpStatus.BAD_REQUEST),
     PHONE_EXIST("1008", "Phone already exists", HttpStatus.BAD_REQUEST),
     CUSTOMER_NOT_FOUND("1009", "CUSTOMER_NOT_FOUND", HttpStatus.BAD_REQUEST),
     ORDER_NOT_FOUND("1010", "ORDER_NOT_FOUND", HttpStatus.BAD_REQUEST),
+    OUT_OF_STOCK("1011","Current inventory is insufficient to fulfill your order.",HttpStatus.BAD_REQUEST),
+    INVALID_ORDER_STATUS("1012", "Can only update orders with PAID, CREATED status", HttpStatus.BAD_REQUEST),
+    INVALID_DELETE_ORDER_STATUS("1013", "Can only delete orders with PAID, CREATED status", HttpStatus.BAD_REQUEST);
 
     ;
     ErrorCode(String code, String message, HttpStatus httpStatusCode) {

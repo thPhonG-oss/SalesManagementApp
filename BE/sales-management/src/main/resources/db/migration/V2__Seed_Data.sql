@@ -136,7 +136,7 @@ INSERT INTO products (category_id, product_name, description, author, publisher,
 
 -- 4. INSERT CUSTOMERS (Khách hàng)
 INSERT INTO customers (customer_name, phone, email, address, total_orders, total_spent) VALUES
-('Nguyễn Văn An', '0901234567', 'an.nguyen@gmail.com', '123 Đường Lê Lợi, Q1, TP.HCM', 0, 0),
+('Nguyễn Văn An', '0901234567', 'an   .nguyen@gmail.com', '123 Đường Lê Lợi, Q1, TP.HCM', 0, 0),
 ('Trần Thị Bích', '0912345678', 'bich.tran@yahoo.com', '456 Đường Nguyễn Huệ, Q1, TP.HCM', 0, 0),
 ('Lê Hoàng Nam', '0987654321', 'nam.le@outlook.com', '789 Đường Điện Biên Phủ, Bình Thạnh, TP.HCM', 0, 0),
 ('Phạm Minh Tuấn', '0351234567', 'tuan.pham@gmail.com', '101 Đường Cầu Giấy, Hà Nội', 0, 0),
@@ -145,7 +145,7 @@ INSERT INTO customers (customer_name, phone, email, address, total_orders, total
 -- 5. INSERT PROMOTIONS (Khuyến mãi)
 INSERT INTO promotions (
     promotion_code, promotion_name, description, discount_type, discount_value,
-    min_order_value, max_discount_amount, start_date, end_date, usage_limit
+    min_order_value, max_discount_value, start_date, end_date, usage_limit
 ) VALUES
 ('WELCOME', 'Chào bạn mới', 'Giảm 50k cho đơn đầu tiên', 'FIXED_AMOUNT', 50000, 200000, 50000, NOW(), DATE_ADD(NOW(), INTERVAL 1 YEAR), 1000),
 ('FREESHIP', 'Miễn phí vận chuyển', 'Giảm tối đa 30k phí ship', 'FIXED_AMOUNT', 30000, 150000, 30000, NOW(), DATE_ADD(NOW(), INTERVAL 6 MONTH), 5000),

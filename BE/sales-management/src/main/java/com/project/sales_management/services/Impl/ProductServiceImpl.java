@@ -7,10 +7,17 @@ import com.project.sales_management.dtos.responses.ListProductResponseDTO;
 import com.project.sales_management.dtos.responses.ProductImportResponse;
 import com.project.sales_management.dtos.responses.ProductResponse;
 import com.project.sales_management.helpers.ExcelHelpers;
+import com.project.sales_management.dtos.requests.ProductUpdateRequestDTO;
+import com.project.sales_management.dtos.responses.ListProductResponseDTO;
+import com.project.sales_management.dtos.responses.ProductImageResponse;
+import com.project.sales_management.dtos.responses.ProductResponse;
+import com.project.sales_management.mappers.ProductImageMapper;
 import com.project.sales_management.mappers.ProductMapper;
 import com.project.sales_management.models.Category;
 import com.project.sales_management.models.Product;
+import com.project.sales_management.models.ProductImage;
 import com.project.sales_management.repositories.CategoryRepository;
+import com.project.sales_management.repositories.ProductImageRepository;
 import com.project.sales_management.repositories.ProductRepository;
 import com.project.sales_management.services.ProductService;
 import jakarta.transaction.Transactional;
@@ -24,6 +31,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +45,11 @@ public class ProductServiceImpl implements ProductService {
     ProductMapper productMapper;
     CategoryRepository categoryRepository;
     ExcelHelpers excelHelpers;
+
+    ProductImageRepository productImageRepository;
+    CloudinaryService cloudinaryService;
+    ProductImageMapper productImageMapper;
+
 
     // CRUD methods to be implemented
     @Transactional
@@ -220,5 +234,81 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return response;
+    }
+    @Override
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        product.setIsActive(false);
+        productRepository.save(product);
+        log.info("Deleted product: {}", product.getProductName());
+    }
+
+    @Override
+    public ProductResponse updateProduct(Long productId, ProductUpdateRequestDTO productUpdateRequestDTO) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        Category category = categoryRepository.findById(productUpdateRequestDTO.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        product.setCategory(category);
+        product.setProductName(productUpdateRequestDTO.getProductName());
+        product.setDescription(productUpdateRequestDTO.getDescription());
+        product.setAuthor(productUpdateRequestDTO.getAuthor());
+        product.setPublisher(productUpdateRequestDTO.getPublisher());
+        product.setPublicationYear(productUpdateRequestDTO.getPublicationYear());
+        product.setPrice(productUpdateRequestDTO.getPrice());
+        product.setStockQuantity(productUpdateRequestDTO.getStockQuantity());
+        product.setMinStockQuantity(productUpdateRequestDTO.getMinStockQuantity());
+        Product updatedProduct = productRepository.save(product);
+        log.info("Updated product: {}", updatedProduct.getProductName());
+        return productMapper.toProductResponse(updatedProduct);
+    }
+
+    @Transactional
+    @Override
+    public ProductImageResponse updateProductImages(Long productId, MultipartFile file) throws IOException {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        String image_url =  cloudinaryService.uploadFileWithoutFolder(file);
+
+        ProductImage productImage = ProductImage.builder()
+                .imageUrl(image_url)
+                .product(product)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        ProductImage savedImage = productImageRepository.save(productImage);
+
+        return productImageMapper.toProductImageResponse(savedImage);
+    }
+
+    @Override
+    public ListProductResponseDTO getProductsByCategory(Long categoryId, int minPrice, int maxPrice, String keyword, int page, int size, String sortBy, String sortDir) {
+        Pageable pageable = PageRequest.of(page -1, size, sortDir.equalsIgnoreCase("asc") ?
+                org.springframework.data.domain.Sort.by(sortBy).ascending() :
+                org.springframework.data.domain.Sort.by(sortBy).descending());
+
+        Page<Product> productPage;
+        if(keyword.isEmpty()) {
+            productPage = productRepository.findByCategory_CategoryIdAndPriceBetween(categoryId, minPrice, maxPrice, pageable);
+        } else {
+            productPage = productRepository.findByCategory_CategoryIdAndPriceBetweenAndProductNameContainingIgnoreCase(categoryId, minPrice, maxPrice, keyword, pageable);
+        }
+
+        List<Product>  products = productPage.getContent();
+
+        List<ProductResponse> listProductResponseDTO = products.stream().map(productMapper::toProductResponse).collect(Collectors.toList());
+
+        return ListProductResponseDTO.builder()
+                .products(listProductResponseDTO)
+                .page(productPage.getNumber())
+                .size(productPage.getSize())
+                .totalElements(productPage.getTotalElements())
+                .totalPages(productPage.getTotalPages())
+                .isLastPage(productPage.isLast())
+                .build();
     }
 }
