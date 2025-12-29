@@ -92,6 +92,7 @@ public class ProductServiceImpl implements ProductService {
 
         List<ProductResponse> listProductResponseDTO = products.stream().map(productMapper::toProductResponse).collect(Collectors.toList());
 
+
         return ListProductResponseDTO.builder()
                 .products(listProductResponseDTO)
                 .page(productPage.getNumber())

@@ -10,6 +10,7 @@ import org.mapstruct.Mapping;
 public interface ProductMapper {
     Product toProduct(ProductCreationRequestDTO productCreationRequestDTO);
 
+    @Mapping(target = "images", source = "product.productImages")
     @Mapping(target = "category", source = "category")
     ProductResponse toProductResponse(Product product);
 
