@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace SalesManagement.WinUI.Services.Implementations
 {
@@ -89,7 +90,52 @@ namespace SalesManagement.WinUI.Services.Implementations
             }
         }
 
+        public async Task<bool> PrintOrderAsync(string orderIdStr)
+        {
+            if (!long.TryParse(orderIdStr, out long orderId)) return false;
 
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            try
+            {
+                // 1. Gọi API lấy file
+                var response = await _client.GetAsync($"/api/v1/orders/{orderId}/invoice");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // 2. Đọc dữ liệu file vào RAM
+                    var content = await response.Content.ReadAsByteArrayAsync();
+
+                    // 3. Tự động tạo file trong thư mục Downloads
+                    // CreationCollisionOption.GenerateUniqueName: Nếu trùng tên thì tự thêm số (1), (2)...
+                    string fileName = $"Invoice_{orderId}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+
+                    StorageFile file = await DownloadsFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
+
+                    // 4. Ghi dữ liệu vào file vừa tạo
+                    await FileIO.WriteBytesAsync(file, content);
+
+                    // 5. (Tùy chọn) Mở file lên luôn để người dùng thấy (nếu muốn)
+                    // await Launcher.LaunchFileAsync(file);
+
+                    System.Diagnostics.Debug.WriteLine($"[PrintOrder] Đã lưu file tại: {file.Path}");
+                    return true;
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"[PrintOrder] API Lỗi: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[PrintOrder] Exception: {ex.Message}");
+            }
+            return false;
+        }
 
         public async Task<List<OrderDetail>> GetOrderDetailsAsync(string orderIdStr)
         {

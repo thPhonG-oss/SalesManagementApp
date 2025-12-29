@@ -53,4 +53,13 @@ namespace SalesManagement.WinUI.Models
         [JsonPropertyName("updatedAt")]
         public DateTime UpdatedAt { get; set; }
     }
+
+    public class PromotionListData
+    {
+        // Tên property phải khớp với JSON (case-insensitive)
+        public List<PromotionResponse> Promotions { get; set; } = new List<PromotionResponse>();
+        public int TotalElements { get; set; }
+        public int TotalPages { get; set; }
+    }
+
 }

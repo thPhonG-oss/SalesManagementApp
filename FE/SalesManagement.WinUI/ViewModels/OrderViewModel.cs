@@ -200,6 +200,22 @@ namespace SalesManagement.WinUI.ViewModels
             if (_deleteAction != null) await _deleteAction(this);
         }
 
+        [RelayCommand]
+        private async Task Print()
+        {
+            // Gọi API kích hoạt in
+            bool success = await _orderService.PrintOrderAsync(OrderId);
+
+            if (success)
+            {
+                // Tùy chọn: Hiện thông báo thành công (nếu App có InfoBar hoặc Toast)
+                System.Diagnostics.Debug.WriteLine("Đã gửi lệnh in!");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Gửi lệnh in thất bại.");
+            }
+        }
 
     }
 

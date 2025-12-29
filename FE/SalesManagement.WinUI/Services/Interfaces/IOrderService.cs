@@ -20,5 +20,7 @@ namespace SalesManagement.WinUI.Services.Interfaces
         Task<bool> UpdateOrderAsync(Order order);
 
         Task<bool> CreateOrderAsync(CreateOrderRequest request);
+
+        Task<bool> PrintOrderAsync (string orderId);
     }
 }

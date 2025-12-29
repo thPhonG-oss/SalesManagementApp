@@ -6,20 +6,12 @@ namespace SalesManagement.WinUI.Models
 {
     public class CreateOrderRequest
     {
-        [JsonPropertyName("customerId")]
-        public long CustomerId { get; set; }
+      
+        [JsonPropertyName("email")]
+        public string Email { get; set; } = string.Empty;
 
         [JsonPropertyName("promotionId")]
-        public long? PromotionId { get; set; } 
-
-        [JsonPropertyName("subTotal")]
-        public decimal SubTotal { get; set; }
-
-        [JsonPropertyName("discountAmount")]
-        public decimal DiscountAmount { get; set; }
-
-        [JsonPropertyName("totalAmount")]
-        public decimal TotalAmount { get; set; }
+        public long? PromotionId { get; set; }
 
         [JsonPropertyName("notes")]
         public string Notes { get; set; } = string.Empty;
@@ -28,10 +20,10 @@ namespace SalesManagement.WinUI.Models
         public string ShippingAddress { get; set; } = string.Empty;
 
         [JsonPropertyName("paymentMethod")]
-        public string PaymentMethod { get; set; } = "CASH"; 
+        public string PaymentMethod { get; set; } = "CASH_ON_DELIVERY";
 
         [JsonPropertyName("orderItems")]
-        public List<CreateOrderItemRequest> OrderItems { get; set; } = new List<CreateOrderItemRequest>();
+        public List<CreateOrderItemRequest> OrderItems { get; set; } = new();
     }
 
     public class CreateOrderItemRequest

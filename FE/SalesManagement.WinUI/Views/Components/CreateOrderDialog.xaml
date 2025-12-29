@@ -113,6 +113,9 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Spacing="12">
+                        <TextBox Header="Email khách hàng" 
+             PlaceholderText="Nhập email khách hàng (bắt buộc)"
+             Text="{x:Bind ViewModel.CustomerEmail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <TextBox Header="Địa chỉ nhận hàng" 
                  PlaceholderText="Nhập địa chỉ giao hàng (để trống nếu nhận tại quầy)"

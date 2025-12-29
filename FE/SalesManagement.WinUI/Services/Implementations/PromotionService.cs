@@ -3,7 +3,6 @@ using SalesManagement.WinUI.Services.Interfaces;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace SalesManagement.WinUI.Services.Implementations
@@ -23,6 +22,7 @@ namespace SalesManagement.WinUI.Services.Implementations
 
         public async Task<List<Promotion>> GetActivePromotionsAsync()
         {
+            // 1. Gắn Token
             var token = _authService.GetAccessToken();
             if (!string.IsNullOrEmpty(token))
             {
@@ -31,25 +31,33 @@ namespace SalesManagement.WinUI.Services.Implementations
 
             try
             {
-                // Gọi API lấy danh sách khuyến mãi
-                // Giả sử API trả về List<PromotionResponse> hoặc JSON array
-                var response = await _client.GetAsync("/api/v1/promotions");
+                // 2. Gọi API
+                var response = await _client.GetAsync("/api/v1/promotions/search");
+
+                // 3. Đọc Raw JSON (Giống ProductService)
+                var rawJson = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    Debug.WriteLine($"[GET PROMOTIONS] Error: {response.StatusCode}");
-                    return new List<Promotion>();
+                    Debug.WriteLine($"[GET PROMOTIONS ERROR] {response.StatusCode} - {rawJson}");
+                    return GetDefaultNonePromotion();
                 }
 
-                // Tùy cấu trúc API trả về, nếu là List<PromotionResponse>
-                // Bạn cần mapping sang Model Promotion dùng cho UI
-                var promoResponses = await response.Content.ReadFromJsonAsync<List<PromotionResponse>>(_jsonOptions);
+                // 4. Deserialize vào Wrapper (ApiResponse<PromotionListData>)
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<PromotionListData>>(rawJson, _jsonOptions);
 
-                if (promoResponses == null) return new List<Promotion>();
+                // 5. Kiểm tra Success và Data
+                if (apiResponse == null || !apiResponse.Success || apiResponse.Data == null || apiResponse.Data.Promotions == null)
+                {
+                    Debug.WriteLine("[GET PROMOTIONS] API returned success=false or null data");
+                    return GetDefaultNonePromotion();
+                }
 
-                // Mapping sang UI Model và thêm item "Không áp dụng"
-                var uiPromotions = promoResponses
-                    .Where(p => p.IsActive && p.EndDate >= DateTime.Now) // Lọc cơ bản: Đang chạy và chưa hết hạn
+                Debug.WriteLine($"[GET PROMOTIONS] Success. Count: {apiResponse.Data.Promotions.Count}");
+
+                // 6. Mapping sang UI Model
+                var uiPromotions = apiResponse.Data.Promotions
+                    .Where(p => p.IsActive && IsDateValid(p.EndDate))
                     .Select(p => new Promotion
                     {
                         PromotionId = p.PromotionId,
@@ -57,14 +65,17 @@ namespace SalesManagement.WinUI.Services.Implementations
                         PromotionName = p.PromotionName,
                         Description = p.Description,
                         DiscountType = p.DiscountType,
-                        DiscountPercentage = (decimal)p.DiscountPercentage,
-                        DiscountValue = p.DiscountValue,
+
+                        // Xử lý logic DiscountValue/Percentage
+                        DiscountPercentage = p.DiscountType == "PERCENTAGE" ? (decimal)p.DiscountValue : 0,
+                        DiscountValue = (decimal)p.DiscountValue,
+
+                        // Nếu API không trả về MinOrderAmount thì mặc định là 0
                         MinOrderAmount = p.MinOrderAmount,
-                        MaxDiscountValue = p.MaxDiscountValue,
-                        
+                        MaxDiscountValue = p.MaxDiscountValue > 0 ? p.MaxDiscountValue : 0,
                     }).ToList();
 
-                // Luôn thêm lựa chọn "Không áp dụng" ở đầu
+                // 7. Luôn thêm mục "Không áp dụng" vào đầu danh sách
                 uiPromotions.Insert(0, new Promotion
                 {
                     PromotionId = 0,
@@ -75,17 +86,37 @@ namespace SalesManagement.WinUI.Services.Implementations
                     MinOrderAmount = 0
                 });
 
+                foreach (var promo in uiPromotions)
+                {
+                    Debug.WriteLine($"[PROMOTION] ID: {promo.PromotionId}, Name: {promo.PromotionName}, Type: {promo.DiscountType}, Value: {promo.DiscountValue}, MinOrder: {promo.MinOrderAmount}");
+                }
                 return uiPromotions;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"[GET PROMOTIONS EXCEPTION] {ex.Message}");
-                // Trả về ít nhất là item "Không áp dụng" để không crash UI
-                return new List<Promotion>
-                {
-                    new Promotion { PromotionId = 0, PromotionName = "Không áp dụng (Lỗi mạng)" }
-                };
+                return GetDefaultNonePromotion();
             }
+        }
+
+        // Hàm helper trả về list mặc định để tránh crash UI
+        private List<Promotion> GetDefaultNonePromotion()
+        {
+            return new List<Promotion>
+            {
+                new Promotion { PromotionId = 0, PromotionName = "Không áp dụng" }
+            };
+        }
+
+        private bool IsDateValid(object endDateObj)
+        {
+            if (endDateObj is DateTime dt) return dt >= DateTime.Now;
+            if (endDateObj is string dateStr && DateTime.TryParse(dateStr, out var parsedDate))
+            {
+                return parsedDate >= DateTime.Now;
+            }
+            
+            return true;
         }
     }
 }

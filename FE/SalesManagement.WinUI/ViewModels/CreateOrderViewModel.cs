@@ -199,6 +199,9 @@ namespace SalesManagement.WinUI.ViewModels
         [ObservableProperty]
         private string _note = string.Empty;
 
+        [ObservableProperty]
+        private string _customerEmail = string.Empty;
+
         public string SubTotalDisplay => SubTotalAmount.ToString("N0") + " đ";
         public string DiscountAmountDisplay => "-" + DiscountAmount.ToString("N0") + " đ";
         public string TotalAmountDisplay => TotalAmount.ToString("N0") + " đ";
@@ -223,14 +226,9 @@ namespace SalesManagement.WinUI.ViewModels
                 _allProducts = productRes.Products;
                 AddRow();
             }
-            _allPromotions = await _promotionService.GetActivePromotionsAsync();
+            var promoData = await _promotionService.GetActivePromotionsAsync();
+            _allPromotions = promoData ?? new List<Promotion>();
 
-            // Load Promotion
-            Promotions = new List<Promotion>
-            {
-              
-            };
-            SelectedPromotion = null;
         }
 
         [RelayCommand]
@@ -254,28 +252,51 @@ namespace SalesManagement.WinUI.ViewModels
 
         public async void OpenPromotionList()
         {
-            // 1. Gọi API lấy danh sách
-            var allPromotions = await _promotionService.GetActivePromotionsAsync();
+            // 1. Lấy danh sách gốc (đã load ở LoadData)
+            if (_allPromotions == null || !_allPromotions.Any())
+            {
+                var data = await _promotionService.GetActivePromotionsAsync();
+                _allPromotions = data ?? new List<Promotion>();
+            }
+            foreach (var item in _allPromotions)
+            {
+                Debug.WriteLine($"[Valid Promotion] {item.PromotionId} - MinOrder: {item.MinOrderAmount}, SubTotal: {SubTotalAmount}");
+            }
 
-            // 2. Lọc danh sách
-            var validPromotions = allPromotions.Where(p =>
-                p.PromotionId == 0 ||
-                p.MinOrderAmount <= SubTotalAmount
-            ).ToList();
+            // 2. Lọc danh sách: CHỈ lấy cái nào thỏa mãn SubTotal hiện tại
+            // SubTotalAmount lúc chưa chọn sp sẽ là 0 -> Voucher 200k sẽ bị loại ngay ở đây
+            var validPromotions = _allPromotions.Where(p =>
+            {
+                // Giữ lại Voucher rỗng (nếu bạn có thiết kế voucher ID=0 là "Không chọn gì")
+                if (p.PromotionId == 0) return true;
+
+                // Logic lọc cứng: Tiền hiện tại phải >= Điều kiện voucher
+                return p.MinOrderAmount <= SubTotalAmount;
+            }).ToList();
+
+            foreach ( var item in validPromotions)
+                            {
+                Debug.WriteLine($"[Valid Promotion] {item.PromotionId} - MinOrder: {item.MinOrderAmount}, SubTotal: {SubTotalAmount}");
+            }
 
             // 3. Cập nhật UI
             Promotions = validPromotions;
 
-            // 4. Giữ selection cũ
-            if (SelectedPromotion != null && Promotions.Any(p => p.PromotionId == SelectedPromotion.PromotionId))
+            // 4. --- FIX QUAN TRỌNG TẠI ĐÂY ---
+            // Kiểm tra xem voucher ĐANG chọn có còn nằm trong danh sách mới lọc không?
+            if (SelectedPromotion != null)
             {
-                var currentId = SelectedPromotion.PromotionId;
-                SelectedPromotion = Promotions.First(p => p.PromotionId == currentId);
+                var stillValid = Promotions.Any(p => p.PromotionId == SelectedPromotion.PromotionId);
+                if (!stillValid)
+                {
+                    // Nếu voucher đang chọn không còn hợp lệ (ví dụ: đang chọn voucher 200k mà tổng tiền tụt xuống 0)
+                    // -> Hủy chọn ngay lập tức
+                    SelectedPromotion = null;
+                }
             }
-            else
-            {
-                SelectedPromotion = Promotions.FirstOrDefault();
-            }
+
+            // XÓA BỎ DÒNG: SelectedPromotion = Promotions.FirstOrDefault(); 
+            // Lý do: Đừng bao giờ tự ý chọn giúp khách, trừ khi bạn có một Voucher mặc định tên là "Không sử dụng" (ID=0)
         }
 
         partial void OnSelectedPromotionChanged(Promotion? value)
@@ -291,39 +312,55 @@ namespace SalesManagement.WinUI.ViewModels
 
         private void CalculateTotal()
         {
+            // 1. Tính tổng tạm tính mới
             SubTotalAmount = Items.Sum(x => x.Total);
+
+            // --- LOGIC MỚI: Tự động hủy Voucher nếu không còn đủ điều kiện ---
+            if(SelectedPromotion != null)
+    {
+                // Kiểm tra ngay lập tức: Tiền có đủ không?
+                if (SubTotalAmount < SelectedPromotion.MinOrderAmount)
+                {
+                    // Nếu không đủ (ví dụ SubTotal = 0) -> ĐÁ VĂNG voucher ra ngay
+                    SelectedPromotion = null;
+
+                    // Debug để bạn kiểm chứng
+                    System.Diagnostics.Debug.WriteLine("Đã gỡ bỏ Voucher vì không đủ điều kiện (SubTotal < MinOrder)");
+
+                    // Return để hàm chạy lại từ đầu (do SelectedPromotion thay đổi kích hoạt lại hàm này)
+                    return;
+                }
+            }
+            // ----------------------------------------------------------------
+
+            // 2. Tính toán Discount (Khi code chạy đến đây nghĩa là Voucher đã hợp lệ hoặc Null)
             decimal discount = 0;
 
             if (SelectedPromotion != null && SelectedPromotion.PromotionId != 0)
             {
-                // 1. Kiểm tra Min Order Amount
-                if (SubTotalAmount >= SelectedPromotion.MinOrderAmount)
+                // Vì đã check ở trên rồi nên ở đây chắc chắn SubTotalAmount >= MinOrderAmount
+                if (SelectedPromotion.DiscountType == "PERCENTAGE")
                 {
-                    if (SelectedPromotion.DiscountType == "PERCENTAGE")
-                    {
-                        // JSON: discountPercentage = 0.1 (tức 10%)
-                        // Công thức: Tổng tiền * 0.1
-                        discount = SubTotalAmount * (decimal)SelectedPromotion.DiscountPercentage;
+                    discount = SubTotalAmount * (decimal)SelectedPromotion.DiscountPercentage;
 
-                        // Kiểm tra Max Discount Value
-                        if (SelectedPromotion.MaxDiscountValue > 0 && discount > SelectedPromotion.MaxDiscountValue)
-                        {
-                            discount = SelectedPromotion.MaxDiscountValue;
-                        }
-                    }
-                    else // FIXED
+                    if (SelectedPromotion.MaxDiscountValue > 0 && discount > SelectedPromotion.MaxDiscountValue)
                     {
-                        discount = SelectedPromotion.DiscountValue;
+                        discount = SelectedPromotion.MaxDiscountValue;
                     }
+                }
+                else
+                {
+                    discount = SelectedPromotion.DiscountValue;
                 }
             }
 
-            // Safety check
+            // Safety check: Không giảm quá số tiền tạm tính
             if (discount > SubTotalAmount) discount = SubTotalAmount;
 
             DiscountAmount = discount;
             TotalAmount = SubTotalAmount - DiscountAmount;
 
+            // Cập nhật UI
             OnPropertyChanged(nameof(SubTotalDisplay));
             OnPropertyChanged(nameof(DiscountAmountDisplay));
             OnPropertyChanged(nameof(TotalAmountDisplay));
@@ -333,35 +370,43 @@ namespace SalesManagement.WinUI.ViewModels
         SelectedPromotion != null ? Visibility.Visible : Visibility.Collapsed;
         public async Task<bool> CreateOrderAsync()
         {
+            // 1. Validate Email (Cơ bản)
+            if (string.IsNullOrWhiteSpace(CustomerEmail))
+            {
+                // Có thể thêm thông báo lỗi ở đây nếu cần
+                System.Diagnostics.Debug.WriteLine("Email không được để trống");
+                return false;
+            }
+
             var validItems = Items.Where(x => x.SelectedProduct != null && x.Quantity > 0).ToList();
             if (!validItems.Any()) return false;
 
+            // 2. Tạo Request theo mẫu mới
             var request = new CreateOrderRequest
             {
-                CustomerId = 1, // Tạm fix cứng, sau này lấy từ AuthUser
+                Email = CustomerEmail, // ✅ Gán Email từ UI
+
                 PromotionId = (SelectedPromotion == null || SelectedPromotion.PromotionId == 0) ? null : SelectedPromotion.PromotionId,
-                SubTotal = SubTotalAmount,
-                DiscountAmount = DiscountAmount,
-                TotalAmount = TotalAmount,
-                PaymentMethod = "CASH_ON_DELIVERY",
+              
                 Notes = Note,
                 ShippingAddress = string.IsNullOrWhiteSpace(ShipAddress) ? "Tại cửa hàng" : ShipAddress,
-                
+                PaymentMethod = "CASH_ON_DELIVERY",
 
                 OrderItems = validItems.Select(x => new CreateOrderItemRequest
                 {
                     ProductId = x.SelectedProduct!.ProductId,
                     Quantity = x.Quantity,
-                    UnitPrice = x.Price, // Giá đã giảm (nếu có)
-                    Discount = 0,        // Đã tính vào unit price hoặc tách riêng tùy logic BE
+                    UnitPrice = x.Price,
+                    Discount = 0, // Hoặc tính logic discount nếu có
                     TotalPrice = x.Total
                 }).ToList()
             };
+
             Debug.WriteLine($"[CreateOrder] Request: {System.Text.Json.JsonSerializer.Serialize(request)}");
             return await _orderService.CreateOrderAsync(request);
         }
 
-        
+
 
     } // <--- KẾT THÚC CLASS CHA
 }

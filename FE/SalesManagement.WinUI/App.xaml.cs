@@ -57,7 +57,7 @@ public partial class App : Application
         services.AddSingleton<ILoadingService, LoadingService>();
         services.AddSingleton<IOrderService, OrderService>();
         services.AddSingleton<IDialogService, DialogService>();
-        services.AddTransient<IPromotionService, MockPromotionService>();
+        services.AddTransient<IPromotionService, PromotionService>();
 
         // ⭐ CATEGORY
         services.AddSingleton<ICategoryService, CategoryService>();
