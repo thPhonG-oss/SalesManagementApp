@@ -67,6 +67,14 @@ public partial class MainViewModel : ObservableObject
             ShowHeader = false
         });
 
+        MainMenuItems.Add(new AppMenuItem
+        {
+            Title = "Cài đặt",
+            Icon = Symbol.Setting,
+            PageType = typeof(SettingsPage),
+            ShowHeader = false
+        });
+
 
         FooterMenuItems.Add(new AppMenuItem { Title = "Đăng xuất", Icon = Symbol.Contact, Tag = "Logout" });
 
