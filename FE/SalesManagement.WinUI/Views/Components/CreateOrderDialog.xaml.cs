@@ -1,22 +1,9 @@
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Extensions.DependencyInjection; // Cần namespace này để dùng GetService<T>
 using SalesManagement.WinUI.Services.Interfaces;
 using SalesManagement.WinUI.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace SalesManagement.WinUI.Views.Components
 {
@@ -27,27 +14,38 @@ namespace SalesManagement.WinUI.Views.Components
         public CreateOrderDialog()
         {
             this.InitializeComponent();
-            // L?y Service th? c�ng ho?c truy?n v�o
-            var service = App.Services.GetService<IOrderService>();
-            ViewModel = new CreateOrderViewModel(service);
+
+            // 1. Lấy các service từ DI Container (App.Services)
+            var orderService = App.Services.GetRequiredService<IOrderService>();
+            var productService = App.Services.GetRequiredService<IProductService>();
+            var promotionService = App.Services.GetRequiredService<IPromotionService>();
+
+            // 2. Khởi tạo ViewModel với đầy đủ 3 tham số
+            ViewModel = new CreateOrderViewModel(orderService, productService, promotionService);
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var deferral = args.GetDeferral();
-            args.Cancel = true;
+            args.Cancel = true; // Mặc định giữ dialog mở để đợi xử lý async
 
             try
             {
                 bool success = await ViewModel.CreateOrderAsync();
                 if (success)
                 {
-                    args.Cancel = false; // ?�ng dialog th�nh c�ng
+                    args.Cancel = false; // Cho phép đóng dialog nếu thành công
                 }
                 else
                 {
-                    // C� th? hi?n InfoBar l?i ? ?�y n?u mu?n
+                    // Xử lý khi lỗi (ví dụ hiện thông báo đỏ dưới footer)
+                    // Hiện tại giữ dialog mở để user sửa lại
                 }
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nếu cần
+                System.Diagnostics.Debug.WriteLine($"Lỗi tạo đơn: {ex.Message}");
             }
             finally
             {

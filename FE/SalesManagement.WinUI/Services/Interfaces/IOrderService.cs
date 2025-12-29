@@ -19,7 +19,6 @@ namespace SalesManagement.WinUI.Services.Interfaces
         Task<bool> DeleteOrderAsync(string orderId);
         Task<bool> UpdateOrderAsync(Order order);
 
-        Task<List<Product>> GetProductsAsync();
-        Task<bool> CreateOrderAsync(Order order, List<OrderDetail> details);
+        Task<bool> CreateOrderAsync(CreateOrderRequest request);
     }
 }

@@ -60,8 +60,7 @@ namespace SalesManagement.WinUI.ViewModels
         private readonly Func<OrderItemViewModel, Task>? _editAction;
         private readonly Func<OrderItemViewModel, Task>? _deleteAction;
 
-        // --- SỬA LỖI TẠI ĐÂY ---
-        // Chỉ khai báo duy nhất 1 lần. Khởi tạo rỗng để chờ A  PI trả về.
+        
         public ObservableCollection<DetailItemViewModel> OrderItems { get; } = new();
 
         public OrderItemViewModel(Order model,
@@ -73,10 +72,10 @@ namespace SalesManagement.WinUI.ViewModels
             _orderService = orderService;
             _editAction = editAction;
             _deleteAction = deleteAction;
-            // Lưu ý: Không nạp OrderItems ở đây nữa vì API danh sách chưa có thông tin chi tiết
+          
         }
 
-        // Hàm này sẽ được gọi từ Main ViewModel sau khi API 2 chạy xong
+        
         public void LoadDetails(List<OrderDetail> details)
         {
             OrderItems.Clear();
@@ -89,8 +88,8 @@ namespace SalesManagement.WinUI.ViewModels
             }
         }
 
-        // Các thuộc tính hiển thị (Binding ra View)
-        public string OrderId => Model.OrderId;
+      
+        public string OrderId => Model.Id.ToString();
         public string DateDisplay => Model.Date.ToString("dd/MM/yyyy");
         public string ItemsCountDisplay => $"{Model.ItemsCount} mặt hàng"; // Lấy từ số tổng hợp
         public string AmountDisplay => Model.Amount.ToString("N0");       // Lấy từ số tổng hợp
@@ -110,9 +109,9 @@ namespace SalesManagement.WinUI.ViewModels
                 }
             }
         }
-        public string DialogTitle => $"Chi tiết đơn hàng {Model.OrderId}";
+        public string DialogTitle => $"Chi tiết đơn hàng {Model.OrderCode}";
 
-        // Logic màu sắc
+       
         public Brush StatusColor
         {
             get
@@ -231,7 +230,7 @@ namespace SalesManagement.WinUI.ViewModels
         [ObservableProperty] private string _totalRevenueDisplay = "0 đ";
         [ObservableProperty] private int _pendingOrdersCount;
 
-        // Filter Properties (MỚI)
+        // Filter Properties
         public ObservableCollection<string> StatusFilters { get; } = new() { "Tất cả", "Mới tạo", "Đã thanh toán", "Đã hủy" };
 
         [ObservableProperty] private string _selectedStatusFilter = "Tất cả";
@@ -348,13 +347,13 @@ namespace SalesManagement.WinUI.ViewModels
         private void CalculateStats()
         {
             TotalOrdersCount = _allOrders.Count;
-            // Tính tổng tiền dựa trên Model mới
+            
             decimal totalRevenue = _allOrders.Sum(x => x.Model.Amount);
             TotalRevenueDisplay = totalRevenue.ToString("N0") + " đ";
             PendingOrdersCount = _allOrders.Count(x => x.Status == "Mới tạo" || x.Status == "Đang xử lý");
         }
 
-        // ... Các hàm Pagination (NextPage, PreviousPage, UpdatePagination) giữ nguyên như cũ ...
+        
         private void UpdatePagination()
         {
             int totalPages = (int)Math.Ceiling((double)_allOrders.Count / _pageSize);
@@ -442,56 +441,48 @@ namespace SalesManagement.WinUI.ViewModels
         {
             if (item == null) return;
 
-            _isProcessingAction = true; 
-            try
-            {
-                bool isConfirmed = await _dialogService.ShowConfirmationAsync(
+            // 1. Hỏi xác nhận
+            bool isConfirmed = await _dialogService.ShowConfirmationAsync(
                 "Xác nhận xóa",
-                $"Bạn có chắc chắn muốn xóa đơn hàng {item.OrderId}?",
+                $"Bạn có chắc chắn muốn xóa đơn hàng ?", // Dùng OrderCodeDisplay cho đẹp
                 "Xóa",
                 "Hủy");
 
-                if (!isConfirmed) return;
+            if (!isConfirmed) return;
 
-                // 2. Thực hiện xóa
-                IsLoading = true;
-                try
-                {
-                    bool success = await _orderService.DeleteOrderAsync(item.OrderId);
-                    if (success)
-                    {
-                        // Xóa khỏi danh sách gốc (_allOrders)
-                        var orderToRemove = _allOrders.FirstOrDefault(x => x.OrderId == item.OrderId);
-                        if (orderToRemove != null)
-                        {
-                            _allOrders.Remove(orderToRemove);
-                        }
-
-                        // Tính toán lại thống kê và phân trang
-                        CalculateStats();
-                        UpdatePagination();
-                    }
-                    else
-                    {
-                        // Xử lý lỗi nếu backend trả về false (Ví dụ: hiện thông báo)
-                        System.Diagnostics.Debug.WriteLine($"Xóa thất bại order {item.OrderId}");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Lỗi xóa: {ex.Message}");
-                }
-                finally
-                {
-                    IsLoading = false;
-                }
-            }
-            finally
+            // 2. Thực hiện xóa
+            // Lưu ý: Không bật IsLoading ở đây vội, để LoadDataAsync lo
+            try
             {
-                _isProcessingAction = false; // Tắt flag
-                // Reset selection
-                DispatcherQueue.GetForCurrentThread().TryEnqueue(() => { SelectedOrder = null; });
+                bool success = await _orderService.DeleteOrderAsync(item.OrderId);
+
+                if (success)
+                {
+                    // --- LOGIC XỬ LÝ TRANG (QUAN TRỌNG) ---
+
+                    // Nếu item bị xóa là item CUỐI CÙNG của trang hiện tại
+                    // VÀ chúng ta đang ở trang > 1
+                    // THÌ phải lùi về trang trước đó.
+                    if (DisplayOrders.Count == 1 && CurrentPage > 1)
+                    {
+                        CurrentPage--;
+                    }
+
+                    // Gọi hàm LoadDataAsync để tải lại dữ liệu mới từ Server
+                    // Hàm này sẽ tự lo việc hiển thị Loading và cập nhật danh sách
+                    LoadDataAsync(CurrentPage);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Xóa thất bại order {item.OrderId}");
+                    // Có thể hiện thông báo lỗi ở đây
+                }
             }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Lỗi xóa: {ex.Message}");
+            }
+            // Không cần finally { IsLoading = false } vì LoadDataAsync sẽ làm việc đó
         }
 
         [RelayCommand]
