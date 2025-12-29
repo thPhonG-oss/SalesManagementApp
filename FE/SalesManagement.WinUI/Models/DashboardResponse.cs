@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using SalesManagement.WinUI.Models;
+
 
 namespace SalesManagement.WinUI.Models
 {
@@ -88,35 +90,9 @@ namespace SalesManagement.WinUI.Models
         public bool IsActive { get; set; }
     }
 
-    public class OrderResponse
-    {
-        [JsonPropertyName("orderId")]
-        public long Id { get; set; }
+  
 
-        [JsonPropertyName("orderCode")]
-        public string OrderNumber { get; set; }
 
-        [JsonPropertyName("orderDate")]
-        public DateTime CreatedDate { get; set; }
-
-        [JsonPropertyName("totalAmount")]
-        public double TotalAmount { get; set; }
-
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
-
-        [JsonPropertyName("subTotal")]
-        public double SubTotal { get; set; }
-
-        [JsonPropertyName("shippingAddress")]
-        public string ShippingAddress { get; set; }
-
-        [JsonPropertyName("paymentMethod")]
-        public string PaymentMethod { get; set; }
-
-        [JsonPropertyName("orderItems")]
-        public List<OrderItemResponse> OrderItems { get; set; } = new();
-    }
 
     public class OrderItemResponse
     {
