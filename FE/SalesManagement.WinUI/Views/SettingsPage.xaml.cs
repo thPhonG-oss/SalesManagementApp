@@ -1,3 +1,4 @@
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -29,7 +30,17 @@ namespace SalesManagement.WinUI.Views
         public SettingsPage()
         {
             this.InitializeComponent();
-            ViewModel = App.Services.GetService<SettingsViewModel>()!;
+            this.InitializeComponent();
+
+            try
+            {
+                ViewModel = App.Services.GetRequiredService<SettingsViewModel>();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ Lỗi khởi tạo SettingsViewModel: {ex.Message}");
+                throw;
+            }
         }
     }
 }
