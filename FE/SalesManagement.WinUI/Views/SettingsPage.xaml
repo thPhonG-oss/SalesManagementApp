@@ -8,7 +8,15 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Padding="40,32" MaxWidth="800">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -28,10 +36,10 @@
 
             <!-- STATUS MESSAGE -->
             <InfoBar Grid.Row="1"
-                     IsOpen="{x:Bind ViewModel.StatusMessage, Mode=OneWay, Converter={StaticResource StringNotEmptyToVisibilityConverter}}"
-                     Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
-                     Severity="Success"
-                     Margin="0,0,0,16"/>
+                        Visibility="{x:Bind ViewModel.StatusMessage, Mode=OneWay, Converter={StaticResource StringNotEmptyToVisibilityConverter}}"
+                        Message="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                        Severity="Success"
+                        Margin="0,0,0,16"/>
 
             <!-- SETTINGS CONTENT -->
             <StackPanel Grid.Row="2" Spacing="16">

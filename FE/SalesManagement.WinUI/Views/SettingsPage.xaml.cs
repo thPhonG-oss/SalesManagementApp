@@ -30,15 +30,15 @@ namespace SalesManagement.WinUI.Views
         public SettingsPage()
         {
             this.InitializeComponent();
-            this.InitializeComponent();
-
             try
             {
                 ViewModel = App.Services.GetRequiredService<SettingsViewModel>();
+                this.DataContext = ViewModel;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"❌ Lỗi khởi tạo SettingsViewModel: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Stack Trace: {ex.StackTrace}");
                 throw;
             }
         }
