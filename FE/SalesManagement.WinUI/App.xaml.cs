@@ -55,9 +55,10 @@ public partial class App : Application
         services.AddSingleton<IStorageService, StorageService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ILoadingService, LoadingService>();
-        services.AddSingleton<IOrderService, MockOrderService>();
+        services.AddSingleton<IOrderService, OrderService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IReportService, ReportService>();
+        services.AddTransient<IPromotionService, PromotionService>();
 
         
         
@@ -114,7 +115,7 @@ public partial class App : Application
         navService.NavigateTo(typeof(LoginPage));
     }
 
-}
+}   
 
 // Extension method to get services easily
 public static class ServiceProviderExtensions

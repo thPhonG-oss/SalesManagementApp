@@ -1,365 +1,332 @@
 ﻿using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
-using System.Threading.Tasks;
-using System;
 using System.Collections.Generic;
-using System.Linq; // Cần thêm thư viện này để dùng Where, Skip, Take
+using System.Diagnostics;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace SalesManagement.WinUI.Services.Implementations
 {
-    public class MockOrderService : IOrderService
+    public class OrderService : IOrderService
     {
-        // Giả lập Database lưu trữ trong biến local của class
-        private readonly List<Order> _databaseOrders;
 
-        public MockOrderService()
+        private readonly HttpClient _client;
+        private readonly IAuthService _authService;
+
+        private readonly JsonSerializerOptions _jsonOptions;
+
+        public OrderService(IHttpClientFactory httpClientFactory, IAuthService authService)
         {
-            // Khởi tạo dữ liệu mẫu 1 lần duy nhất khi Service được tạo
-            _databaseOrders = new List<Order>
-            {
-                new Order { OrderId = "ORD001", Date = new DateTime(2025,1,25), ItemsCount = 2, Amount = 1250000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD002", Date = new DateTime(2025,1,24), ItemsCount = 2, Amount = 1650000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD003", Date = new DateTime(2025,1,25), ItemsCount = 1, Amount = 1800000, Status = "Đã hủy" },
-                new Order { OrderId = "ORD004", Date = new DateTime(2025,1,23), ItemsCount = 3, Amount = 2100000, Status = "Mới tạo" },
-                new Order { OrderId = "ORD005", Date = new DateTime(2025,1,23), ItemsCount = 4, Amount = 5200000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD006", Date = new DateTime(2025,1,22), ItemsCount = 2, Amount = 890000, Status = "Mới tạo" },
-                new Order { OrderId = "ORD007", Date = new DateTime(2025,1,22), ItemsCount = 6, Amount = 4750000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD008", Date = new DateTime(2025,1,21), ItemsCount = 1, Amount = 650000, Status = "Đã hủy" },
-                new Order { OrderId = "ORD009", Date = new DateTime(2025,1,21), ItemsCount = 3, Amount = 2890000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD010", Date = new DateTime(2025,1,20), ItemsCount = 7, Amount = 6300000, Status = "Mới tạo" },
-                new Order { OrderId = "ORD011", Date = new DateTime(2025,1,20), ItemsCount = 2, Amount = 1420000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD012", Date = new DateTime(2025,1,19), ItemsCount = 4, Amount = 3180000, Status = "Đã hủy" },
-                new Order { OrderId = "ORD013", Date = new DateTime(2025,1,19), ItemsCount = 5, Amount = 4500000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD014", Date = new DateTime(2025,1,18), ItemsCount = 3, Amount = 2650000, Status = "Mới tạo" },
-                new Order { OrderId = "ORD015", Date = new DateTime(2025,1,18), ItemsCount = 8, Amount = 7890000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD016", Date = new DateTime(2025,1,17), ItemsCount = 2, Amount = 1100000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD017", Date = new DateTime(2025,1,17), ItemsCount = 1, Amount = 520000, Status = "Đã hủy" },
-                new Order { OrderId = "ORD018", Date = new DateTime(2025,1,16), ItemsCount = 6, Amount = 5340000, Status = "Mới tạo" },
-                new Order { OrderId = "ORD019", Date = new DateTime(2025,1,16), ItemsCount = 4, Amount = 3720000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD020", Date = new DateTime(2025,1,15), ItemsCount = 3, Amount = 2250000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD021", Date = new DateTime(2025,1,15), ItemsCount = 5, Amount = 4980000, Status = "Mới tạo" },
-                new Order { OrderId = "ORD022", Date = new DateTime(2025,1,14), ItemsCount = 2, Amount = 760000, Status = "Đã hủy" },
-                new Order { OrderId = "ORD023", Date = new DateTime(2025,1,14), ItemsCount = 4, Amount = 3400000, Status = "Đã thanh toán" },
-                new Order { OrderId = "ORD024", Date = new DateTime(2025,1,13), ItemsCount = 1, Amount = 420000, Status = "Mới tạo" },
-                new Order { OrderId = "ORD025", Date = new DateTime(2025,1,12), ItemsCount = 7, Amount = 6890000, Status = "Đã thanh toán" }
-            };
+            _client = httpClientFactory.CreateClient("API");
+            _authService = authService;
+
+            _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         }
 
         // Cập nhật hàm này để xử lý Filter và Pagination
         public async Task<(List<Order> Items, int TotalCount, decimal TotalRevenue, int PendingCount)> GetOrdersAsync(
-            int pageIndex,
-            int pageSize,
-            string status = null,
-            DateTime? fromDate = null,
-            DateTime? toDate = null)
+            int pageIndex, int pageSize, string status = null, DateTime? fromDate = null, DateTime? toDate = null)
         {
-            await Task.Delay(500); 
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
 
-            // 1. Tạo Query từ danh sách gốc
-            var query = _databaseOrders.AsQueryable();
+            // API dùng page index bắt đầu từ 0, UI dùng từ 1 -> trừ đi 1
+            var apiPage = pageIndex > 0 ? pageIndex - 1 : 0;
+            var url = $"/api/v1/orders?pageNumber={apiPage}&pageSize={pageSize}";
 
-            // 2. Áp dụng bộ lọc (Filter)
-            // Lọc theo trạng thái
             if (!string.IsNullOrEmpty(status) && status != "Tất cả")
             {
-                query = query.Where(x => x.Status == status);
+                url += $"&status={MapStatusToApi(status)}";
             }
+            if (fromDate.HasValue) url += $"&fromDate={fromDate.Value:yyyy-MM-dd}";
+            if (toDate.HasValue) url += $"&toDate={toDate.Value:yyyy-MM-dd}";
 
-            // Lọc theo ngày bắt đầu
-            if (fromDate.HasValue)
+            Debug.WriteLine($"{url}");
+
+            try
             {
-                query = query.Where(x => x.Date.Date >= fromDate.Value.Date);
-            }
+                var response = await _client.GetAsync(url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine($"[API Error] {response.StatusCode}");
+                    return (new List<Order>(), 0, 0, 0);
+                }
 
-            // Lọc theo ngày kết thúc
-            if (toDate.HasValue)
+                var jsonString = await response.Content.ReadAsStringAsync();
+
+                // 🔥 THAY ĐỔI Ở ĐÂY: Dùng class cụ thể OrderApiResponse
+                var apiResponse = JsonSerializer.Deserialize<OrderApiResponse>(jsonString, _jsonOptions);
+
+                if (apiResponse == null || apiResponse.Content == null)
+                    return (new List<Order>(), 0, 0, 0);
+
+                // Mapping dữ liệu API sang UI Model
+                var uiOrders = apiResponse.Content.Select(o => new Order
+                {
+                    Id = o.OrderId,                 // ID thật (long)
+                    OrderCode = o.OrderCode,        // Mã hiển thị (string)
+                    Date = o.OrderDate,
+                    Status = MapStatusToUI(o.Status),
+                    ItemsCount = o.OrderItems?.Count ?? 0,
+                    Amount = o.TotalAmount
+                }).ToList();
+
+                // Tính toán sơ bộ (nên lấy từ API thống kê riêng nếu có)
+                decimal revenue = uiOrders.Sum(x => x.Amount);
+
+                return (uiOrders, apiResponse.TotalElements, revenue, 0);
+            }
+            catch (Exception ex)
             {
-                query = query.Where(x => x.Date.Date <= toDate.Value.Date);
+                Debug.WriteLine($"Exception: {ex.Message}");
+                return (new List<Order>(), 0, 0, 0);
             }
-
-           
-            var filteredList = query.ToList(); 
-            var totalCount = filteredList.Count;
-            var totalRevenue = filteredList.Sum(x => x.Amount);
-            var pendingCount = filteredList.Count(x => x.Status == "Mới tạo");
-
-            
-            var pagedItems = filteredList
-                                .OrderByDescending(x => x.Date) 
-                                .Skip((pageIndex - 1) * pageSize)
-                                .Take(pageSize)
-                                .ToList();
-
-           
-            return (pagedItems, totalCount, totalRevenue, pendingCount);
         }
 
-
-
-        public async Task<List<OrderDetail>> GetOrderDetailsAsync(string orderId)
+        public async Task<bool> PrintOrderAsync(string orderIdStr)
         {
-            await Task.Delay(300);
-            return orderId switch
+            if (!long.TryParse(orderIdStr, out long orderId)) return false;
 
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
             {
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
 
-                "ORD001" => new List<OrderDetail>
+            try
+            {
+                // 1. Gọi API lấy file
+                var response = await _client.GetAsync($"/api/v1/orders/{orderId}/invoice");
 
+                if (response.IsSuccessStatusCode)
                 {
+                    // 2. Đọc dữ liệu file vào RAM
+                    var content = await response.Content.ReadAsByteArrayAsync();
 
-                    new OrderDetail { ProductName = "Laptop Dell XPS 13", Quantity = 1, Price = 1000000 },
+                    // 3. Tự động tạo file trong thư mục Downloads
+                    // CreationCollisionOption.GenerateUniqueName: Nếu trùng tên thì tự thêm số (1), (2)...
+                    string fileName = $"Invoice_{orderId}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
 
-                    new OrderDetail { ProductName = "Chuột Logitech", Quantity = 1, Price = 250000 }
+                    StorageFile file = await DownloadsFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
-                },
+                    // 4. Ghi dữ liệu vào file vừa tạo
+                    await FileIO.WriteBytesAsync(file, content);
 
-                "ORD002" => new List<OrderDetail>
+                    // 5. (Tùy chọn) Mở file lên luôn để người dùng thấy (nếu muốn)
+                    // await Launcher.LaunchFileAsync(file);
 
+                    System.Diagnostics.Debug.WriteLine($"[PrintOrder] Đã lưu file tại: {file.Path}");
+                    return true;
+                }
+                else
                 {
+                    System.Diagnostics.Debug.WriteLine($"[PrintOrder] API Lỗi: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[PrintOrder] Exception: {ex.Message}");
+            }
+            return false;
+        }
 
-                    new OrderDetail { ProductName = "Màn hình LG 24 inch", Quantity = 1, Price = 1500000 },
+        public async Task<List<OrderDetail>> GetOrderDetailsAsync(string orderIdStr)
+        {
+            // 1. Validate and Parse ID
+            // The API requires an integer ID (int64/long). The UI might be passing "ORD001" or "123".
+            // If your UI is passing the numeric ID as a string, this parse will succeed.
+            if (!long.TryParse(orderIdStr, out long orderId))
+            {
+                Debug.WriteLine($"[GetOrderDetailsAsync] Invalid Order ID format: {orderIdStr}. Expected a numeric ID.");
+                return new List<OrderDetail>();
+            }
 
-                    new OrderDetail { ProductName = "Cáp HDMI", Quantity = 1, Price = 150000 }
+            // 2. Attach Authorization Token
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
 
-                },
+            try
+            {
+                // 3. Call API Endpoint: GET /api/v1/orders/{orderId}
+                var response = await _client.GetAsync($"/api/v1/orders/{orderId}");
 
-                "ORD003" => new List<OrderDetail>
-
+                if (!response.IsSuccessStatusCode)
                 {
+                    Debug.WriteLine($"[GetOrderDetailsAsync] API Error: {response.StatusCode} for ID {orderId}");
+                    return new List<OrderDetail>();
+                }
 
-                    new OrderDetail { ProductName = "Bàn phím cơ Keychron", Quantity = 1, Price = 1800000 }
+                // 4. Deserialize Response
+                // We use OrderResponse model which matches the JSON structure provided
+                var orderResponse = await response.Content.ReadFromJsonAsync<OrderResponse>(_jsonOptions);
 
-                },
-
-                "ORD004" => new List<OrderDetail>
-
+                if (orderResponse == null || orderResponse.OrderItems == null)
                 {
+                    return new List<OrderDetail>();
+                }
 
-                    new OrderDetail { ProductName = "Ổ cứng SSD 1TB", Quantity = 1, Price = 1200000 },
-
-                    new OrderDetail { ProductName = "RAM 8GB", Quantity = 1, Price = 400000 }
-
-                },
-
-                "ORD005" => new List<OrderDetail>
-
+                // 5. Map to UI Model (OrderDetail)
+                // We transform the API's OrderItem list into the simple OrderDetail list used by the UI
+                var details = orderResponse.OrderItems.Select(item => new OrderDetail
                 {
+                    // Handle potential null product reference
+                    ProductName = item.Product?.ProductName ?? "Unknown Product",
+                    Quantity = item.Quantity,
+                    // Use UnitPrice or TotalPrice based on what you want to display per row
+                    Price = item.UnitPrice
+                }).ToList();
 
-                    new OrderDetail { ProductName = "Tai nghe Sony", Quantity = 2, Price = 900000 }
+                return details;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[GetOrderDetailsAsync] Exception: {ex.Message}");
+                return new List<OrderDetail>();
+            }
+        }
 
-                },
+        public async Task<bool> DeleteOrderAsync(string orderIdStr)
+        {
+            // 1. Validate and Parse ID
+            // The UI passes the ID as a string, but the API path likely needs the numeric ID.
+            if (!long.TryParse(orderIdStr, out long orderId))
+            {
+                Debug.WriteLine($"[DeleteOrderAsync] Invalid Order ID format: {orderIdStr}. Expected a numeric ID.");
+                return false;
+            }
 
-                "ORD006" => new List<OrderDetail>
+            // 2. Attach Authorization Token
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
 
+            try
+            {
+                // 3. Call API Endpoint: DELETE /api/v1/orders/{orderId}
+                var response = await _client.DeleteAsync($"/api/v1/orders/{orderId}");
+
+                if (response.IsSuccessStatusCode)
                 {
-
-                    new OrderDetail { ProductName = "USB 32GB", Quantity = 5, Price = 200000 }
-
-                },
-
-                "ORD007" => new List<OrderDetail>
-
+                    Debug.WriteLine($"[DeleteOrderAsync] Successfully deleted order {orderId}");
+                    return true;
+                }
+                else
                 {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"[DeleteOrderAsync] Failed to delete order {orderId}. Status: {response.StatusCode}. Error: {errorContent}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[DeleteOrderAsync] Exception: {ex.Message}");
+                return false;
+            }
+        }
 
-                    new OrderDetail { ProductName = "Laptop HP Envy", Quantity = 1, Price = 1200000 },
+        public async Task<bool> UpdateOrderAsync(Order order)
+        {
+            Debug.WriteLine($"[UpdateOrderAsync] Success for Order");
+            if (order.Id <= 0) return false;
 
-                    new OrderDetail { ProductName = "Chuột không dây", Quantity = 1, Price = 200000 }
+            
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
 
-                },
+            
+            var request = new UpdateOrderRequest
+            {
+                Status = MapStatusToApi(order.Status),
+                PaymentMethod = "CASH_ON_DELIVERY", 
+                OrderItems = new List<UpdateOrderItemRequest>()
+            };
 
-                "ORD008" => new List<OrderDetail>
+            try
+            {
+                
+                var response = await _client.PutAsJsonAsync($"/api/v1/orders/{order.Id}", request, _jsonOptions);
 
+                if (response.IsSuccessStatusCode)
                 {
-
-                    new OrderDetail { ProductName = "Adapter sạc", Quantity = 1, Price = 150000 }
-
-                },
-
-                "ORD009" => new List<OrderDetail>
-
+                    Debug.WriteLine($"[UpdateOrderAsync] Success for Order {order.Id}");
+                    return true;
+                }
+                else
                 {
-
-                    new OrderDetail { ProductName = "Màn hình Samsung 27 inch", Quantity = 1, Price = 3500000 }
-
-                },
-
-                "ORD010" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "RAM 16GB", Quantity = 2, Price = 800000 }
-
-                },
-
-                "ORD011" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "HDD 2TB", Quantity = 1, Price = 900000 }
-
-                },
-
-                "ORD012" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Đế tản nhiệt", Quantity = 1, Price = 300000 }
-
-                },
-
-                "ORD013" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Máy in HP", Quantity = 1, Price = 2500000 }
-
-                },
-
-                "ORD014" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Webcam Logitech", Quantity = 1, Price = 600000 }
-
-                },
-
-                "ORD015" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Balo Laptop", Quantity = 1, Price = 450000 }
-
-                },
-
-                "ORD016" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "SSD 512GB", Quantity = 1, Price = 900000 }
-
-                },
-
-                "ORD017" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Chuột chơi game", Quantity = 1, Price = 400000 }
-
-                },
-
-                "ORD018" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Loa Bluetooth", Quantity = 2, Price = 550000 }
-
-                },
-
-                "ORD019" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Bàn làm việc", Quantity = 1, Price = 2000000 }
-
-                },
-
-                "ORD020" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Ghế game", Quantity = 1, Price = 1800000 }
-
-                },
-
-                "ORD021" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Docking station", Quantity = 1, Price = 1250000 }
-
-                },
-
-                "ORD022" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Cáp mạng CAT6", Quantity = 10, Price = 50000 }
-
-                },
-
-                "ORD023" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Bộ phụ kiện văn phòng", Quantity = 4, Price = 850000 }
-
-                },
-
-                "ORD024" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Sạc dự phòng 10000mAh", Quantity = 1, Price = 420000 }
-
-                },
-
-                "ORD025" => new List<OrderDetail>
-
-                {
-
-                    new OrderDetail { ProductName = "Combo PC văn phòng", Quantity = 1, Price = 6890000 }
-
-                },
-
-                _ => new List<OrderDetail>()
-
+                    var error = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"[UpdateOrderAsync] Failed: {response.StatusCode} - {error}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[UpdateOrderAsync] Exception: {ex.Message}");
+                return false;
+            }
+        }
+
+        // Helper to map UI status back to API enum strings
+        private string MapStatusToApi(string uiStatus)
+        {
+            return uiStatus switch
+            {
+                "Mới tạo" => "CREATED",
+                "Đã thanh toán" => "PAID",
+                "Đã hủy" => "CANCELLED",
+                _ => "CREATED" 
             };
         }
 
-        public Task<bool> DeleteOrderAsync(string orderId)
+
+
+        public async Task<bool> CreateOrderAsync(CreateOrderRequest request)
         {
-            // Xóa khỏi Database giả lập
-            var item = _databaseOrders.FirstOrDefault(x => x.OrderId == orderId);
-            if (item != null)
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
             {
-                _databaseOrders.Remove(item);
-                return Task.FromResult(true);
+                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
-            return Task.FromResult(false);
-        }
 
-        public Task<bool> UpdateOrderAsync(Order order)
-        {
-            // Cập nhật Database giả lập
-            var existing = _databaseOrders.FirstOrDefault(x => x.OrderId == order.OrderId);
-            if (existing != null)
+            // Gọi API endpoint thật
+            var response = await _client.PostAsJsonAsync("/api/v1/orders", request);
+
+            if (response.IsSuccessStatusCode)
             {
-                existing.Status = order.Status;
-                existing.Amount = order.Amount;
-                existing.Date = order.Date;
-                return Task.FromResult(true);
+                Debug.WriteLine("[CREATE ORDER] Success");
+                return true;
             }
-            return Task.FromResult(false);
-        }
-
-        public Task<List<Product>> GetProductsAsync()
-        {
-            return Task.FromResult(new List<Product>
+            else
             {
-                new Product { ProductId = 1 , ProductName = "Laptop Dell XPS 13", Price = 1000000 },
-                new Product { ProductId =  2, ProductName = "Chuột Logitech", Price = 250000 },
-                new Product { ProductId = 3, ProductName = "Màn hình LG 24 inch", Price = 1500000 },
-                new Product { ProductId = 4, ProductName = "Bàn phím cơ", Price = 1800000 },
-                new Product { ProductId = 5, ProductName = "Tai nghe Sony", Price = 900000 }
-            });
+                var error = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"[CREATE ORDER] Failed: {response.StatusCode} - {error}");
+                return false;
+            }
         }
 
-        public async Task<bool> CreateOrderAsync(Order order, List<OrderDetail> details)
+        private string MapStatusToUI(string apiStatus)
         {
-            await Task.Delay(800);
-            // Thêm vào database giả lập
-            _databaseOrders.Add(order);
-            return true;
+            return apiStatus switch
+            {
+                "CREATED" => "Mới tạo",
+                "PAID" => "Đã thanh toán",
+                "CANCELLED" => "Đã hủy",
+                _ => apiStatus
+            };
         }
     }
 }
