@@ -10,8 +10,11 @@ namespace SalesManagement.WinUI.Services.Implementations;
 
 public class StorageService : IStorageService
 {
+
+
     private const string CredentialsFileName = "credentials.dat";
     private const string SettingsFileName = "settings.json";
+    private const string AppSettingsFileName = "app_settings.json";
     private readonly ApplicationDataContainer _localSettings;
     private readonly StorageFolder _localFolder;
 
@@ -118,6 +121,70 @@ public class StorageService : IStorageService
     public Task<string?> GetLastScreenAsync()
     {
         return GetSettingAsync("LastScreen");
+    }
+
+    public async Task SaveAppSettingsAsync(AppSettings settings)
+    {
+        try
+        {
+            var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            var file = await _localFolder.CreateFileAsync(
+                AppSettingsFileName,
+                CreationCollisionOption.ReplaceExisting
+            );
+
+            await FileIO.WriteTextAsync(file, json);
+
+            System.Diagnostics.Debug.WriteLine($"✅ Saved settings: ItemsPerPage={settings.ItemsPerPage}");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ Error saving app settings: {ex.Message}");
+        }
+    }
+
+    public async Task<AppSettings> GetAppSettingsAsync()
+    {
+        try
+        {
+            var file = await _localFolder.GetFileAsync(AppSettingsFileName);
+            var json = await FileIO.ReadTextAsync(file);
+
+            var settings = JsonSerializer.Deserialize<AppSettings>(json);
+            if (settings != null)
+            {
+                System.Diagnostics.Debug.WriteLine($"✅ Loaded settings: ItemsPerPage={settings.ItemsPerPage}");
+                return settings;
+            }
+        }
+        catch (FileNotFoundException)
+        {
+            System.Diagnostics.Debug.WriteLine("⚠️ Settings file not found, using default");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ Error loading app settings: {ex.Message}");
+        }
+
+        // Trả về mặc định nếu không load được
+        return new AppSettings();
+    }
+
+    public async Task ResetAppSettingsAsync()
+    {
+        try
+        {
+            var file = await _localFolder.GetFileAsync(AppSettingsFileName);
+            await file.DeleteAsync();
+        }
+        catch (FileNotFoundException) { }
+
+        // Save lại settings mặc định
+        await SaveAppSettingsAsync(new AppSettings());
     }
 
     // Simple encryption using Data Protection API

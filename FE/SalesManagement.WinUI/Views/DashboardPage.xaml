@@ -315,5 +315,137 @@
 
             </StackPanel>
         </ScrollViewer>
+    <Page.Resources>
+        <Style x:Key="StatCardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20,16"/>
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="Height" Value="100"/>
+            <Setter Property="Margin" Value="0,0,16,16"/>
+        </Style>
+        <Style x:Key="BoxStyle" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20,16"/>
+            <Setter Property="Width" Value="500"/>
+            <Setter Property="Height" Value="200"/>
+            <Setter Property="Margin" Value="0,0,16,16"/>
+        </Style>
+        <Style x:Key="ListStyle" TargetType="Border">
+            <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20,16"/>
+            <Setter Property="Width" Value="500"/>
+            <Setter Property="Height" Value="250"/>
+            <Setter Property="Margin" Value="0,0,16,16"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel>
+        <VariableSizedWrapGrid Grid.Row="1" Orientation="Horizontal" 
+                       ItemWidth="316" ItemHeight="116"
+                       MaximumRowsOrColumns="4">
+
+    <Border Style="{StaticResource StatCardStyle}">
+        <StackPanel Spacing="4" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <FontIcon Glyph="&#xE762;" FontSize="14" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                <TextBlock Text="Đơn hàng trong ngày" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="13" VerticalAlignment="Center"/>
+            </StackPanel>
+            <TextBlock Text="0" FontSize="28" FontWeight="Bold"/>
+        </StackPanel>
+    </Border>
+
+    <Border Style="{StaticResource StatCardStyle}">
+        <StackPanel Spacing="4" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <FontIcon Glyph="&#xE8C7;" FontSize="14" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                <TextBlock Text="Doanh thu trong ngày" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="13" VerticalAlignment="Center"/>
+            </StackPanel>
+            <TextBlock Text="0" FontSize="28" FontWeight="Bold"/>
+        </StackPanel>
+    </Border>
+
+    <Border Grid.Column="2" Style="{StaticResource StatCardStyle}">
+    <StackPanel Spacing="4">
+        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+            <FontIcon Glyph="&#xE81E;" 
+          FontSize="14" 
+          Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+            <TextBlock Text="Sản phẩm trong cửa hàng" 
+           Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" 
+           FontSize="13" 
+           VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <TextBlock Text="0" 
+       FontSize="28" FontWeight="Bold" />
+    </StackPanel>
+</Border>
+
+</VariableSizedWrapGrid>
+            <VariableSizedWrapGrid Grid.Row="2" Orientation="Horizontal" 
+                       ItemWidth="416" ItemHeight="216"
+                       MaximumRowsOrColumns="2">
+
+                <Border Style="{StaticResource BoxStyle}">
+                    <StackPanel Spacing="4" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE762;" FontSize="14" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="Đơn hàng gần đây" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="13" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="---" FontSize="28" FontWeight="Bold"/> <!-- Chart -->
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource BoxStyle}">
+                    <StackPanel Spacing="4" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE8C7;" FontSize="14" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="Doanh thu trong tháng" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="13" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="---" FontSize="28" FontWeight="Bold"/> <!-- Chart -->
+                    </StackPanel>
+                </Border>
+
+
+            </VariableSizedWrapGrid>
+
+
+            <VariableSizedWrapGrid Grid.Row="3" Orientation="Horizontal" 
+           ItemWidth="416" ItemHeight="316"
+           MaximumRowsOrColumns="2">
+
+                <Border Style="{StaticResource ListStyle}">
+                    <StackPanel Spacing="4" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE7EB;" FontSize="14" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="Sản phẩm bán chạy" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="13" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="---" FontSize="28" FontWeight="Bold"/> <!-- List -->
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource ListStyle}">
+                    <StackPanel Spacing="4" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE814;" FontSize="14" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                            <TextBlock Text="Sản phẩm có số lượng ít" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}" FontSize="13" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="---" FontSize="28" FontWeight="Bold"/> <!-- List -->
+                    </StackPanel>
+                </Border>
+
+
+            </VariableSizedWrapGrid>
+        </StackPanel>
     </Grid>
 </Page>

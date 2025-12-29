@@ -12,6 +12,9 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Converters -->
+            <converters:CurrencyConverter x:Key="CurrencyConverter" />
+            <converters:DateConverter x:Key="DateConverter" />
+            <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
             <converters:BooleanConverters x:Key="BoolToVisibilityConverter"/>
             <converters:BoolNegationConverter x:Key="BoolNegationConverter"/>
 

@@ -47,5 +47,10 @@ namespace SalesManagement.WinUI.Views
         {
             await _viewModel.RefreshDashboard();
         }
+        
+        public void ButtonEvent()
+        {           
+            // To do
+        }
     }
 }

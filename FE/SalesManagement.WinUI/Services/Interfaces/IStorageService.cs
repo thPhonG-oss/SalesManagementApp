@@ -45,5 +45,21 @@ namespace SalesManagement.WinUI.Services.Interfaces
         /// Gets last opened screen
         /// </summary>
         Task<string?> GetLastScreenAsync();
+
+        // ===== APP SETTINGS (MỚI) =====
+        /// <summary>
+        /// Lưu toàn bộ cấu hình app
+        /// </summary>
+        Task SaveAppSettingsAsync(AppSettings settings);
+
+        /// <summary>
+        /// Lấy toàn bộ cấu hình app
+        /// </summary>
+        Task<AppSettings> GetAppSettingsAsync();
+
+        /// <summary>
+        /// Reset về cấu hình mặc định
+        /// </summary>
+        Task ResetAppSettingsAsync();
     }
 }

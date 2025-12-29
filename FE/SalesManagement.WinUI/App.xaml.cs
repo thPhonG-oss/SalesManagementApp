@@ -58,8 +58,13 @@ public partial class App : Application
         services.AddSingleton<IStorageService, StorageService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ILoadingService, LoadingService>();
-        services.AddSingleton<IOrderService, MockOrderService>();
+        services.AddSingleton<IOrderService, OrderService>();
         services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IReportService, ReportService>();
+        services.AddTransient<IPromotionService, PromotionService>();
+
+        
+        
 
         services.AddTransient<IApiService>(sp =>
     new ApiService(
@@ -76,11 +81,16 @@ public partial class App : Application
         services.AddTransient<MainViewModel>();
         services.AddTransient<OrderViewModel>();
         services.AddSingleton<DashboardViewModel>();
+       
 
 
+        services.AddTransient<ReportViewModel>();
         // ⭐ PRODUCT
         services.AddSingleton<IProductService, ProductService>();
         services.AddTransient<ProductViewModel>();
+
+        // ⭐ THÊM MỚI - Settings
+        services.AddTransient<SettingsViewModel>();
 
         // ================= VIEWS =================
         services.AddTransient<LoginPage>();
@@ -94,6 +104,9 @@ public partial class App : Application
         services.AddTransient<AddProductPage>();
 
         services.AddTransient<AddProductViewModel>();
+
+        // ⭐ THÊM DÒNG NÀY
+        services.AddTransient<SettingsPage>();
 
         return services.BuildServiceProvider();
     }
@@ -115,7 +128,7 @@ public partial class App : Application
         navService.NavigateTo(typeof(LoginPage));
     }
 
-}
+}   
 
 // Extension method to get services easily
 public static class ServiceProviderExtensions

@@ -10,7 +10,8 @@
     Title="{x:Bind ViewModel.DialogTitle, Mode=OneWay}"
     PrimaryButtonText="Lưu thay đổi"
     CloseButtonText="Đóng"
-    DefaultButton="Primary">
+    DefaultButton="Primary"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
 
     <ContentDialog.Resources>
         <Style x:Key="LabelTextStyle" TargetType="TextBlock">

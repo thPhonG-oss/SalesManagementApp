@@ -4,9 +4,6 @@
  * Bao gồm: 5 Category, 100+ Products, Users, Customers, Promotions
  */
 
-SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
-
 -- 1. INSERT CATEGORIES (Danh mục)
 -- Giả định ID sẽ là: 1-Văn học, 2-Kinh tế, 3-CNTT, 4-Kỹ năng sống, 5-Thiếu nhi
 INSERT INTO categories (category_name, description, is_active) VALUES
