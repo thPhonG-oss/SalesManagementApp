@@ -26,6 +26,8 @@ public enum ErrorCode {
     ORDER_NOT_FOUND("1010", "ORDER_NOT_FOUND", HttpStatus.BAD_REQUEST),
     OUT_OF_STOCK("1011","Current inventory is insufficient to fulfill your order.",HttpStatus.BAD_REQUEST),
     DISCOUNT_NOT_SUITABLE("1012","The discount is not suitable for you.",HttpStatus.BAD_REQUEST)
+    INVALID_ORDER_STATUS("1012", "Can only update orders with PAID, CREATED status", HttpStatus.BAD_REQUEST),
+    INVALID_DELETE_ORDER_STATUS("1013", "Can only delete orders with PAID, CREATED status", HttpStatus.BAD_REQUEST);
 
     ;
     ErrorCode(String code, String message, HttpStatus httpStatusCode) {

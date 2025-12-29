@@ -25,6 +25,5 @@ public interface OrderMapper {
     Order toOrder(OrderRequest orderRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "orderItems", ignore = true)
     void updateOrder(@MappingTarget Order order, OrderUpdateRequest orderUpdateRequest);
 }

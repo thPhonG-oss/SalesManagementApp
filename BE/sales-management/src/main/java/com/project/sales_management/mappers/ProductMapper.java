@@ -12,4 +12,5 @@ public interface ProductMapper {
 
     @Mapping(target = "category", source = "category")
     ProductResponse toProductResponse(Product product);
+
 }
