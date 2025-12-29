@@ -1,10 +1,16 @@
 package com.project.sales_management.services;
 
 import com.project.sales_management.dtos.requests.ProductCreationRequestDTO;
+import com.project.sales_management.dtos.requests.ProductUpdateRequestDTO;
 import com.project.sales_management.dtos.responses.ListProductResponseDTO;
 import com.project.sales_management.dtos.responses.ProductImportResponse;
+import com.project.sales_management.dtos.responses.ProductImageResponse;
 import com.project.sales_management.dtos.responses.ProductResponse;
 import jakarta.transaction.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 public interface ProductService {
     // CRUD methods to be implemented
@@ -17,6 +23,16 @@ public interface ProductService {
 
     ListProductResponseDTO searchProducts(String keyword, Double maxPrice, Double minPrice, int page, int size, String sortBy, String sortDir);
 
+
     @Transactional
     ProductImportResponse importProducts(org.springframework.web.multipart.MultipartFile file);
+
+    void deleteProduct(Long productId);
+
+    ProductResponse updateProduct(Long productId, ProductUpdateRequestDTO productUpdateRequestDTO);
+
+    ProductImageResponse updateProductImages(Long productId, MultipartFile file) throws IOException;
+
+    ListProductResponseDTO getProductsByCategory(Long categoryId, int minPrice, int maxPrice, String keyword, int page, int size, String sortBy, String sortDir);
+
 }
