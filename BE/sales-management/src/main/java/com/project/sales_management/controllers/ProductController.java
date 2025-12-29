@@ -89,7 +89,7 @@ public class ProductController {
                 ApiResponse.builder()
                         .success(true)
                         .message("Products imported successfully")
-                        .data(null)
+                        .data(productService.importProducts(file))
                         .build()
         );
     }

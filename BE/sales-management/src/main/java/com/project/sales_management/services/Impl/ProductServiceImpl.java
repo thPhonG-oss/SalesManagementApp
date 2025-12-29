@@ -160,6 +160,16 @@ public class ProductServiceImpl implements ProductService {
             for (ProductImportDTO productImportDTO : productImportDTOS) {
                 try{
                     Category category = categoryRepository.findByCategoryName(productImportDTO.getCategoryName());
+                    if(category == null) {
+                        failureCount++;
+                        response.getErrors().add(
+                                ImportError.builder()
+                                        .rowNumber(response.getTotalRows() - productImportDTOS.indexOf(productImportDTO))
+                                        .errorMessage("Danh mục không tồn tại")
+                                        .build()
+                        );
+                        continue;
+                    }
 
                     if(productRepository.existsByProductName(productImportDTO.getProductName())) {
                         failureCount++;

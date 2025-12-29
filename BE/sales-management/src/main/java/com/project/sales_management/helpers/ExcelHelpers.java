@@ -83,7 +83,7 @@ public class ExcelHelpers {
 
         // Đọc categoryName dưới dạng String
         Cell categoryNameCell = row.getCell(CATEGORY_NAME_COL);
-        if (categoryNameCell != null || getCellValueAsString(categoryNameCell).trim().isEmpty()) {
+        if (categoryNameCell == null || getCellValueAsString(categoryNameCell).trim().isEmpty()) {
             productImportResponse.getErrors().add(
                     ImportError.builder()
                             .rowNumber(rowNumber)
