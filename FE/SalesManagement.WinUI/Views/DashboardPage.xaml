@@ -6,8 +6,315 @@
     xmlns:local="using:SalesManagement.WinUI.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+
+        <!-- Loading Ring -->
+        <ProgressRing 
+            Grid.Row="1" 
+            IsActive="{Binding IsLoading}" 
+            HorizontalAlignment="Center" 
+            VerticalAlignment="Center"
+            Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+        <!-- Content -->
+        <ScrollViewer 
+            Grid.Row="1"
+            Visibility="{Binding IsLoading, Converter={StaticResource BoolNegationConverter}}">
+            <StackPanel Spacing="20">
+
+                <!-- KPI Cards Row -->
+                <Grid ColumnSpacing="15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Total Products Card -->
+                    <Border 
+                        Grid.Column="0" 
+                        Background="{ThemeResource CardBackgroundFillColorDefault}" 
+                        CornerRadius="8" 
+                        Padding="20"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource CardStrokeColorDefault}">
+                        <StackPanel Spacing="10">
+                            <TextBlock 
+                                Text="Tổng Sản Phẩm" 
+                                FontSize="14" 
+                                Foreground="{ThemeResource TextFillColorSecondary}"/>
+                            <TextBlock 
+                                Text="{Binding DashboardData.TotalProducts}" 
+                                FontSize="32" 
+                                FontWeight="Bold" 
+                                Foreground="#0078D4"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Today Orders Card -->
+                    <Border 
+                        Grid.Column="1" 
+                        Background="{ThemeResource CardBackgroundFillColorDefault}" 
+                        CornerRadius="8" 
+                        Padding="20"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource CardStrokeColorDefault}">
+                        <StackPanel Spacing="10">
+                            <TextBlock 
+                                Text="Đơn Hàng Hôm Nay" 
+                                FontSize="14" 
+                                Foreground="{ThemeResource TextFillColorSecondary}"/>
+                            <TextBlock 
+                                Text="{Binding DashboardData.TodayOrderCount}" 
+                                FontSize="32" 
+                                FontWeight="Bold" 
+                                Foreground="#107C10"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Today Revenue Card -->
+                    <Border 
+                        Grid.Column="2" 
+                        Background="{ThemeResource CardBackgroundFillColorDefault}" 
+                        CornerRadius="8" 
+                        Padding="20"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource CardStrokeColorDefault}">
+                        <StackPanel Spacing="10">
+                            <TextBlock 
+                                Text="Doanh Thu Hôm Nay" 
+                                FontSize="14" 
+                                Foreground="{ThemeResource TextFillColorSecondary}"/>
+                            <TextBlock 
+                                Text="{Binding DashboardData.TodayRevenue}" 
+                                FontSize="28" 
+                                FontWeight="Bold" 
+                                Foreground="#E81B23"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Low Stock & Top Selling Row -->
+                <Grid ColumnSpacing="15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Low Stock Products -->
+                    <Border 
+                        Grid.Column="0" 
+                        Background="{ThemeResource CardBackgroundFillColorDefault}" 
+                        CornerRadius="8" 
+                        Padding="20"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource CardStrokeColorDefault}">
+                        <StackPanel Spacing="15">
+                            <TextBlock 
+                                Text="Top 5 Sắp Hết Hàng" 
+                                FontSize="16" 
+                                FontWeight="Bold"/>
+                            <ItemsControl ItemsSource="{Binding DashboardData.LowStockProducts}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border 
+                                            Background="{ThemeResource CardBackgroundFillColorSecondary}" 
+                                            CornerRadius="4" 
+                                            Padding="12" 
+                                            Margin="0,5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" Spacing="4">
+                                                    <TextBlock 
+                                                        Text="{Binding Name}" 
+                                                        FontWeight="Bold" 
+                                                        TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock 
+                                                        Text="{Binding Price}" 
+                                                        FontSize="12" 
+                                                        Foreground="{ThemeResource TextFillColorTertiary}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock 
+                                                        Text="{Binding Quantity}" 
+                                                        FontWeight="Bold" 
+                                                        Foreground="#E81B23" 
+                                                        TextAlignment="Right"
+                                                        FontSize="18"/>
+                                                    <TextBlock 
+                                                        Text="cái" 
+                                                        FontSize="11" 
+                                                        Foreground="{ThemeResource TextFillColorTertiary}"
+                                                        TextAlignment="Right"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Top Selling Products -->
+                    <Border 
+                        Grid.Column="1" 
+                        Background="{ThemeResource CardBackgroundFillColorDefault}" 
+                        CornerRadius="8" 
+                        Padding="20"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource CardStrokeColorDefault}">
+                        <StackPanel Spacing="15">
+                            <TextBlock 
+                                Text="Top 5 Bán Chạy" 
+                                FontSize="16" 
+                                FontWeight="Bold"/>
+                            <ItemsControl ItemsSource="{Binding DashboardData.TopSellingProducts}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border 
+                                            Background="{ThemeResource CardBackgroundFillColorSecondary}" 
+                                            CornerRadius="4" 
+                                            Padding="12" 
+                                            Margin="0,5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="60"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel Grid.Column="0" Spacing="4">
+                                                    <TextBlock 
+                                                        Text="{Binding Name}" 
+                                                        FontWeight="Bold" 
+                                                        TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock 
+                                                        Text="{Binding Price}" 
+                                                        FontSize="12" 
+                                                        Foreground="{ThemeResource TextFillColorTertiary}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock 
+                                                        Text="{Binding Quantity}" 
+                                                        FontWeight="Bold" 
+                                                        Foreground="#107C10" 
+                                                        TextAlignment="Right"
+                                                        FontSize="18"/>
+                                                    <TextBlock 
+                                                        Text="cái" 
+                                                        FontSize="11" 
+                                                        Foreground="{ThemeResource TextFillColorTertiary}"
+                                                        TextAlignment="Right"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Recent Orders -->
+                <Border 
+                    Background="{ThemeResource CardBackgroundFillColorDefault}" 
+                    CornerRadius="8" 
+                    Padding="20"
+                    BorderThickness="1"
+                    BorderBrush="{ThemeResource CardStrokeColorDefault}">
+                    <StackPanel Spacing="15">
+                        <TextBlock 
+                            Text="3 Đơn Hàng Gần Nhất" 
+                            FontSize="16" 
+                            FontWeight="Bold"/>
+                        <ItemsControl ItemsSource="{Binding DashboardData.RecentOrders}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border 
+                                        Background="{ThemeResource CardBackgroundFillColorSecondary}" 
+                                        CornerRadius="4" 
+                                        Padding="15" 
+                                        Margin="0,8">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="140"/>
+                                                <ColumnDefinition Width="100"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Spacing="3">
+                                                <TextBlock 
+                                                    Text="Mã ĐH" 
+                                                    FontSize="11" 
+                                                    Foreground="{ThemeResource TextFillColorTertiary}"/>
+                                                <TextBlock 
+                                                    Text="{Binding OrderNumber}" 
+                                                    FontWeight="Bold" 
+                                                    TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Spacing="3" Margin="20,0,0,0">
+                                                <TextBlock 
+                                                    Text="Ngày Tạo" 
+                                                    FontSize="11" 
+                                                    Foreground="{ThemeResource TextFillColorTertiary}"/>
+                                                <TextBlock 
+                                                    Text="{Binding CreatedDate}" 
+                                                    FontWeight="Bold"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Spacing="3">
+                                                <TextBlock 
+                                                    Text="Tổng Tiền" 
+                                                    FontSize="11" 
+                                                    Foreground="{ThemeResource TextFillColorTertiary}"/>
+                                                <TextBlock 
+                                                    Text="{Binding TotalAmount}" 
+                                                    FontWeight="Bold" 
+                                                    Foreground="#0078D4"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                                                <TextBlock 
+                                                    Text="{Binding Status}" 
+                                                    TextAlignment="Center" 
+                                                    FontSize="12" 
+                                                    FontWeight="Bold"
+                                                    Foreground="#107C10"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- Revenue Chart -->
+                <Border 
+                    Background="{ThemeResource CardBackgroundFillColorDefault}" 
+                    CornerRadius="8" 
+                    Padding="20"
+                    BorderThickness="1"
+                    BorderBrush="{ThemeResource CardStrokeColorDefault}">
+                    <StackPanel Spacing="15">
+                        <TextBlock 
+                            Text="Doanh Thu Theo Ngày" 
+                            FontSize="16" 
+                            FontWeight="Bold"/>
+                        <local:RevenueChart DataSource="{Binding DashboardData.DailyRevenue}" Height="300"/>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
     <Page.Resources>
         <Style x:Key="StatCardStyle" TargetType="Border">
             <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}"/>
