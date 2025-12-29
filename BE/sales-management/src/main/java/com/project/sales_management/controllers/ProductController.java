@@ -82,6 +82,17 @@ public class ProductController {
                         .build()
         );
     }
+    @PostMapping("/import")
+    public ResponseEntity<ApiResponse<?>> importProducts(@RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        // Implementation goes here
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .success(true)
+                        .message("Products imported successfully")
+                        .data(productService.importProducts(file))
+                        .build()
+        );
+    }
 
     @PostMapping("/{productId}/images")
     public ResponseEntity<ApiResponse<?>> uploadProductImage(@PathVariable Long productId,@RequestParam("file") MultipartFile file) throws IOException {
@@ -138,5 +149,4 @@ public class ProductController {
                         .build()
         );
     }
-
 }
