@@ -38,7 +38,7 @@ public class Promotion {
     @Column(name = "min_order_value")
     Double minOrderValue;
 
-    @Column(name = "max_discount_amount")
+    @Column(name = "max_discount_value")
     Double maxDiscountValue;
 
     @Column(name = "start_date", nullable = false)
