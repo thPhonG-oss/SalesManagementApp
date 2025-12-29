@@ -1,6 +1,7 @@
 ﻿// FE/SalesManagement.WinUI/ViewModels/SettingsViewModel.cs
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
 using System.Collections.ObjectModel;
@@ -96,6 +97,9 @@ namespace SalesManagement.WinUI.ViewModels
 
                 await _storageService.SaveAppSettingsAsync(settings);
 
+                // ⭐ ÁP DỤNG THEME NGAY LẬP TỨC
+                ApplyTheme(SelectedTheme);
+
                 _originalSettings = settings;
                 HasChanges = false;
                 StatusMessage = "✅ Đã lưu cấu hình thành công!";
@@ -116,6 +120,9 @@ namespace SalesManagement.WinUI.ViewModels
             {
                 await _storageService.ResetAppSettingsAsync();
                 await LoadSettingsAsync();
+
+                // ⭐ ÁP DỤNG THEME MẶC ĐỊNH
+                ApplyTheme(SelectedTheme);
 
                 StatusMessage = "✅ Đã khôi phục cấu hình mặc định!";
                 await Task.Delay(2000);
@@ -159,6 +166,29 @@ namespace SalesManagement.WinUI.ViewModels
             HasChanges = SelectedPageSize != _originalSettings.ItemsPerPage
                       || RememberLastScreen != _originalSettings.RememberLastScreen
                       || SelectedTheme != _originalSettings.Theme;
+        }
+
+        // ⭐⭐⭐ HÀM ÁP DỤNG THEME - QUAN TRỌNG ⭐⭐⭐
+        private void ApplyTheme(string theme)
+        {
+            try
+            {
+                if (App.MainWindow?.Content is FrameworkElement rootElement)
+                {
+                    rootElement.RequestedTheme = theme switch
+                    {
+                        "Dark" => ElementTheme.Dark,
+                        "Light" => ElementTheme.Light,
+                        _ => ElementTheme.Default
+                    };
+
+                    System.Diagnostics.Debug.WriteLine($"✅ Theme applied: {theme}");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ Error applying theme: {ex.Message}");
+            }
         }
     }
 }
