@@ -58,6 +58,9 @@ public partial class App : Application
         services.AddSingleton<IOrderService, MockOrderService>();
         services.AddSingleton<IDialogService, DialogService>();
 
+        // ⭐ THÊM MỚI - Settings
+        services.AddTransient<SettingsViewModel>();
+
         // ⭐ CATEGORY
         services.AddSingleton<ICategoryService, CategoryService>();
 
