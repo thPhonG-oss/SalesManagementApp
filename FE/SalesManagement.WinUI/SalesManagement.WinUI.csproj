@@ -26,6 +26,7 @@
 		<None Remove="Views\OrderPage.xaml" />
 		<None Remove="Views\ProductPage.xaml" />
 		<None Remove="Views\ReportPage.xaml" />
+		<None Remove="Views\RevenueChart.xaml" />
 		<None Remove="Views\UpdateProductPage.xaml" />
 	</ItemGroup>
 
@@ -66,10 +67,15 @@
 	<ItemGroup>
 		<Folder Include="Behaviors\" />
 		<Folder Include="Helpers\" />
-		<Folder Include="Converters\" />
 		<Folder Include="Config\" />
 		<Folder Include="Resources\Images\" />
 		<Folder Include="Resources\Styles\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\RevenueChart.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>
