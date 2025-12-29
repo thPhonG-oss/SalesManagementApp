@@ -19,12 +19,13 @@ import com.project.sales_management.models.*;
 import com.project.sales_management.repositories.OrderRepository;
 import com.project.sales_management.repositories.PromotionRepository;
 import com.project.sales_management.services.OrderService;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +37,7 @@ import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -122,11 +124,36 @@ public class OrderServiceImpl implements OrderService {
     
 
     @Override
-    public Page<OrderResponse> getAllOrders(Integer pageNumber, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("orderDate").descending());
-        Page<Order> orderPage = orderRepository.findAll(pageable);
+    public Page<OrderResponse> getAllOrders(Integer pageNumber, Integer pageSize,
+                                            OrderStatus status, LocalDateTime fromDate, LocalDateTime toDate) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending());
+
+        // Build Specification dynamically
+        Specification<Order> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Filter by status
+            if (status != null) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), status));
+            }
+
+            // Filter by fromDate (createdAt >= fromDate)
+            if (fromDate != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("orderDate"), fromDate));
+            }
+
+            // Filter by toDate (createdAt <= toDate)
+            if (toDate != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("orderDate"), toDate));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<Order> orderPage = orderRepository.findAll(spec, pageable);
         return orderPage.map(orderMapper::toOrderResponse);
     }
+
 
     @Override
     public OrderResponse getOrderById(Long orderId) {
