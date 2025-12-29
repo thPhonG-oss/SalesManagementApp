@@ -57,6 +57,7 @@ public partial class App : Application
         services.AddSingleton<ILoadingService, LoadingService>();
         services.AddSingleton<IOrderService, MockOrderService>();
         services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IReportService, ReportService>();
 
         
         
@@ -70,6 +71,8 @@ public partial class App : Application
         services.AddTransient<OrderViewModel>();
        
 
+
+        services.AddTransient<ReportViewModel>();
         // ⭐ PRODUCT
         services.AddSingleton<IProductService, ProductService>();
         services.AddTransient<ProductViewModel>();
