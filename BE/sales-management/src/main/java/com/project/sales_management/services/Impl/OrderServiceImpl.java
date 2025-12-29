@@ -52,15 +52,33 @@ public class OrderServiceImpl implements OrderService {
     ProductRepository productRepository;
     OrderItemRepository orderItemRepository;
     CustomerService customerService;
-
+    @Transactional
     @Override
     public OrderResponse createOrder(OrderRequest orderRequest) {
         Order order = orderMapper.toOrder(orderRequest);
         Customer customer=customerRepository.findByEmail(orderRequest.getEmail()).orElseThrow(()->new AppException(ErrorCode.CUSTOMER_NOT_EXIST));
         order.setCustomer(customer);
-        order.setPromotion(promotionRepository.findById(orderRequest.getPromotionId())
-                .orElseThrow(() -> new AppException(ErrorCode.PROMOTION_NOT_EXIST)));
+        Promotion promotion=promotionRepository.findById(orderRequest.getPromotionId())
+                .orElseThrow(() -> new AppException(ErrorCode.PROMOTION_NOT_EXIST));
+        order.setPromotion(promotion);
         order.setOrderCode(generateOrderCode());
+        double orderSubTotal = 0.0;
+
+        for (OrderItemRequest i : orderRequest.getOrderItems()) {
+            Product product = productRepository.findById(i.getProductId())
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXIST));
+            if(product.getIsDiscounted()==false){
+                orderSubTotal += product.getPrice() * i.getQuantity();
+            }else{
+                orderSubTotal+=product.getSpecialPrice()*i.getQuantity();
+            }
+
+        }
+
+        if (orderSubTotal < promotion.getMinOrderValue() ) {
+            throw new AppException(ErrorCode.DISCOUNT_NOT_SUITABLE);
+        }
+
         order.setSubTotal(0.0);
         order.setDiscountAmount(0.0);
         order.setTotalAmount(0.0);
@@ -89,11 +107,14 @@ public class OrderServiceImpl implements OrderService {
             i.setTotalPrice(totalPrice);
             i.setDiscount(discount);
             i.setUnitPrice(unitPrice);
+
             OrderItem orderItem = orderItemService.createOrderItem(i, newOrder);
             orderItem.setOrder(newOrder);
             newOrder.getOrderItems().add(orderItem);
         });
         recalculateOrderTotals(newOrder);
+        promotion.setUsedCount(promotion.getUsedCount()+1);
+        promotionRepository.save(promotion);
         return orderMapper.toOrderResponse(newOrder);
     }
     public String generateOrderCode() {
@@ -175,7 +196,7 @@ public class OrderServiceImpl implements OrderService {
                 discountAmount = promotion.getDiscountValue();
             }
         }
-        System.out.println(">>> Discount Amount = " + discountAmount+"           "+promotion.getDiscountType());
+
 
         double totalAmount = subtotal - discountAmount;
 
