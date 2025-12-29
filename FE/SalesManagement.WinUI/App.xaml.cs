@@ -98,7 +98,7 @@ public partial class App : Application
         navService.SetFrame(rootFrame);
 
         // Mở trang Login
-        navService.NavigateTo(typeof(MainPage));
+        navService.NavigateTo(typeof(LoginPage));
     }
 
 }
