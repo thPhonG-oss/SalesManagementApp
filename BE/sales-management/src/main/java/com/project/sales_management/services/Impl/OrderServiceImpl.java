@@ -167,7 +167,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() ->new AppException(ErrorCode.ORDER_NOT_FOUND));
 
-        // Chỉ cho phép update order có status
+
         if (order.getStatus() != OrderStatus.CREATED && order.getStatus() != OrderStatus.PAID) {
             throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
         }
