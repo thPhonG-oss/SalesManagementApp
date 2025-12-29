@@ -57,6 +57,7 @@ public partial class App : Application
         services.AddSingleton<ILoadingService, LoadingService>();
         services.AddSingleton<IOrderService, MockOrderService>();
         services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IReportService, ReportService>();
 
         // ⭐ CATEGORY
         services.AddSingleton<ICategoryService, CategoryService>();
@@ -65,7 +66,7 @@ public partial class App : Application
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainViewModel>();
         services.AddTransient<OrderViewModel>();
-
+        services.AddTransient<ReportViewModel>();
         // ⭐ PRODUCT
         services.AddSingleton<IProductService, ProductService>();
         services.AddTransient<ProductViewModel>();
@@ -98,7 +99,7 @@ public partial class App : Application
         navService.SetFrame(rootFrame);
 
         // Mở trang Login
-        navService.NavigateTo(typeof(MainPage));
+        navService.NavigateTo(typeof(LoginPage));
     }
 
 }
