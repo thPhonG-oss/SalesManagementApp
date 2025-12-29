@@ -1,4 +1,7 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿// FE/SalesManagement.WinUI/ViewModels/ProductViewModel.cs
+// Cập nhật để sử dụng Settings
+
+using CommunityToolkit.Mvvm.Input;
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
 using System.Collections.ObjectModel;
@@ -10,8 +13,9 @@ namespace SalesManagement.WinUI.ViewModels
         private readonly ICategoryService _categoryService;
         private readonly IProductService _productService;
         private readonly INavigationService _navigationService;
+        private readonly IStorageService _storageService; // ⭐ THÊM MỚI
 
-        // ================= CATEGORY =================
+        // ===== CATEGORY =====
         public ObservableCollection<Category> Categories { get; } = new();
 
         private Category? _selectedCategory;
@@ -28,8 +32,8 @@ namespace SalesManagement.WinUI.ViewModels
             }
         }
 
-        // ================= PRICE FILTER =================
-        private string? _selectedPriceFilter = "0-999999999";   // default "Tất cả"
+        // ===== PRICE FILTER =====
+        private string? _selectedPriceFilter = "0-999999999";
         public string? SelectedPriceFilter
         {
             get => _selectedPriceFilter;
@@ -43,11 +47,11 @@ namespace SalesManagement.WinUI.ViewModels
             }
         }
 
-        // ================= PRODUCT =================
+        // ===== PRODUCT =====
         private readonly ObservableCollection<Product> _allProducts = new();
         public ObservableCollection<Product> Products { get; } = new();
 
-        // ================= SEARCH =================
+        // ===== SEARCH =====
         private string _searchText = string.Empty;
         public string SearchText
         {
@@ -62,7 +66,7 @@ namespace SalesManagement.WinUI.ViewModels
             }
         }
 
-        // ================= PAGINATION =================
+        // ===== PAGINATION =====
         private int _page = 1;
         public int Page
         {
@@ -90,22 +94,30 @@ namespace SalesManagement.WinUI.ViewModels
             }
         }
 
-        private const int _pageSize = 20;
+        // ⭐ THÊM MỚI - Dynamic Page Size
+        private int _pageSize = 20;
+        public int PageSize
+        {
+            get => _pageSize;
+            set => SetProperty(ref _pageSize, value);
+        }
 
-        // ================= COMMAND =================
+        // ===== COMMAND =====
         public RelayCommand NextPageCommand { get; }
         public RelayCommand PrevPageCommand { get; }
         public RelayCommand OpenAddProductCommand { get; }
 
-        // ================= CTOR =================
+        // ===== CTOR =====
         public ProductViewModel(
             ICategoryService categoryService,
             IProductService productService,
-            INavigationService navigationService)
+            INavigationService navigationService,
+            IStorageService storageService) // ⭐ INJECT MỚI
         {
             _categoryService = categoryService;
             _productService = productService;
             _navigationService = navigationService;
+            _storageService = storageService; // ⭐ LƯU
 
             PrevPageCommand = new RelayCommand(
                 () => Page--,
@@ -117,17 +129,28 @@ namespace SalesManagement.WinUI.ViewModels
 
             OpenAddProductCommand = new RelayCommand(OpenAddProduct);
 
-            _ = LoadCategoriesAsync();
-            _ = LoadProductsAsync();
+            _ = InitializeAsync(); // ⭐ THAY THẾ
         }
 
-        // ================= OPEN ADD PRODUCT PAGE =================
+        // ⭐ THÊM MỚI - Initialize với Settings
+        private async Task InitializeAsync()
+        {
+            // Load settings trước
+            var settings = await _storageService.GetAppSettingsAsync();
+            PageSize = settings.ItemsPerPage;
+
+            // Sau đó load data
+            await LoadCategoriesAsync();
+            await LoadProductsAsync();
+        }
+
+        // ===== OPEN ADD PRODUCT PAGE =====
         private void OpenAddProduct()
         {
             _navigationService.NavigateTo(typeof(Views.AddProductPage));
         }
 
-        // ================= LOAD CATEGORY =================
+        // ===== LOAD CATEGORY =====
         private async Task LoadCategoriesAsync()
         {
             var data = await _categoryService.GetAllAsync();
@@ -147,7 +170,7 @@ namespace SalesManagement.WinUI.ViewModels
             SelectedCategory = Categories.First();
         }
 
-        // ================= LOAD PRODUCT (1 LẦN) =================
+        // ===== LOAD PRODUCT =====
         private async Task LoadProductsAsync()
         {
             var result = await _productService.GetProductsAsync();
@@ -167,22 +190,22 @@ namespace SalesManagement.WinUI.ViewModels
             ApplyFilterAndPaging();
         }
 
-        // ================= FILTER + PAGING =================
+        // ===== FILTER + PAGING =====
         private void ApplyFilterAndPaging()
         {
             IEnumerable<Product> query = _allProducts;
 
-            // ===== FILTER BY CATEGORY =====
+            // Filter by category
             if (SelectedCategory != null && SelectedCategory.CategoryId != -1)
                 query = query.Where(p => p.Category?.CategoryId == SelectedCategory.CategoryId);
 
-            // ===== FILTER BY SEARCH TEXT =====
+            // Filter by search
             if (!string.IsNullOrWhiteSpace(SearchText))
                 query = query.Where(p =>
                     p.ProductName != null &&
                     p.ProductName.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
 
-            // ===== FILTER BY PRICE RANGE =====
+            // Filter by price
             if (!string.IsNullOrEmpty(SelectedPriceFilter))
             {
                 var parts = SelectedPriceFilter.Split('-');
@@ -194,17 +217,17 @@ namespace SalesManagement.WinUI.ViewModels
                 }
             }
 
-            // ===== PAGING =====
+            // ⭐ SỬ DỤNG PageSize ĐỘNG
             var count = query.Count();
-            TotalPages = Math.Max(1, (int)Math.Ceiling(count / (double)_pageSize));
+            TotalPages = Math.Max(1, (int)Math.Ceiling(count / (double)PageSize));
 
             if (Page > TotalPages)
                 Page = 1;
 
             Products.Clear();
             foreach (var item in query
-                .Skip((Page - 1) * _pageSize)
-                .Take(_pageSize))
+                .Skip((Page - 1) * PageSize)
+                .Take(PageSize))
                 Products.Add(item);
         }
 
