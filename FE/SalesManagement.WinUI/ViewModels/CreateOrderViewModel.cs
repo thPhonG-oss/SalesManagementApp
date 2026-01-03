@@ -231,6 +231,24 @@ namespace SalesManagement.WinUI.ViewModels
 
         }
 
+        public void ResetData()
+        {
+            // 1. Xóa danh sách sản phẩm
+            Items.Clear();
+            AddRow(); // Thêm lại 1 dòng trống mặc định
+
+            // 2. Xóa thông tin nhập liệu
+            CustomerEmail = string.Empty;
+            ShipAddress = string.Empty;
+            Note = string.Empty;
+
+            // 3. Reset Voucher & Tiền
+            SelectedPromotion = null;
+            SubTotalAmount = 0;
+            DiscountAmount = 0;
+            TotalAmount = 0;
+        }
+
         [RelayCommand]
         private void AddRow()
         {

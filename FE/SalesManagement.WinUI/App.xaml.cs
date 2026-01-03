@@ -85,9 +85,14 @@ public partial class App : Application
 
 
         services.AddTransient<ReportViewModel>();
+        services.AddSingleton<CreateOrderViewModel>();
+
+        services.AddTransient<ProductViewModel>();
         // ⭐ PRODUCT
         services.AddSingleton<IProductService, ProductService>();
         services.AddTransient<ProductViewModel>();
+
+        
 
         // ⭐ THÊM MỚI - Settings
         services.AddTransient<SettingsViewModel>();

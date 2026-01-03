@@ -63,12 +63,15 @@ namespace SalesManagement.WinUI.Services
             await dialog.ShowAsync();
         }
 
-        public async Task<bool> ShowCreateOrderDialogAsync()
+        public async Task<bool> ShowCreateOrderDialogAsync(CreateOrderViewModel viewModel)
         {
-            if (_xamlRoot == null) return false;
-
             var dialog = new CreateOrderDialog();
-            dialog.XamlRoot = _xamlRoot;
+
+            // Gán Singleton ViewModel vào Dialog
+            dialog.ViewModel = viewModel;
+
+            // Thiết lập XamlRoot (Bắt buộc với WinUI 3)
+            dialog.XamlRoot = App.MainWindow.Content.XamlRoot;
 
             var result = await dialog.ShowAsync();
             return result == ContentDialogResult.Primary;
