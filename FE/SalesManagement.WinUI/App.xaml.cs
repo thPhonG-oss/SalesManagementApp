@@ -62,9 +62,11 @@ public partial class App : Application
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IReportService, ReportService>();
         services.AddTransient<IPromotionService, PromotionService>();
+        services.AddSingleton<ICategoryService, CategoryService>();
+        services.AddSingleton<ICustomerService, CustomerService>();
+        services.AddTransient<CustomerViewModel>();
 
-        
-        
+
 
         services.AddTransient<IApiService>(sp =>
     new ApiService(
@@ -81,6 +83,7 @@ public partial class App : Application
         services.AddTransient<MainViewModel>();
         services.AddTransient<OrderViewModel>();
         services.AddSingleton<DashboardViewModel>();
+       
        
 
 
@@ -101,6 +104,7 @@ public partial class App : Application
         services.AddTransient<LoginPage>();
         services.AddTransient<MainPage>();
         services.AddTransient<DashboardPage>();
+        services.AddTransient<CustomerPage>();
 
 
         // ⭐ PRODUCT PAGE
@@ -109,6 +113,7 @@ public partial class App : Application
         services.AddTransient<AddProductPage>();
 
         services.AddTransient<AddProductViewModel>();
+
 
         // ⭐ THÊM DÒNG NÀY
         services.AddTransient<SettingsPage>();
