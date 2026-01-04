@@ -101,52 +101,51 @@ public class ProductService : IProductService
 
     public async Task<bool> UploadImageAsync(int productId, StorageFile file)
     {
-        var token = _authService.GetAccessToken();
-        if (!string.IsNullOrEmpty(token))
-        {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
-        }
-
         try
         {
-            // Đọc stream của file ảnh
+            var token = _authService.GetAccessToken();
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+
             using var stream = await file.OpenStreamForReadAsync();
 
-            // Tạo form-data body
-            using var content = new MultipartFormDataContent();
+            using var form = new MultipartFormDataContent();
+
             var fileContent = new StreamContent(stream);
+            fileContent.Headers.ContentType =
+                new MediaTypeHeaderValue(GetMimeType(file.FileType));
 
-            // Thiết lập header loại ảnh — tự động nhận diện
-            fileContent.Headers.ContentType = new MediaTypeHeaderValue(GetMimeType(file.FileType));
+            // ⚠️ "file" PHẢI TRÙNG với @RequestParam("file") bên BE
+            form.Add(fileContent, "file", file.Name);
 
-            // ⚠️ "file" là tên field BE yêu cầu, có thể thay nếu backend cần "image" hoặc "upload"
-            content.Add(fileContent, "file", file.Name);
+            var response = await _client.PostAsync(
+                $"/api/v1/products/{productId}/images",
+                form
+            );
 
-            // Gửi POST multipart/form-data
-            var response = await _client.PostAsync($"/api/v1/products/{productId}/images", content);
-
-            Debug.WriteLine($"[UPLOAD IMAGE] {response.StatusCode}");
+            var body = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine(body);
 
             return response.IsSuccessStatusCode;
         }
         catch (Exception ex)
         {
-            Debug.WriteLine("UploadImageAsync error: " + ex.Message);
+            Debug.WriteLine("UploadImageAsync error: " + ex);
             return false;
         }
     }
 
-    private string GetMimeType(string fileExtension)
+
+    private string GetMimeType(string extension)
     {
-        return fileExtension.ToLower() switch
+        return extension.ToLower() switch
         {
             ".jpg" or ".jpeg" => "image/jpeg",
             ".png" => "image/png",
-            ".gif" => "image/gif",
             _ => "application/octet-stream"
         };
     }
+
 
     public async Task<bool> UpdateProductAsync(int productId, Product product)
     {

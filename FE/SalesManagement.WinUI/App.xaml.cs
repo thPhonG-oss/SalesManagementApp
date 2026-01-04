@@ -62,11 +62,13 @@ public partial class App : Application
         // ⭐ CATEGORY
         services.AddSingleton<ICategoryService, CategoryService>();
 
+
         // ================= VIEWMODELS =================
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainViewModel>();
         services.AddTransient<OrderViewModel>();
         services.AddTransient<ReportViewModel>();
+        services.AddTransient<CategoryManagementViewModel>();
         // ⭐ PRODUCT
         services.AddSingleton<IProductService, ProductService>();
         services.AddTransient<ProductViewModel>();
@@ -79,6 +81,7 @@ public partial class App : Application
         services.AddTransient<ProductPage>();
 
         services.AddTransient<AddProductPage>();
+        services.AddTransient<CategoryManagementPage>();
 
         services.AddTransient<AddProductViewModel>();
 
