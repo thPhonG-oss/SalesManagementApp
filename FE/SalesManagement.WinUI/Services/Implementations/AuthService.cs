@@ -52,6 +52,8 @@ public class AuthService : IAuthService
                 return (false, "Invalid response from server", null);
             _currentUser = user;
             _accessToken = user.AccessToken;
+            client.DefaultRequestHeaders.Authorization =
+    new AuthenticationHeaderValue("Bearer", _accessToken);
             return (true, string.Empty, user);
         }
         catch (Exception ex)
@@ -155,4 +157,5 @@ public class AuthService : IAuthService
     {
         return _currentUser != null && !string.IsNullOrEmpty(_accessToken);
     }
+
 }

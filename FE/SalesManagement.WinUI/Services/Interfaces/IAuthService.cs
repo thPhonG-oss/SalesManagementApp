@@ -38,4 +38,5 @@ public interface IAuthService
     /// Checks if user is authenticated
     /// </summary>
     bool IsAuthenticated();
+
 }

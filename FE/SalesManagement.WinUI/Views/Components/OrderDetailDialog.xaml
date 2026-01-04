@@ -7,15 +7,17 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:SalesManagement.WinUI.ViewModels"
     mc:Ignorable="d"
-    Title="{x:Bind OrderVM.DialogTitle, Mode=OneWay, FallbackValue='Chi tiết đơn hàng ORD001'}"
+    Title="{x:Bind OrderVM.DialogTitle, Mode=OneWay, FallbackValue='Chi tiết đơn hàng'}"
+    
     PrimaryButtonText="Đóng"
     DefaultButton="Primary"
-    Style="{StaticResource DefaultContentDialogStyle}"
-
     
-    >
+    SecondaryButtonText="In hóa đơn" 
+    SecondaryButtonCommand="{x:Bind OrderVM.PrintCommand}" 
+    
+    Style="{StaticResource DefaultContentDialogStyle}">
 
-    <ContentDialog.Resources>
+<ContentDialog.Resources>
        
         <Style TargetType="TextBlock" x:Key="LabelStyle">
             <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
