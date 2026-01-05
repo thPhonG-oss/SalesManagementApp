@@ -2,6 +2,7 @@
 // Cập nhật để sử dụng Settings
 
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml.Controls;
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
 using System.Collections.ObjectModel;
@@ -106,6 +107,7 @@ namespace SalesManagement.WinUI.ViewModels
         public RelayCommand NextPageCommand { get; }
         public RelayCommand PrevPageCommand { get; }
         public RelayCommand OpenAddProductCommand { get; }
+        public IAsyncRelayCommand OpenCategoryDialogCommand { get; }
 
         // ===== CTOR =====
         public ProductViewModel(
@@ -128,6 +130,7 @@ namespace SalesManagement.WinUI.ViewModels
                 () => Page < TotalPages);
 
             OpenAddProductCommand = new RelayCommand(OpenAddProduct);
+            OpenCategoryDialogCommand = new AsyncRelayCommand(OpenCategoryDialogAsync);
 
             _ = InitializeAsync(); // ⭐ THAY THẾ
         }
@@ -235,6 +238,37 @@ namespace SalesManagement.WinUI.ViewModels
         {
             PrevPageCommand.NotifyCanExecuteChanged();
             NextPageCommand.NotifyCanExecuteChanged();
+        }
+
+        // ================= OPEN CATEGORY PAGE (POPUP) =================
+        private async Task OpenCategoryDialogAsync()
+        {
+            try
+            {
+                // Tạo dialog chứa Page riêng
+                var dialog = new ContentDialog
+                {
+                    Title = "📂 Quản lý danh mục",
+                    PrimaryButtonText = "Đóng",
+                    IsPrimaryButtonEnabled = true,
+                    DefaultButton = ContentDialogButton.Primary,
+                    XamlRoot = App.MainWindow.Content.XamlRoot,
+                    Content = new Views.CategoryManagementPage()
+                };
+
+                await dialog.ShowAsync();
+            }
+            catch (Exception ex)
+            {
+                var errorDialog = new ContentDialog
+                {
+                    Title = "Lỗi",
+                    Content = $"Không thể mở trang quản lý danh mục: {ex.Message}",
+                    CloseButtonText = "Đóng",
+                    XamlRoot = App.MainWindow.Content.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+            }
         }
     }
 }

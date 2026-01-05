@@ -1,0 +1,64 @@
+<Page
+    x:Class="SalesManagement.WinUI.Views.PromotionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Loading -->
+        <ProgressRing
+            IsActive="{Binding IsLoading}"
+            Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"/>
+
+        <!-- Promotion List -->
+        <ListView
+            Grid.Row="1"
+            ItemsSource="{Binding Promotions}"
+            SelectionMode="Single">
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border
+                        Margin="0,4"
+                        Padding="12"
+                        CornerRadius="8"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                        <StackPanel Spacing="4">
+                            <TextBlock
+                                Text="{Binding PromotionName}"
+                                FontSize="16"
+                                FontWeight="SemiBold"/>
+
+                            <TextBlock
+                                Text="{Binding Description}"
+                                Foreground="{ThemeResource SystemControlForegroundSecondaryBrush}"
+                                TextWrapping="Wrap"/>
+
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock
+                                    Text="{Binding DiscountType}"
+                                    FontWeight="Bold"/>
+
+                                <TextBlock
+                                    Text="{Binding DiscountValue}"/>
+
+                                <TextBlock
+                                    Text="{Binding MinOrderAmount}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

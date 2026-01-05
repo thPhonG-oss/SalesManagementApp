@@ -45,25 +45,37 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- IMAGE -->
+                    <!-- IMAGE SLIDESHOW -->
                     <StackPanel>
-                        <Border Width="260"
-                                Height="360"
-                                CornerRadius="16"
-                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
-                                >
-                            <Image Source="{Binding ImageUrl}"
-                                   Stretch="Uniform"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
-                        </Border>
+                        <FlipView
+                            ItemsSource="{Binding DisplayImages}"
+                            Width="260"
+                            Height="360"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
 
-
-                        <Button Content="Thay đổi ảnh"
-                                Margin="0,12,0,0"
-                                HorizontalAlignment="Center"
-                                Click="ChangeImage_Click"/>
+                            <FlipView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border
+                                        Width="260"
+                                        Height="360"
+                                        CornerRadius="16"
+                                        Background="{ThemeResource SubtleFillColorSecondaryBrush}">
+                                        <Image
+                                            Source="{Binding ImageUrl}"
+                                            Stretch="UniformToFill"/>
+                                    </Border>
+                                </DataTemplate>
+                            </FlipView.ItemTemplate>
+                        </FlipView>
+                        <!-- BUTTON UPLOAD IMAGE -->
+                        <Button
+                            Content="Tải thêm ảnh"
+                            Width="160"
+                            HorizontalAlignment="Center"
+                            Click="UploadImage_Click"/>
                     </StackPanel>
+
 
 
                     <!-- INFO -->
@@ -96,9 +108,21 @@
                                        TextWrapping="Wrap"/>
                         </Border>
 
-                        <TextBlock Text="{Binding StockText}"
-                                   FontSize="13"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <!-- Label -->
+                            <TextBlock
+                                Text="Số lượng tồn kho:"
+                                FontSize="13"
+                                FontWeight="SemiBold"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+
+                            <!-- Value -->
+                            <TextBlock
+                                Text="{Binding StockText}"
+                                FontSize="13"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
+
 
                         <!-- ACTION BUTTONS -->
                         <StackPanel Orientation="Horizontal"

@@ -92,8 +92,48 @@ namespace SalesManagement.WinUI.Models
 
         // ================= UI HELPER =================
 
-        public string ImageUrl { get; set; } =
-            "https://res.cloudinary.com/dznocieoi/image/upload/v1766487761/istockphoto-1396814518-612x612_upvria.jpg";
+        public string ImageUrl
+        {
+            get
+            {
+                const string defaultImage =
+                    "https://res.cloudinary.com/dznocieoi/image/upload/v1766487761/istockphoto-1396814518-612x612_upvria.jpg";
+
+                return Images != null && Images.Count > 0
+                    ? Images[0].ImageUrl
+                    : defaultImage;
+            }
+            set
+            {
+                if (Images != null && Images.Count > 0)
+                {
+                    Images[0].ImageUrl = value;
+                }
+            }
+        }
+
+
+        public IEnumerable<ProductImage> DisplayImages
+        {
+            get
+            {
+                if (Images != null && Images.Any())
+                    return Images;
+
+                return new[]
+                {
+                new ProductImage
+                {
+                    ImageUrl = "https://res.cloudinary.com/dznocieoi/image/upload/v1766487761/istockphoto-1396814518-612x612_upvria.jpg"
+                }
+            };
+            }
+        }
+
+        public void NotifyImagesChanged()
+        {
+            OnPropertyChanged(nameof(DisplayImages));
+        }
 
         public string StockText => $"{StockQuantity}";
 

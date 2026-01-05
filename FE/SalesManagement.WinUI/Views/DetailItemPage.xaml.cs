@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.Windows.Storage.Pickers;
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
 using SalesManagement.WinUI.ViewModels;
 using System.Diagnostics;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 
 
 namespace SalesManagement.WinUI.Views
@@ -33,6 +33,7 @@ namespace SalesManagement.WinUI.Views
                 Product = product;
                 Debug.WriteLine("Danh mục: " + Product.Category?.CategoryName);
                 DataContext = Product;
+                Debug.WriteLine("Đã vào DetailItemPage " + Product.DisplayImages.First());
             }
         }
 
@@ -107,66 +108,86 @@ namespace SalesManagement.WinUI.Views
             }
         }
 
-        private async void ChangeImage_Click(object sender, RoutedEventArgs e)
+        private async void UploadImage_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (DataContext is not Product product)
+                return;
+
+            // ===== PICK FILE =====
+            var picker = new FileOpenPicker();
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+            picker.FileTypeFilter.Add(".png");
+
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+            WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file == null) return;
+
+            // ===== PREVIEW IMAGE =====
+            var bitmap = new Microsoft.UI.Xaml.Media.Imaging.BitmapImage();
+            using (var stream = await file.OpenReadAsync())
             {
-                // 🔹 Tạo FileOpenPicker tương thích WinUI 3
-                var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
-                var picker = new FileOpenPicker(windowId: Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd))
-                {
-                    SuggestedStartLocation = PickerLocationId.PicturesLibrary,
-                    ViewMode = PickerViewMode.Thumbnail
-                };
-
-                picker.FileTypeFilter.Add(".jpg");
-                picker.FileTypeFilter.Add(".jpeg");
-                picker.FileTypeFilter.Add(".png");
-
-                // ⚠️ WinAppSDK 1.5+: trả về PickFileResult, không phải StorageFile
-                var pickResult = await picker.PickSingleFileAsync();
-                if (pickResult == null)
-                    return;
-
-                // ✅ Lấy StorageFile từ PickFileResult
-                var file = await StorageFile.GetFileFromPathAsync(pickResult.Path);
-
-                // ✅ Hiển thị ảnh xem trước
-                using (var stream = await file.OpenAsync(FileAccessMode.Read))
-                {
-                    var bitmap = new BitmapImage();
-                    await bitmap.SetSourceAsync(stream);
-
-                    if (FindName("ProductImage") is Image imageControl)
-                    {
-                        imageControl.Source = bitmap;
-                    }
-                }
-
-                // ✅ Gọi API upload multipart/form-data
-                var productService = App.Services.GetService<IProductService>();
-                if (productService != null && Product != null)
-                {
-                    bool success = await productService.UploadImageAsync(Product.ProductId, file);
-
-                    var dialog = new ContentDialog
-                    {
-                        Title = success ? "Thành công" : "Lỗi",
-                        Content = success
-                            ? "Ảnh sản phẩm đã được cập nhật."
-                            : "Không thể upload ảnh.",
-                        CloseButtonText = "OK",
-                        XamlRoot = this.XamlRoot
-                    };
-                    await dialog.ShowAsync();
-                }
+                await bitmap.SetSourceAsync(stream);
             }
-            catch (Exception ex)
+
+            // ===== CONFIRM DIALOG =====
+            var previewImage = new Image
             {
-                Debug.WriteLine($"ChangeImage_Click error: {ex.Message}");
+                Source = bitmap,
+                Stretch = Stretch.Uniform,
+                Height = 300
+            };
+
+            var dialog = new ContentDialog
+            {
+                Title = "Xác nhận tải ảnh",
+                Content = new StackPanel
+                {
+                    Spacing = 12,
+                    Children =
+            {
+                new TextBlock
+                {
+                    Text = "Bạn có muốn tải ảnh này lên cho sản phẩm không?",
+                    TextWrapping = TextWrapping.Wrap
+                },
+                previewImage
+            }
+                },
+                PrimaryButtonText = "Tải ảnh",
+                CloseButtonText = "Hủy",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = this.XamlRoot
+            };
+
+            var result = await dialog.ShowAsync();
+            if (result != ContentDialogResult.Primary)
+                return;
+
+            // ===== UPLOAD =====
+            var productService = App.Services.GetService<IProductService>();
+            if (productService == null) return;
+
+            bool success = await productService.UploadImageAsync(product.ProductId, file);
+
+            // ===== RESULT =====
+            await new ContentDialog
+            {
+                Title = success ? "Thành công" : "Lỗi",
+                Content = success ? "Upload ảnh thành công!" : "Upload ảnh thất bại!",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            }.ShowAsync();
+
+            // (OPTIONAL) Reload images nếu bạn có API get images
+            // 👉 Sau khi bấm OK
+            if (success && Frame.CanGoBack)
+            {
+                Frame.GoBack(); // quay về trang Product
             }
         }
-
 
 
     }
