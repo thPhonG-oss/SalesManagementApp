@@ -96,6 +96,7 @@ public class PromotionServiceImpl implements PromotionService {
                 .orElseThrow(() -> new RuntimeException("Promotion not found"));
         promotionMapper.mapToPromotion(promotionUpdateRequestDTO);
         promotion.setUpdatedAt(LocalDateTime.now());
+        promotion.setIsActive(true);
         Promotion updatedPromotion = promotionRepository.save(promotion);
         return promotionMapper.toPromotionResponse(updatedPromotion);
     }
