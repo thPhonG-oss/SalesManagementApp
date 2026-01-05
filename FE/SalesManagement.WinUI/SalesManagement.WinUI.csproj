@@ -78,6 +78,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Update="Views\PromotionPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
 		<Page Update="Views\Components\CreateOrderDialog.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>

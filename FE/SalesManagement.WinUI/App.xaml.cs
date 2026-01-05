@@ -63,8 +63,8 @@ public partial class App : Application
         services.AddSingleton<IReportService, ReportService>();
         services.AddTransient<IPromotionService, PromotionService>();
 
-        
-        
+
+
 
         services.AddTransient<IApiService>(sp =>
     new ApiService(
@@ -82,7 +82,8 @@ public partial class App : Application
         services.AddTransient<MainViewModel>();
         services.AddTransient<OrderViewModel>();
         services.AddSingleton<DashboardViewModel>();
-       
+        services.AddTransient<PromotionViewModel>();
+        // ⭐ REPORT
 
 
         services.AddTransient<ReportViewModel>();
@@ -111,6 +112,7 @@ public partial class App : Application
         // ⭐ THÊM DÒNG NÀY
         services.AddTransient<SettingsPage>();
 
+        services.AddTransient<PromotionPage>();
         return services.BuildServiceProvider();
     }
 
@@ -131,7 +133,7 @@ public partial class App : Application
         navService.NavigateTo(typeof(LoginPage));
     }
 
-}   
+}
 
 // Extension method to get services easily
 public static class ServiceProviderExtensions

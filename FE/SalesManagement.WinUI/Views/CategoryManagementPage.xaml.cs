@@ -133,5 +133,44 @@ namespace SalesManagement.WinUI.Views
             }
         }
 
+        private async void DeleteCategory_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement element && element.DataContext is Category category)
+            {
+                var confirmDialog = new ContentDialog
+                {
+                    Title = "Xác nhận xóa",
+                    Content = $"Bạn có chắc chắn muốn xóa danh mục '{category.CategoryName}' không?",
+                    PrimaryButtonText = "Xóa",
+                    CloseButtonText = "Hủy",
+                    XamlRoot = this.XamlRoot
+                };
+                var result = await confirmDialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    bool success = await ViewModel.DeleteCategoryAsync(category.CategoryId);
+                    if (success)
+                    {
+                        await new ContentDialog
+                        {
+                            Title = "Thành công",
+                            Content = "Đã xóa danh mục.",
+                            CloseButtonText = "Đóng",
+                            XamlRoot = this.XamlRoot
+                        }.ShowAsync();
+                    }
+                    else
+                    {
+                        await new ContentDialog
+                        {
+                            Title = "Lỗi",
+                            Content = ViewModel.ErrorMessage ?? "Không thể xóa danh mục.",
+                            CloseButtonText = "Đóng",
+                            XamlRoot = this.XamlRoot
+                        }.ShowAsync();
+                    }
+                }
+            }
+        }
     }
 }

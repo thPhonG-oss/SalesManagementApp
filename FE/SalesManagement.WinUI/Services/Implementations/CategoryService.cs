@@ -110,5 +110,30 @@ namespace SalesManagement.WinUI.Services.Implementations
                 return false;
             }
         }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            try
+            {
+                SetAuthHeader();
+                var response = await _httpClient.DeleteAsync($"/api/categories/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine("[CategoryService] DeleteAsync: Success");
+                    return true;
+                }
+                else
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    Debug.WriteLine($"[CategoryService] DeleteAsync Failed: {response.StatusCode} - {content}");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[CategoryService] DeleteAsync Error: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

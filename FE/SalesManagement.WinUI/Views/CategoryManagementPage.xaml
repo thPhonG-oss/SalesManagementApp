@@ -182,19 +182,16 @@
                                                 </Button>
 
 
-                                                <!-- Nút Xóa -->
                                                 <Button
                                                     Padding="16,0"
                                                     Height="32"
                                                     CornerRadius="6"
                                                     Background="#FFE53935"
                                                     Foreground="White"
-                                                    Command="{Binding DataContext.DeleteCategoryCommand, ElementName=PageRoot}"
-                                                    CommandParameter="{Binding}">
-                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                        <TextBlock Text="Xóa"/>
-                                                    </StackPanel>
+                                                    Click="DeleteCategory_Click">
+                                                    <TextBlock Text="Xóa"/>
                                                 </Button>
+
 
                                             </StackPanel>
 

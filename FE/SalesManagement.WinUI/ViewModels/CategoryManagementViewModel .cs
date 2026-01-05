@@ -164,5 +164,35 @@ namespace SalesManagement.WinUI.ViewModels
             }
         }
 
+        public async Task<bool> DeleteCategoryAsync(int id)
+        {
+            try
+            {
+                IsLoading = true;
+                ErrorMessage = string.Empty;
+                var result = await _categoryService.DeleteAsync(id);
+                if (result)
+                {
+                    Debug.WriteLine("[CategoryManagementViewModel] Delete Success → Reload list");
+                    await LoadCategoriesAsync();
+                    return true;
+                }
+                else
+                {
+                    ErrorMessage = "Không thể xóa danh mục.";
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Lỗi khi xóa: {ex.Message}";
+                Debug.WriteLine($"[CategoryManagementViewModel] DeleteCategoryAsync Error: {ex.Message}");
+                return false;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
     }
 }

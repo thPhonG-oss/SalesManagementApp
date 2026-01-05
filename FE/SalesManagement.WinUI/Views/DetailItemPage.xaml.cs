@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
@@ -112,6 +113,7 @@ namespace SalesManagement.WinUI.Views
             if (DataContext is not Product product)
                 return;
 
+            // ===== PICK FILE =====
             var picker = new FileOpenPicker();
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
@@ -123,16 +125,68 @@ namespace SalesManagement.WinUI.Views
             StorageFile file = await picker.PickSingleFileAsync();
             if (file == null) return;
 
+            // ===== PREVIEW IMAGE =====
+            var bitmap = new Microsoft.UI.Xaml.Media.Imaging.BitmapImage();
+            using (var stream = await file.OpenReadAsync())
+            {
+                await bitmap.SetSourceAsync(stream);
+            }
+
+            // ===== CONFIRM DIALOG =====
+            var previewImage = new Image
+            {
+                Source = bitmap,
+                Stretch = Stretch.Uniform,
+                Height = 300
+            };
+
+            var dialog = new ContentDialog
+            {
+                Title = "Xác nhận tải ảnh",
+                Content = new StackPanel
+                {
+                    Spacing = 12,
+                    Children =
+            {
+                new TextBlock
+                {
+                    Text = "Bạn có muốn tải ảnh này lên cho sản phẩm không?",
+                    TextWrapping = TextWrapping.Wrap
+                },
+                previewImage
+            }
+                },
+                PrimaryButtonText = "Tải ảnh",
+                CloseButtonText = "Hủy",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = this.XamlRoot
+            };
+
+            var result = await dialog.ShowAsync();
+            if (result != ContentDialogResult.Primary)
+                return;
+
+            // ===== UPLOAD =====
             var productService = App.Services.GetService<IProductService>();
+            if (productService == null) return;
+
             bool success = await productService.UploadImageAsync(product.ProductId, file);
 
+            // ===== RESULT =====
             await new ContentDialog
             {
                 Title = success ? "Thành công" : "Lỗi",
-                Content = success ? "Upload ảnh thành công" : "Upload ảnh thất bại",
+                Content = success ? "Upload ảnh thành công!" : "Upload ảnh thất bại!",
                 CloseButtonText = "OK",
                 XamlRoot = this.XamlRoot
             }.ShowAsync();
+
+            // (OPTIONAL) Reload images nếu bạn có API get images
+            // 👉 Sau khi bấm OK
+            if (success && Frame.CanGoBack)
+            {
+                Frame.GoBack(); // quay về trang Product
+            }
         }
 
 
