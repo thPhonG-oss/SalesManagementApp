@@ -44,7 +44,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponse updateCategory(CategoryRequest categoryRequest,Long id) {
         Category category=categoryRepository.findById(id).orElseThrow(()-> new AppException(ErrorCode.CATEGORY_NOT_EXIST));
-        if (categoryRepository.existsByCategoryName(categoryRequest.getCategoryName()) && categoryRepository.findByCategoryName(categoryRequest.getCategoryName()).getIsActive()==true)
+        if (categoryRepository.existsByCategoryName(categoryRequest.getCategoryName()) &&
+                categoryRepository.findByCategoryName(categoryRequest.getCategoryName()).getIsActive()==true
+                && categoryRequest.getDescription().equals(category.getDescription()))
             throw new AppException(ErrorCode.CATEGORY_EXISTED);
         categoryMapper.updateCategoryFromRequest(categoryRequest,category);
         return categoryMapper.toCategoryResponse(categoryRepository.save(category));
