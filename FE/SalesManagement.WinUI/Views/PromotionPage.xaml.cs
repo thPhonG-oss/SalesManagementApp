@@ -1,3 +1,4 @@
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SalesManagement.WinUI.ViewModels;
@@ -6,13 +7,17 @@ namespace SalesManagement.WinUI.Views
 {
     public sealed partial class PromotionPage : Page
     {
+        private readonly INavigationService _navigationService;
         public PromotionViewModel ViewModel { get; }
 
-        public PromotionPage(PromotionViewModel viewModel)
+        public PromotionPage()
         {
             InitializeComponent();
-            ViewModel = viewModel;
+
+            ViewModel = App.Services.GetRequiredService<PromotionViewModel>();
             DataContext = ViewModel;
+
+            _navigationService = App.Services.GetRequiredService<INavigationService>();
 
             Loaded += PromotionsPage_Loaded;
         }
@@ -20,6 +25,11 @@ namespace SalesManagement.WinUI.Views
         private async void PromotionsPage_Loaded(object sender, RoutedEventArgs e)
         {
             await ViewModel.LoadPromotionsAsync();
+        }
+
+        private void AddButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AddPromotionPage));
         }
     }
 }

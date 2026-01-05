@@ -16,6 +16,7 @@
 
 	<ItemGroup>
 		<None Remove="appsettings.json" />
+		<None Remove="Views\AddPromotionPage.xaml" />
 		<None Remove="Views\CategoryManagementPage.xaml" />
 		<None Remove="Views\Components\CreateOrderDialog.xaml" />
 		<None Remove="Views\AddProductPage.xaml" />
@@ -75,6 +76,12 @@
 		<Folder Include="Config\" />
 		<Folder Include="Resources\Images\" />
 		<Folder Include="Resources\Styles\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\AddPromotionPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>
