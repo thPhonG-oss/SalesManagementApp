@@ -36,6 +36,7 @@ public class PromotionServiceImpl implements PromotionService {
 
         promotion.setPromotionCode(generateUniquePromotionCode());
         promotion.setCreatedAt(LocalDateTime.now());
+        promotion.setIsActive(true);
 
         Promotion savedPromotion = promotionRepository.save(promotion);
         return promotionMapper.toPromotionResponse(savedPromotion);
