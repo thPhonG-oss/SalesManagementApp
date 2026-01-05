@@ -60,7 +60,7 @@ namespace SalesManagement.WinUI.Models
             get
             {
                 return DiscountType.ToLower() == "percentage"
-                    ? $"{DiscountPercentage}%"
+                    ? $"{DiscountValue}%"
                     : DiscountValue.ToString("C2");
             }
         }

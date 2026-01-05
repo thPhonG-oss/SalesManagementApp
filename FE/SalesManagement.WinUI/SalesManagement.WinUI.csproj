@@ -31,6 +31,7 @@
 		<None Remove="Views\RevenueChart.xaml" />
 		<None Remove="Views\SettingsPage.xaml" />
 		<None Remove="Views\UpdateProductPage.xaml" />
+		<None Remove="Views\UpdatePromotionPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -76,6 +77,12 @@
 		<Folder Include="Config\" />
 		<Folder Include="Resources\Images\" />
 		<Folder Include="Resources\Styles\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\UpdatePromotionPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

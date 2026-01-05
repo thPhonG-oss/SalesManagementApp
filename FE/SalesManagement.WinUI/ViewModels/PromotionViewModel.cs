@@ -34,7 +34,8 @@ namespace SalesManagement.WinUI.ViewModels
             foreach (var promo in promotions)
             {
                 Promotions.Add(promo);
-                Debug.WriteLine(promo.statusBool);
+                Debug.WriteLine(promo.DiscountValue);
+                Debug.WriteLine(promo.FormattedDiscount);
 
             }
 

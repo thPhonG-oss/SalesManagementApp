@@ -202,7 +202,8 @@
                                         Content="Sửa"
                                         Width="130"
                                         Padding="10,4"
-                                        CornerRadius="6" />
+                                        CornerRadius="6"
+                                        Click="EditPromotion_Click"/>
 
                                     <Button
                                         x:Name="CancelBtn"
@@ -306,7 +307,8 @@
                                         Content="Sửa"
                                         HorizontalAlignment="Stretch"
                                         Padding="8,4"
-                                        CornerRadius="6" />
+                                        CornerRadius="6"
+                                        Click="EditPromotion_Click"/>
 
                                     <Button
                                         Grid.Column="1"

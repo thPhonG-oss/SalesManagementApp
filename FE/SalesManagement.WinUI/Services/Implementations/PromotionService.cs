@@ -229,5 +229,38 @@ namespace SalesManagement.WinUI.Services.Implementations
             }
         }
 
+        public async Task<bool> UpdatePromotionAsync(long promotionId, UpdatePromotionRequest request)
+        {
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            try
+            {
+                var json = JsonSerializer.Serialize(request);
+                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                var response = await _client.PutAsync($"/api/v1/promotions/{promotionId}", content);
+                var raw = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine($"[UPDATE PROMOTION ERROR] {response.StatusCode} - {raw}");
+                    return false;
+                }
+
+                Debug.WriteLine("[UPDATE PROMOTION] Success");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[UPDATE PROMOTION EXCEPTION] {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }

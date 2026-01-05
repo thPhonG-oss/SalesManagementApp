@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.ViewModels;
 
 namespace SalesManagement.WinUI.Views
@@ -30,6 +31,15 @@ namespace SalesManagement.WinUI.Views
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(AddPromotionPage));
+        }
+
+        private void EditPromotion_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button &&
+                button.DataContext is PromotionResponse promotion)
+            {
+                Frame.Navigate(typeof(UpdatePromotionPage), promotion);
+            }
         }
     }
 }
