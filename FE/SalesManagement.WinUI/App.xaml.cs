@@ -44,6 +44,9 @@ public partial class App : Application
             client.BaseAddress = new Uri(baseUrl);
             client.Timeout = TimeSpan.FromSeconds(30);
         })
+
+
+
         .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
         {
             UseCookies = true,
@@ -55,12 +58,20 @@ public partial class App : Application
         services.AddSingleton<IStorageService, StorageService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ILoadingService, LoadingService>();
-        services.AddSingleton<IOrderService, MockOrderService>();
+        services.AddSingleton<IOrderService, OrderService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IReportService, ReportService>();
+        services.AddTransient<IPromotionService, PromotionService>();
 
         
         
+
+        services.AddTransient<IApiService>(sp =>
+    new ApiService(
+        sp.GetRequiredService<IHttpClientFactory>(),
+        sp.GetRequiredService<IAuthService>()
+    )
+);
 
         // ⭐ CATEGORY
         services.AddSingleton<ICategoryService, CategoryService>();
@@ -69,6 +80,7 @@ public partial class App : Application
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainViewModel>();
         services.AddTransient<OrderViewModel>();
+        services.AddSingleton<DashboardViewModel>();
        
 
 
@@ -83,6 +95,8 @@ public partial class App : Application
         // ================= VIEWS =================
         services.AddTransient<LoginPage>();
         services.AddTransient<MainPage>();
+        services.AddTransient<DashboardPage>();
+
 
         // ⭐ PRODUCT PAGE
         services.AddTransient<ProductPage>();
@@ -114,7 +128,7 @@ public partial class App : Application
         navService.NavigateTo(typeof(LoginPage));
     }
 
-}
+}   
 
 // Extension method to get services easily
 public static class ServiceProviderExtensions

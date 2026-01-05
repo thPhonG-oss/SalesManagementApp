@@ -22,7 +22,7 @@ public class PromotionResponse {
     DiscountType discountType;
     Double discountPercentage;
     Double discountValue;
-    Double minOrderAmount;
+    Double minOrderValue;
     Double maxDiscountValue;
     String startDate;
     String endDate;

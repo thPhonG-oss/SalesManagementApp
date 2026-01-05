@@ -26,6 +26,7 @@
 		<None Remove="Views\OrderPage.xaml" />
 		<None Remove="Views\ProductPage.xaml" />
 		<None Remove="Views\ReportPage.xaml" />
+		<None Remove="Views\RevenueChart.xaml" />
 		<None Remove="Views\SettingsPage.xaml" />
 		<None Remove="Views\UpdateProductPage.xaml" />
 	</ItemGroup>
@@ -76,9 +77,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Views\SettingsPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Views\RevenueChart.xaml" />
+		<Page Update="Views\SettingsPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 
 	<ItemGroup>
