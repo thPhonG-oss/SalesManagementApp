@@ -13,5 +13,7 @@ public interface PromotionMapper {
     @Mapping(target = "minOrderValue", source = "minOrderValue")
     PromotionResponse toPromotionResponse(Promotion promotion);
     Promotion toPromotion(PromotionCreationRequestDTO promotionCreationRequestDTO);
+
+    @Mapping(target = "isActive", source = "isActive")
     Promotion mapToPromotion(PromotionUpdateRequestDTO promotionUpdateRequestDTO);
 }
