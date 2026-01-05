@@ -16,6 +16,7 @@
 
 	<ItemGroup>
 		<None Remove="appsettings.json" />
+		<None Remove="Views\CategoryManagementPage.xaml" />
 		<None Remove="Views\Components\CreateOrderDialog.xaml" />
 		<None Remove="Views\AddProductPage.xaml" />
 		<None Remove="Views\Components\LoadingDialog.xaml" />
@@ -77,10 +78,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Page Update="Views\RevenueChart.xaml" />
-		<Page Update="Views\SettingsPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
+	  <Page Update="Views\PromotionPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>

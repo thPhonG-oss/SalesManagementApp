@@ -12,7 +12,7 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly IAuthService _authService;
     private readonly INavigationService _navigationService;
-    private readonly ILoadingService _loadingService; 
+    private readonly ILoadingService _loadingService;
 
     // Danh sách menu
     public ObservableCollection<AppMenuItem> MainMenuItems { get; } = new();
@@ -46,7 +46,7 @@ public partial class MainViewModel : ObservableObject
         MainMenuItems.Add(new AppMenuItem
         {
             Title = "Sản phẩm",
-            Icon = Symbol.Tag, 
+            Icon = Symbol.Tag,
             PageType = typeof(ProductPage),
             ShowHeader = false
         });
@@ -54,15 +54,23 @@ public partial class MainViewModel : ObservableObject
         MainMenuItems.Add(new AppMenuItem
         {
             Title = "Đơn hàng",
-            Icon = Symbol.List, 
-            PageType = typeof(OrderPage), 
+            Icon = Symbol.List,
+            PageType = typeof(OrderPage),
+            ShowHeader = false
+        });
+
+        MainMenuItems.Add(new AppMenuItem
+        {
+            Title = "Khuyến mãi",
+            Icon = Symbol.Tag,
+            PageType = typeof(PromotionPage),
             ShowHeader = false
         });
 
         MainMenuItems.Add(new AppMenuItem
         {
             Title = "Báo cáo",
-            Icon = Symbol.FourBars, 
+            Icon = Symbol.FourBars,
             PageType = typeof(ReportPage),
             ShowHeader = false
         });
