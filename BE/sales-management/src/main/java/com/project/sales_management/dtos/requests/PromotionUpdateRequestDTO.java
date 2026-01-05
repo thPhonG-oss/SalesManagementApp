@@ -18,5 +18,5 @@ public class PromotionUpdateRequestDTO {
     double minOrderValue;
     double maxDiscountValue;
     Integer usageLimit;
-    boolean isActive;
+    Boolean isActive;
 }
