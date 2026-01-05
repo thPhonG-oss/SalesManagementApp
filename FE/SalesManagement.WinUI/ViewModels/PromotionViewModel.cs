@@ -42,6 +42,13 @@ namespace SalesManagement.WinUI.ViewModels
             IsLoading = false;
         }
 
+        public async Task<bool> DeactivatePromotionAsync(long promotionId)
+        {
+            return await _promotionService.DeactivatePromotionAsync(promotionId);
+        }
+
+
+
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

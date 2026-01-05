@@ -41,5 +41,67 @@ namespace SalesManagement.WinUI.Views
                 Frame.Navigate(typeof(UpdatePromotionPage), promotion);
             }
         }
+
+        private async Task ShowSuccessDialog()
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Thành công",
+                Content = "Khuyến mãi đã được hủy thành công.",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+
+            await dialog.ShowAsync();
+        }
+
+        private async Task ShowErrorDialog()
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Lỗi",
+                Content = "Không thể hủy khuyến mãi. Vui lòng thử lại.",
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+
+            await dialog.ShowAsync();
+        }
+
+        private async void CancelPromotion_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button button ||
+                button.DataContext is not PromotionResponse promotion)
+                return;
+
+            var dialog = new ContentDialog
+            {
+                Title = "Xác nhận hủy khuyến mãi",
+                Content = $"Bạn có chắc chắn muốn hủy khuyến mãi \"{promotion.PromotionName}\"?",
+                PrimaryButtonText = "Hủy khuyến mãi",
+                CloseButtonText = "Không",
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = this.XamlRoot
+            };
+
+            var result = await dialog.ShowAsync();
+
+            if (result != ContentDialogResult.Primary)
+                return;
+
+            // 🔥 Gọi API
+            var success = await ViewModel.DeactivatePromotionAsync(promotion.PromotionId);
+
+            if (success)
+            {
+                await ShowSuccessDialog();
+                await ViewModel.LoadPromotionsAsync(); // reload list
+            }
+            else
+            {
+                await ShowErrorDialog();
+            }
+        }
+
     }
 }

@@ -88,7 +88,7 @@
             <Button
                 x:Name="AddButton"
                 Grid.Column="1"
-                Content="➕ Thêm khuyến mãi"
+                Content="+ Thêm khuyến mãi"
                 Padding="14,6"
                 CornerRadius="6"
                 FontWeight="SemiBold"
@@ -206,14 +206,12 @@
                                         Click="EditPromotion_Click"/>
 
                                     <Button
-                                        x:Name="CancelBtn"
                                         Content="Hủy khuyến mãi"
-                                        Width="130"
-                                        Padding="10,4"
-                                        CornerRadius="6"
+                                        Click="CancelPromotion_Click"
                                         Background="#FFE5533D"
                                         Foreground="White"
                                         Visibility="{x:Bind statusBool, Mode=OneWay}" />
+
                                 </StackPanel>
                             </Grid>
 
@@ -318,6 +316,7 @@
                                         CornerRadius="6"
                                         Background="#FFE5533D"
                                         Foreground="White"
+                                        Click="CancelPromotion_Click"
                                         Visibility="{x:Bind statusBool, Mode=OneWay}" />
                                 </Grid>
                             </StackPanel>

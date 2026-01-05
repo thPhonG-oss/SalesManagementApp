@@ -262,5 +262,39 @@ namespace SalesManagement.WinUI.Services.Implementations
             }
         }
 
+        public async Task<bool> DeactivatePromotionAsync(long promotionId)
+        {
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            try
+            {
+                var request = new HttpRequestMessage(
+                    HttpMethod.Patch,
+                    $"/api/v1/promotions/{promotionId}/deactivate");
+
+                var response = await _client.SendAsync(request);
+                var raw = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine($"[DEACTIVATE PROMOTION ERROR] {response.StatusCode} - {raw}");
+                    return false;
+                }
+
+                Debug.WriteLine("[DEACTIVATE PROMOTION] Success");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[DEACTIVATE PROMOTION EXCEPTION] {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }

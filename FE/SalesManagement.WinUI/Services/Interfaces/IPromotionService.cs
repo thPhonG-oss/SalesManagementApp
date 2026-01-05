@@ -12,6 +12,7 @@ namespace SalesManagement.WinUI.Services.Interfaces
             string sortDir = "desc");
         Task<bool> CreatePromotionAsync(CreatePromotionRequest request);
         Task<bool> UpdatePromotionAsync(long promotionId, UpdatePromotionRequest request);
+        Task<bool> DeactivatePromotionAsync(long promotionId);
 
     }
 }
