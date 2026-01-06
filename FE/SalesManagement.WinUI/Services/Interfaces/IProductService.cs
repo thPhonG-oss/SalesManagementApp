@@ -18,5 +18,7 @@ namespace SalesManagement.WinUI.Services.Interfaces
 
         Task<bool> UpdateProductAsync(int productId, Product product);
 
+        // Upload file excel
+        Task<bool> ImportProductsFromExcelAsync(StorageFile file);
     }
 }

@@ -142,6 +142,8 @@ public class ProductService : IProductService
         {
             ".jpg" or ".jpeg" => "image/jpeg",
             ".png" => "image/png",
+            ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            ".xls" => "application/vnd.ms-excel",
             _ => "application/octet-stream"
         };
     }
@@ -173,6 +175,48 @@ public class ProductService : IProductService
 
         Debug.WriteLine($"[UPDATE PRODUCT] {response.StatusCode}");
         return response.IsSuccessStatusCode;
+    }
+
+    // ⭐ THÊM MỚI - Import Products from Excel
+    public async Task<bool> ImportProductsFromExcelAsync(StorageFile file)
+    {
+        try
+        {
+            var token = _authService.GetAccessToken();
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token);
+
+            using var stream = await file.OpenStreamForReadAsync();
+            using var form = new MultipartFormDataContent();
+
+            var fileContent = new StreamContent(stream);
+
+            // Set content type cho file Excel
+            var mimeType = file.FileType.ToLower() switch
+            {
+                ".xlsx" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                ".xls" => "application/vnd.ms-excel",
+                _ => "application/octet-stream"
+            };
+
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(mimeType);
+
+            // ⚠️ "file" PHẢI TRÙNG với @RequestParam("file") bên BE
+            form.Add(fileContent, "file", file.Name);
+
+            var response = await _client.PostAsync("/api/v1/products/import", form);
+
+            var body = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"[IMPORT PRODUCTS] Status: {response.StatusCode}");
+            Debug.WriteLine($"[IMPORT PRODUCTS] Response: {body}");
+
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[IMPORT PRODUCTS] Error: {ex.Message}");
+            return false;
+        }
     }
 
 }
