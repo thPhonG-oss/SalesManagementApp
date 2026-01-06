@@ -43,6 +43,8 @@ namespace SalesManagement.WinUI.Services.Implementations
                     return GetDefaultNonePromotion();
                 }
 
+                Debug.WriteLine(rawJson);
+
                 // 4. Deserialize vào Wrapper (ApiResponse<PromotionListData>)
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse<PromotionListData>>(rawJson, _jsonOptions);
 
@@ -66,11 +68,13 @@ namespace SalesManagement.WinUI.Services.Implementations
                         Description = p.Description,
                         DiscountType = p.DiscountType,
 
-                        // Xử lý logic DiscountValue/Percentage
+                        // Logic này ĐÚNG: Nếu là % thì lấy value làm %, ngược lại % là 0
                         DiscountPercentage = p.DiscountType == "PERCENTAGE" ? (decimal)p.DiscountValue : 0,
+
+                        // Value tiền mặt
                         DiscountValue = (decimal)p.DiscountValue,
 
-                        // Nếu API không trả về MinOrderAmount thì mặc định là 0
+                        // Giờ đây MinOrderAmount đã có dữ liệu từ JSON
                         MinOrderAmount = p.MinOrderAmount,
                         MaxDiscountValue = p.MaxDiscountValue > 0 ? p.MaxDiscountValue : 0,
                     }).ToList();
@@ -110,10 +114,13 @@ namespace SalesManagement.WinUI.Services.Implementations
 
         private bool IsDateValid(object endDateObj)
         {
-            if (endDateObj is DateTime dt) return dt >= DateTime.Now;
-            if (endDateObj is string dateStr && DateTime.TryParse(dateStr, out var parsedDate))
+            // Vì Model PromotionResponse đã định nghĩa EndDate là DateTime, 
+            // nên object này chắc chắn là DateTime sau khi Deserialize.
+            if (endDateObj is DateTime dt)
             {
-                return parsedDate >= DateTime.Now;
+                // Sử dụng .Date để so sánh chỉ ngày, bỏ qua giờ phút 
+                // (Để tránh trường hợp hết hạn vào 23:59 hôm nay nhưng so sánh với Now lại sai)
+                return dt.Date >= DateTime.Now.Date;
             }
 
             return true;

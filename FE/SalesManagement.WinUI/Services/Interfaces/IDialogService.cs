@@ -17,6 +17,6 @@ namespace SalesManagement.WinUI.Services.Interfaces
 
         Task ShowOrderDetailDialogAsync(OrderItemViewModel orderVm);
 
-        Task<bool> ShowCreateOrderDialogAsync();
+        Task<bool> ShowCreateOrderDialogAsync(CreateOrderViewModel viewModel);
     }
 }

@@ -62,6 +62,10 @@ public partial class App : Application
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IReportService, ReportService>();
         services.AddTransient<IPromotionService, PromotionService>();
+        services.AddSingleton<ICategoryService, CategoryService>();
+        services.AddSingleton<ICustomerService, CustomerService>();
+        services.AddTransient<CustomerViewModel>();
+
 
 
 
@@ -88,9 +92,19 @@ public partial class App : Application
 
         services.AddTransient<ReportViewModel>();
         services.AddTransient<CategoryManagementViewModel>();
+       
+       
+
+
+        services.AddTransient<ReportViewModel>();
+        services.AddSingleton<CreateOrderViewModel>();
+
+        services.AddTransient<ProductViewModel>();
         // ⭐ PRODUCT
         services.AddSingleton<IProductService, ProductService>();
         services.AddTransient<ProductViewModel>();
+
+        
 
         // ⭐ THÊM MỚI - Settings
         services.AddTransient<SettingsViewModel>();
@@ -99,6 +113,7 @@ public partial class App : Application
         services.AddTransient<LoginPage>();
         services.AddTransient<MainPage>();
         services.AddTransient<DashboardPage>();
+        services.AddTransient<CustomerPage>();
 
 
         // ⭐ PRODUCT PAGE
@@ -108,6 +123,7 @@ public partial class App : Application
         services.AddTransient<CategoryManagementPage>();
 
         services.AddTransient<AddProductViewModel>();
+
 
         // ⭐ THÊM DÒNG NÀY
         services.AddTransient<SettingsPage>();

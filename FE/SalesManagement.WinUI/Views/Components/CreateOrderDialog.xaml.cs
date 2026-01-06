@@ -9,9 +9,9 @@ namespace SalesManagement.WinUI.Views.Components
 {
     public sealed partial class CreateOrderDialog : ContentDialog
     {
-        public CreateOrderViewModel ViewModel { get; }
+        public CreateOrderViewModel ViewModel { get; set; } = default!;
 
-        public CreateOrderDialog()
+        public CreateOrderDialog( )
         {
             this.InitializeComponent();
 
@@ -20,8 +20,7 @@ namespace SalesManagement.WinUI.Views.Components
             var productService = App.Services.GetRequiredService<IProductService>();
             var promotionService = App.Services.GetRequiredService<IPromotionService>();
 
-            // 2. Khởi tạo ViewModel với đầy đủ 3 tham số
-            ViewModel = new CreateOrderViewModel(orderService, productService, promotionService);
+           
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

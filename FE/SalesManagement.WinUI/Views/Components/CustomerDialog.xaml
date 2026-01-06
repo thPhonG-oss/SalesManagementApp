@@ -1,0 +1,21 @@
+<ContentDialog
+    x:Class="SalesManagement.WinUI.Views.Components.CustomerDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:SalesManagement.WinUI.Models"
+    mc:Ignorable="d"
+    Title="Thông tin khách hàng"
+    PrimaryButtonText="Lưu"
+    CloseButtonText="Hủy"
+    DefaultButton="Primary">
+
+    <StackPanel Spacing="12" MinWidth="350">
+        <TextBox Header="Họ và tên" Text="{x:Bind Customer.FullName, Mode=TwoWay}" PlaceholderText="Nhập tên khách hàng"/>
+        <TextBox Header="Số điện thoại" Text="{x:Bind Customer.Phone, Mode=TwoWay}" PlaceholderText="09..."/>
+        <TextBox Header="Email" Text="{x:Bind Customer.Email, Mode=TwoWay}" PlaceholderText="abc@example.com"/>
+        <TextBox Header="Địa chỉ" Text="{x:Bind Customer.Address, Mode=TwoWay}" 
+                 AcceptsReturn="True" TextWrapping="Wrap" Height="80"/>
+    </StackPanel>
+</ContentDialog>
