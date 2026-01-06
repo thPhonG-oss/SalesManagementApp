@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Globalization;
+using System.Text.Json.Serialization;
 
 namespace SalesManagement.WinUI.Models
 {
@@ -55,13 +56,16 @@ namespace SalesManagement.WinUI.Models
         public DateOnly NewStartDate => DateOnly.FromDateTime(StartDate);
         public DateOnly NewEndDate => DateOnly.FromDateTime(EndDate);
 
+
         public string FormattedDiscount
         {
             get
             {
-                return DiscountType.ToLower() == "percentage"
+                var culture = new CultureInfo("vi-VN");
+
+                return DiscountType.Equals("percentage", StringComparison.OrdinalIgnoreCase)
                     ? $"{DiscountValue}%"
-                    : DiscountValue.ToString("C2");
+                    : DiscountValue.ToString("C0", culture);
             }
         }
 
@@ -77,9 +81,12 @@ namespace SalesManagement.WinUI.Models
         {
             get
             {
-                string minOrder = MinOrderAmount.ToString("C2");
-                string maxDiscount = MaxDiscountValue.ToString("C2");
-                return $"Min Order: {minOrder}, Max Discount: {maxDiscount}";
+                var culture = new CultureInfo("vi-VN");
+
+                string minOrder = MinOrderAmount.ToString("C0", culture);
+                string maxDiscount = MaxDiscountValue.ToString("C0", culture);
+
+                return $"Đơn tối thiểu {minOrder} • Giảm tối đa {maxDiscount}";
             }
         }
 
