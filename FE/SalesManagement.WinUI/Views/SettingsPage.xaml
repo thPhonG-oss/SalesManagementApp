@@ -29,11 +29,11 @@
 
                 <!-- HEADER -->
                 <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
-                    <TextBlock Text="Cài đặt chương trình" 
-                               FontSize="28" 
+                    <TextBlock Text="Cài đặt chương trình"
+                               FontSize="28"
                                FontWeight="SemiBold"
                                TextWrapping="Wrap"/>
-                    <TextBlock Text="Tùy chỉnh hiển thị và hành vi của ứng dụng" 
+                    <TextBlock Text="Tùy chỉnh hiển thị và hành vi của ứng dụng"
                                Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
                                TextWrapping="Wrap"/>
                 </StackPanel>
@@ -50,14 +50,14 @@
                 <StackPanel Grid.Row="2" Spacing="16">
 
                     <!-- SECTION: HIỂN THỊ -->
-                    <Border Background="{ThemeResource LayerFillColorDefaultBrush}" 
+                    <Border Background="{ThemeResource LayerFillColorDefaultBrush}"
                             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1" 
-                            CornerRadius="8" 
+                            BorderThickness="1"
+                            CornerRadius="8"
                             Padding="20">
                         <StackPanel Spacing="16">
-                            <TextBlock Text="Hiển thị" 
-                                       FontSize="16" 
+                            <TextBlock Text="Hiển thị"
+                                       FontSize="16"
                                        FontWeight="SemiBold"/>
 
                             <!-- Số lượng item mỗi trang -->
@@ -68,23 +68,23 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="Số lượng sản phẩm mỗi trang" 
+                                    <TextBlock Text="Số lượng sản phẩm mỗi trang"
                                                FontWeight="Medium"
                                                TextWrapping="Wrap"/>
-                                    <TextBlock Text="Số lượng sản phẩm hiển thị trong danh sách" 
-                                               FontSize="12" 
+                                    <TextBlock Text="Số lượng sản phẩm hiển thị trong danh sách"
+                                               FontSize="12"
                                                Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
                                                Margin="0,4,0,0"
                                                TextWrapping="Wrap"/>
                                 </StackPanel>
 
-                                <ComboBox Grid.Column="1" 
+                                <ComboBox Grid.Column="1"
                                           ItemsSource="{x:Bind ViewModel.PageSizeOptions}"
                                           SelectedItem="{x:Bind ViewModel.SelectedPageSize, Mode=TwoWay}"
                                           HorizontalAlignment="Stretch"/>
                             </Grid>
 
-                            <Rectangle Height="1" 
+                            <Rectangle Height="1"
                                        Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>
 
                             <!-- Theme -->
@@ -95,17 +95,17 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="Giao diện" 
+                                    <TextBlock Text="Giao diện"
                                                FontWeight="Medium"
                                                TextWrapping="Wrap"/>
-                                    <TextBlock Text="Chọn chế độ sáng/tối cho ứng dụng" 
-                                               FontSize="12" 
+                                    <TextBlock Text="Chọn chế độ sáng/tối cho ứng dụng"
+                                               FontSize="12"
                                                Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
                                                Margin="0,4,0,0"
                                                TextWrapping="Wrap"/>
                                 </StackPanel>
 
-                                <ComboBox Grid.Column="1" 
+                                <ComboBox Grid.Column="1"
                                           ItemsSource="{x:Bind ViewModel.ThemeOptions}"
                                           SelectedItem="{x:Bind ViewModel.SelectedTheme, Mode=TwoWay}"
                                           HorizontalAlignment="Stretch"/>
@@ -114,14 +114,14 @@
                     </Border>
 
                     <!-- SECTION: HÀNH VI -->
-                    <Border Background="{ThemeResource LayerFillColorDefaultBrush}" 
+                    <Border Background="{ThemeResource LayerFillColorDefaultBrush}"
                             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1" 
-                            CornerRadius="8" 
+                            BorderThickness="1"
+                            CornerRadius="8"
                             Padding="20">
                         <StackPanel Spacing="16">
-                            <TextBlock Text="Hành vi" 
-                                       FontSize="16" 
+                            <TextBlock Text="Hành vi"
+                                       FontSize="16"
                                        FontWeight="SemiBold"/>
 
                             <!-- Nhớ màn hình cuối -->
@@ -132,19 +132,19 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                    <TextBlock Text="Nhớ màn hình cuối cùng" 
+                                    <TextBlock Text="Nhớ màn hình cuối cùng"
                                                FontWeight="Medium"
                                                TextWrapping="Wrap"/>
-                                    <TextBlock Text="Mở lại màn hình bạn đang làm việc khi khởi động" 
-                                               FontSize="12" 
+                                    <TextBlock Text="Mở lại màn hình bạn đang làm việc khi khởi động"
+                                               FontSize="12"
                                                Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
                                                Margin="0,4,0,0"
                                                TextWrapping="Wrap"/>
                                 </StackPanel>
 
-                                <ToggleSwitch Grid.Column="1" 
+                                <ToggleSwitch Grid.Column="1"
                                               IsOn="{x:Bind ViewModel.RememberLastScreen, Mode=TwoWay}"
-                                              OnContent="" 
+                                              OnContent=""
                                               OffContent=""
                                               HorizontalAlignment="Right"
                                               VerticalAlignment="Center"/>
@@ -153,14 +153,14 @@
                     </Border>
 
                     <!-- SECTION: THÔNG TIN -->
-                    <Border Background="{ThemeResource LayerFillColorDefaultBrush}" 
+                    <Border Background="{ThemeResource LayerFillColorDefaultBrush}"
                             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1" 
-                            CornerRadius="8" 
+                            BorderThickness="1"
+                            CornerRadius="8"
                             Padding="20">
                         <StackPanel Spacing="8">
-                            <TextBlock Text="Thông tin ứng dụng" 
-                                       FontSize="16" 
+                            <TextBlock Text="Thông tin ứng dụng"
+                                       FontSize="16"
                                        FontWeight="SemiBold"/>
 
                             <TextBlock Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"
@@ -177,10 +177,43 @@
                         </StackPanel>
                     </Border>
 
+                    <!-- SECTION: BẢO MẬT -->
+                    <Border Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="20">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Bảo mật"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"/>
+
+                            <Grid ColumnSpacing="20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Mật khẩu"
+                                               FontWeight="Medium"/>
+                                    <TextBlock Text="Thay đổi mật khẩu đăng nhập"
+                                               FontSize="12"
+                                               Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                </StackPanel>
+
+                                <Button Grid.Column="1"
+                                        Content="Thay đổi"
+                                        Click="ChangePassword_Click"
+                                        MinWidth="120"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
                 </StackPanel>
 
                 <!-- ACTION BUTTONS -->
-                <Grid Grid.Row="3" 
+                <Grid Grid.Row="3"
                       Margin="0,24,0,0"
                       ColumnSpacing="8">
                     <Grid.ColumnDefinitions>

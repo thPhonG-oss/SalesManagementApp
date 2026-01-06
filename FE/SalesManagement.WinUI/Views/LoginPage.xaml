@@ -16,110 +16,110 @@
         </Grid.ColumnDefinitions>
 
         <!-- Left Panel - Branding -->
-        <Grid Grid.Column="0" 
+        <Grid Grid.Column="0"
               Background="{ThemeResource AccentFillColorDefaultBrush}"
               Padding="60">
             <StackPanel VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Spacing="24">
+                        HorizontalAlignment="Center"
+                        Spacing="24">
 
                 <!-- Logo/Icon -->
-                <FontIcon Glyph="&#xE719;" 
-                         FontSize="120"
-                         Foreground="White"/>
+                <FontIcon Glyph="&#xE719;"
+                          FontSize="120"
+                          Foreground="White"/>
 
                 <!-- App Name -->
                 <TextBlock Text="Sales Management"
-                          FontSize="36"
-                          FontWeight="Bold"
-                          Foreground="White"
-                          HorizontalAlignment="Center"/>
+                           FontSize="36"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           HorizontalAlignment="Center"/>
 
                 <TextBlock Text="Manage your business efficiently"
-                          FontSize="18"
-                          Foreground="White"
-                          Opacity="0.9"
-                          HorizontalAlignment="Center"
-                          TextAlignment="Center"/>
+                           FontSize="18"
+                           Foreground="White"
+                           Opacity="0.9"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"/>
 
                 <!-- Version -->
                 <TextBlock Text="{x:Bind ViewModel.AppVersion, Mode=OneWay}"
-                          FontSize="14"
-                          Foreground="White"
-                          Opacity="0.7"
-                          HorizontalAlignment="Center"
-                          Margin="0,40,0,0"/>
+                           FontSize="14"
+                           Foreground="White"
+                           Opacity="0.7"
+                           HorizontalAlignment="Center"
+                           Margin="0,40,0,0"/>
             </StackPanel>
         </Grid>
 
         <!-- Right Panel - Login Form -->
         <Grid Grid.Column="1" Padding="80">
             <StackPanel VerticalAlignment="Center"
-                       MaxWidth="400"
-                       Spacing="20">
+                        MaxWidth="400"
+                        Spacing="20">
 
                 <!-- Title -->
                 <TextBlock Text="Welcome Back"
-                          FontSize="32"
-                          FontWeight="SemiBold"
-                          Margin="0,0,0,20"/>
+                           FontSize="32"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,20"/>
 
                 <!-- Error Message -->
                 <InfoBar IsOpen="{x:Bind ViewModel.HasError, Mode=OneWay}"
-                        Severity="Error"
-                        Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
-                        IsClosable="False"
-                        Margin="0,0,0,10"/>
+                         Severity="Error"
+                         Message="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}"
+                         IsClosable="False"
+                         Margin="0,0,0,10"/>
 
                 <!-- Username -->
                 <StackPanel Spacing="8">
                     <TextBlock Text="Username"
-                              FontWeight="SemiBold"/>
+                               FontWeight="SemiBold"/>
                     <TextBox x:Name="UsernameTextBox"
-                            Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            PlaceholderText="Enter your username"
-                            IsEnabled="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                            KeyDown="OnTextBoxKeyDown"/>
+                             Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             PlaceholderText="Enter your username"
+                             IsEnabled="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                             KeyDown="OnTextBoxKeyDown"/>
                 </StackPanel>
 
                 <!-- Password -->
                 <StackPanel Spacing="8">
                     <TextBlock Text="Password"
-                              FontWeight="SemiBold"/>
+                               FontWeight="SemiBold"/>
                     <PasswordBox x:Name="PasswordBox"
-                                Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                PlaceholderText="Enter your password"
-                                IsEnabled="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
-                                KeyDown="OnPasswordBoxKeyDown"/>
+                                 Password="{x:Bind ViewModel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 PlaceholderText="Enter your password"
+                                 IsEnabled="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                                 KeyDown="OnPasswordBoxKeyDown"/>
                 </StackPanel>
 
                 <!-- Remember Me & Config -->
                 <Grid Margin="0,8,0,0">
                     <CheckBox Content="Remember me"
-                             IsChecked="{x:Bind ViewModel.RememberMe, Mode=TwoWay}"
-                             HorizontalAlignment="Left"/>
+                              IsChecked="{x:Bind ViewModel.RememberMe, Mode=TwoWay}"
+                              HorizontalAlignment="Left"/>
 
                     <HyperlinkButton Content="Server Config"
-                                    Command="{x:Bind ViewModel.NavigateToConfigCommand}"
-                                    HorizontalAlignment="Right"/>
+                                     Click="OnServerConfigClicked"
+                                     HorizontalAlignment="Right"/>
                 </Grid>
 
                 <!-- Login Button -->
                 <Button Command="{x:Bind ViewModel.LoginCommand}"
-                       HorizontalAlignment="Stretch"
-                       Height="48"
-                       Margin="0,12,0,0"
-                       Style="{StaticResource AccentButtonStyle}">
+                        HorizontalAlignment="Stretch"
+                        Height="48"
+                        Margin="0,12,0,0"
+                        Style="{StaticResource AccentButtonStyle}">
                     <Grid>
                         <TextBlock Text="Login"
-                                  Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"/>
+                                   Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"/>
                         <StackPanel Orientation="Horizontal"
-                                   Spacing="12"
-                                   Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Spacing="12"
+                                    Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                             <ProgressRing IsActive="True"
-                                        Width="20"
-                                        Height="20"
-                                        Foreground="White"/>
+                                          Width="20"
+                                          Height="20"
+                                          Foreground="White"/>
                             <TextBlock Text="Logging in..."/>
                         </StackPanel>
                     </Grid>

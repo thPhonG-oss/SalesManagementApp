@@ -1,0 +1,24 @@
+<ContentDialog
+    x:Class="SalesManagement.WinUI.Views.Dialogs.ServerConfigDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Server Configuration"
+    PrimaryButtonText="Save"
+    CloseButtonText="Cancel"
+    DefaultButton="Primary"
+    PrimaryButtonClick="OnPrimaryButtonClick">
+
+    <StackPanel Spacing="12">
+        <TextBlock Text="Server Port"
+                   FontWeight="SemiBold"/>
+
+        <TextBox x:Name="PortTextBox"
+                 PlaceholderText="8081"
+                 InputScope="Number"/>
+
+        <InfoBar x:Name="ErrorBar"
+                 IsOpen="False"
+                 Severity="Error"
+                 Message="Port không hợp lệ"/>
+    </StackPanel>
+</ContentDialog>
