@@ -4,6 +4,8 @@ import com.project.sales_management.models.DiscountType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,4 +21,6 @@ public class PromotionUpdateRequestDTO {
     double maxDiscountValue;
     Integer usageLimit;
     Boolean isActive;
+    LocalDate startDate;
+    LocalDate endDate;
 }
