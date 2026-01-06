@@ -416,3 +416,6 @@ Generated Files/
 
 # Temporary publish folder
 PublishProfile
+
+.idea
+.vs

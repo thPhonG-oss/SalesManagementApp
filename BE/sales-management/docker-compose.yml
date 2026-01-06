@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: sales-management-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: sales_management_db
+      MYSQL_USER: sales_user
+      MYSQL_PASSWORD: sales_pass123
+    ports:
+      - "3307:3306"  # Expose ra port 3307 để tránh conflict với MySQL local
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - sales-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # Backend Application
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sales-management-backend
+    environment:
+      # Port
+      PORT: 8080
+
+      # Database Configuration
+      DATABASE_URL: jdbc:mysql://mysql:3306/sales_management_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      DB_USERNAME: sales_user
+      DB_PASSWORD: sales_pass123
+
+      # JWT Configuration
+      SECRET_KEY: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
+
+      # Cloudinary Configuration (Thay thế bằng thông tin thực của bạn)
+      CLOUD_NAME: ${CLOUD_NAME}
+      CLOUD_API_KEY: ${CLOUD_API_KEY}
+      CLOUD_API_SECRET: ${CLOUD_API_SECRET}
+
+      # Spring Profile
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - sales-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  sales-network:
+    driver: bridge
