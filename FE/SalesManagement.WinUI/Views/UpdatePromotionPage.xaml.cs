@@ -57,7 +57,7 @@ namespace SalesManagement.WinUI.Views
             };
 
 
-            Debug.WriteLine("==== " + request.DiscountValue);
+            Debug.WriteLine("==== " + Promotion.IsActive);
             var success = await promotionService.UpdatePromotionAsync(
                 Promotion.PromotionId,
                 request

@@ -25,7 +25,7 @@ namespace SalesManagement.WinUI.Models
         [JsonPropertyName("usageLimit")]
         public int UsageLimit { get; set; }
 
-        [JsonPropertyName("active")]
+        [JsonPropertyName("isActive")]
         public bool Active { get; set; }
     }
 }
