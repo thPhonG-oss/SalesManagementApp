@@ -17,6 +17,8 @@ public interface PromotionMapper {
     @Mapping(target = "endDate", ignore = true)
     Promotion toPromotion(PromotionCreationRequestDTO promotionCreationRequestDTO);
 
+    @Mapping(target = "startDate", ignore = true)
+    @Mapping(target = "endDate", ignore = true)
     @Mapping(target = "isActive", source = "isActive")
     Promotion mapToPromotion(PromotionUpdateRequestDTO promotionUpdateRequestDTO);
 }
