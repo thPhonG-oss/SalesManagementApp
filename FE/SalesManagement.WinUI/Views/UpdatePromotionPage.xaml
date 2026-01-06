@@ -69,7 +69,7 @@
 
                         <TextBox Header="Tên khuyến mãi"
                                  PlaceholderText="Nhập tên khuyến mãi"
-                                 Text="{Binding PromotionName, Mode=TwoWay}"
+                                 Text="{x:Bind ViewModel.PromotionName, Mode=TwoWay}"
                                  CornerRadius="8"/>
 
                         <StackPanel Spacing="4">
@@ -87,14 +87,15 @@
                                 </Border>
                             </StackPanel>
                             <TextBox PlaceholderText="Ví dụ: SUMMER2024"
-                                     Text="{Binding PromotionCode, Mode=TwoWay}"
+                                     Text="{x:Bind ViewModel.PromotionCode, Mode=TwoWay}"
+                                     IsReadOnly="True"
                                      CornerRadius="8"
                                      FontFamily="Consolas"/>
                         </StackPanel>
 
                         <TextBox Header="Mô tả chi tiết"
                                  PlaceholderText="Nhập mô tả về chương trình khuyến mãi"
-                                 Text="{Binding Description, Mode=TwoWay}"
+                                 Text="{x:Bind ViewModel.Description, Mode=TwoWay}"
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"
                                  Height="100"
@@ -122,7 +123,7 @@
                             <TextBlock Text="Loại giảm giá"
                                        FontSize="14"
                                        FontWeight="SemiBold"/>
-                            <ComboBox SelectedValue="{Binding DiscountType, Mode=TwoWay}"
+                            <ComboBox SelectedValue="{x:Bind ViewModel.DiscountType, Mode=TwoWay}"
                                       SelectedValuePath="Content"
                                       HorizontalAlignment="Stretch"
                                       CornerRadius="8">
@@ -198,10 +199,9 @@
                                                FontSize="14"
                                                FontWeight="SemiBold"/>
                                 </StackPanel>
-                                <DatePicker
-                                    Date="{Binding StartDate, Mode=TwoWay}"
-                                    HorizontalAlignment="Stretch"
-                                    CornerRadius="8"/>
+                                <DatePicker x:Name="StartDatePicker"
+                                            HorizontalAlignment="Stretch"
+                                            CornerRadius="8"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="1" Spacing="4">
@@ -212,10 +212,9 @@
                                                FontSize="14"
                                                FontWeight="SemiBold"/>
                                 </StackPanel>
-                                <DatePicker
-                                    Date="{Binding EndDate, Mode=TwoWay}"
-                                    HorizontalAlignment="Stretch"
-                                    CornerRadius="8"/>
+                                <DatePicker x:Name="EndDatePicker"
+                                            HorizontalAlignment="Stretch"
+                                            CornerRadius="8"/>
                             </StackPanel>
                         </Grid>
 
@@ -227,7 +226,7 @@
                                            FontSize="14"
                                            FontWeight="SemiBold"/>
                             </StackPanel>
-                            <NumberBox Value="{Binding UsageLimit, Mode=TwoWay}"
+                            <NumberBox Value="{x:Bind ViewModel.UsageLimit, Mode=TwoWay}"
                                        PlaceholderText="Nhập số lượt tối đa"
                                        CornerRadius="8"/>
                             <TextBlock Text="Số lượt khuyến mãi có thể được sử dụng tối đa"
