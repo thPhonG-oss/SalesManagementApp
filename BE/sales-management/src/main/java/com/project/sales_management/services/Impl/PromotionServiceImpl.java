@@ -94,9 +94,19 @@ public class PromotionServiceImpl implements PromotionService {
     public PromotionResponse updatePromotion(Long promotionId, PromotionUpdateRequestDTO promotionUpdateRequestDTO) {
         Promotion promotion = promotionRepository.findById(promotionId)
                 .orElseThrow(() -> new RuntimeException("Promotion not found"));
-        promotionMapper.mapToPromotion(promotionUpdateRequestDTO);
+
+        promotion.setPromotionName(promotionUpdateRequestDTO.getPromotionName());
+        promotion.setDescription(promotionUpdateRequestDTO.getDescription());
+        promotion.setDiscountType(promotionUpdateRequestDTO.getDiscountType());
+        promotion.setDiscountValue(promotionUpdateRequestDTO.getDiscountValue());
+        promotion.setMinOrderValue(promotionUpdateRequestDTO.getMinOrderValue());
+        promotion.setMaxDiscountValue(promotionUpdateRequestDTO.getMaxDiscountValue());
+        promotion.setUsageLimit(promotionUpdateRequestDTO.getUsageLimit());
+        promotion.setIsActive(promotionUpdateRequestDTO.getIsActive());
         promotion.setUpdatedAt(LocalDateTime.now());
+
         Promotion updatedPromotion = promotionRepository.save(promotion);
+
         return promotionMapper.toPromotionResponse(updatedPromotion);
     }
 

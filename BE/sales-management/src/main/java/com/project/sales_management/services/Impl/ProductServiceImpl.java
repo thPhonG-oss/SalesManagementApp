@@ -64,6 +64,7 @@ public class ProductServiceImpl implements ProductService {
         Category category = categoryRepository.findById(productCreationRequestDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         product.setCategory(category);
+        product.setIsActive(true);
 
         Product savedProduct = productRepository.save(product);
         return productMapper.toProductResponse(savedProduct);

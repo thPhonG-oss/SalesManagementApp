@@ -1,0 +1,226 @@
+<Page
+    x:Class="SalesManagement.WinUI.Views.AddPromotionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Padding="32,24" MaxWidth="700">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header Section -->
+            <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,24">
+                <TextBlock Text="Thêm khuyến mãi mới"
+                           FontSize="32"
+                           FontWeight="Bold"/>
+                <TextBlock Text="Tạo chương trình khuyến mãi cho khách hàng"
+                           FontSize="14"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+            </StackPanel>
+
+            <!-- Form Section -->
+            <StackPanel Grid.Row="1" Spacing="20">
+
+                <!-- Basic Information Card -->
+                <Border Padding="20"
+                        CornerRadius="12"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <Border.Shadow>
+                        <ThemeShadow />
+                    </Border.Shadow>
+
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Thông tin cơ bản"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"/>
+
+                        <TextBox Header="Tên khuyến mãi"
+                                 PlaceholderText="Ví dụ: Giảm giá mùa hè 2024"
+                                 Text="{Binding PromotionName, Mode=TwoWay}"
+                                 CornerRadius="8"/>
+
+                        <TextBox Header="Mô tả chi tiết"
+                                 PlaceholderText="Nhập mô tả về chương trình khuyến mãi"
+                                 Text="{Binding Description, Mode=TwoWay}"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 Height="100"
+                                 CornerRadius="8"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Discount Configuration Card -->
+                <Border Padding="20"
+                        CornerRadius="12"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <Border.Shadow>
+                        <ThemeShadow />
+                    </Border.Shadow>
+
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Cấu hình giảm giá"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"/>
+
+                        <ComboBox Header="Loại giảm giá"
+                                  ItemsSource="{Binding DiscountTypes}"
+                                  SelectedItem="{Binding SelectedDiscountType, Mode=TwoWay}"
+                                  HorizontalAlignment="Stretch"
+                                  CornerRadius="8"/>
+
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Spacing="4">
+                                <TextBlock Text="Giá trị giảm"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,4"/>
+                                <NumberBox Value="{Binding DiscountValue, Mode=TwoWay}"
+                                           Minimum="0"
+                                           SpinButtonPlacementMode="Hidden"
+                                           CornerRadius="8"
+                                           PlaceholderText="0"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Spacing="4">
+                                <TextBlock Text="Giảm tối đa"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Margin="0,0,0,4"/>
+                                <NumberBox Value="{Binding MaxDiscountValue, Mode=TwoWay}"
+                                           Minimum="0"
+                                           SpinButtonPlacementMode="Hidden"
+                                           CornerRadius="8"
+                                           PlaceholderText="0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Giá trị đơn hàng tối thiểu"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,4"/>
+                            <NumberBox Value="{Binding MinOrderValue, Mode=TwoWay}"
+                                       Minimum="0"
+                                       SpinButtonPlacementMode="Hidden"
+                                       CornerRadius="8"
+                                       PlaceholderText="0"/>
+                            <TextBlock Text="Đơn hàng phải đạt giá trị tối thiểu này để áp dụng khuyến mãi"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       TextWrapping="Wrap"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Time & Usage Card -->
+                <Border Padding="20"
+                        CornerRadius="12"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                    <Border.Shadow>
+                        <ThemeShadow />
+                    </Border.Shadow>
+
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Thời gian và giới hạn"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"/>
+
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Spacing="4">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE787;" FontSize="14"
+                                              Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                    <TextBlock Text="Ngày bắt đầu"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"/>
+                                </StackPanel>
+                                <DatePicker Date="{Binding StartDate, Mode=TwoWay}"
+                                            HorizontalAlignment="Stretch"
+                                            CornerRadius="8"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Spacing="4">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE787;" FontSize="14"
+                                              Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                    <TextBlock Text="Ngày kết thúc"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"/>
+                                </StackPanel>
+                                <DatePicker Date="{Binding EndDate, Mode=TwoWay}"
+                                            HorizontalAlignment="Stretch"
+                                            CornerRadius="8"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Spacing="4">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <FontIcon Glyph="&#xE8EF;" FontSize="14"
+                                          Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                <TextBlock Text="Giới hạn lượt sử dụng"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
+                            <TextBox Text="{Binding UsageLimit, Mode=TwoWay}"
+                                     PlaceholderText="Nhập số lượt sử dụng tối đa"
+                                     CornerRadius="8"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Action Buttons -->
+                <StackPanel Orientation="Horizontal"
+                            Spacing="12"
+                            HorizontalAlignment="Right"
+                            Margin="0,8,0,0">
+                    <Button Content="Hủy bỏ"
+                            Click="Cancel_Click"
+                            Width="120"
+                            Height="40"
+                            CornerRadius="8"
+                            FontWeight="SemiBold">
+                        <Button.Resources>
+                            <SolidColorBrush x:Key="ButtonBackground" Color="Transparent"/>
+                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#0A000000"/>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Content="Lưu khuyến mãi"
+                            Background="{ThemeResource AccentFillColorDefaultBrush}"
+                            Foreground="White"
+                            Click="Save_Click"
+                            Width="160"
+                            Height="40"
+                            CornerRadius="8"
+                            FontWeight="SemiBold">
+                        <Button.Shadow>
+                            <ThemeShadow />
+                        </Button.Shadow>
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

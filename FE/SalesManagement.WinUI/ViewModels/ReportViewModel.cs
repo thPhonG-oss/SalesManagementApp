@@ -67,6 +67,12 @@ namespace SalesManagement.WinUI.ViewModels
         public ObservableCollection<ReportProductYear> ProductYear { get; } = new();
         public ObservableCollection<ReportProductSales> ProductSales { get; } = new();
 
+        // CHUẨN BỊ DATA PIE
+        public ObservableCollection<PieItem> RevenueDayPie { get; } = new();
+        public ObservableCollection<PieItem> RevenueMonthPie { get; } = new();
+        public ObservableCollection<PieItem> RevenueYearPie { get; } = new();
+
+
         // Current Period Data
         public ReportRevenueCurrentYear? CurrentYearData { get; private set; }
         public ReportRevenueCurrentYear? CurrentMonthData { get; private set; }
@@ -122,9 +128,25 @@ namespace SalesManagement.WinUI.ViewModels
         private async Task LoadRevenueDailyAsync(DateTime start, DateTime end)
         {
             var data = await _reportService.GetRevenueByDailyAsync(start, end);
+
             foreach (var item in data)
                 RevenueDaily.Add(item);
+
+            // ===== PIE: TOP 7 DAYS =====
+            RevenueDayPie.Clear();
+
+            foreach (var d in data
+                .OrderByDescending(x => x.Revenue)
+                .Take(7))
+            {
+                RevenueDayPie.Add(new PieItem
+                {
+                    Label = d.Date.ToString("dd/MM"),
+                    Value = (double)d.Revenue
+                });
+            }
         }
+
 
         private async Task LoadRevenueWeeklyAsync(DateTime start, DateTime end)
         {
@@ -136,16 +158,42 @@ namespace SalesManagement.WinUI.ViewModels
         private async Task LoadRevenueMonthAsync(DateTime start, DateTime end)
         {
             var data = await _reportService.GetRevenueByMonthAsync(start, end);
+
             foreach (var item in data)
                 RevenueMonth.Add(item);
+
+            RevenueMonthPie.Clear();
+
+            foreach (var m in data)
+            {
+                RevenueMonthPie.Add(new PieItem
+                {
+                    Label = $"{m.MonthName}/{m.Year}",
+                    Value = (double)m.Revenue
+                });
+            }
         }
+
 
         private async Task LoadRevenueYearAsync(DateTime start, DateTime end)
         {
             var data = await _reportService.GetRevenueByYearAsync(start, end);
+
             foreach (var item in data)
                 RevenueYear.Add(item);
+
+            RevenueYearPie.Clear();
+
+            foreach (var y in data)
+            {
+                RevenueYearPie.Add(new PieItem
+                {
+                    Label = y.Year.ToString(),
+                    Value = (double)y.Revenue
+                });
+            }
         }
+
 
         private async Task LoadProductDailyAsync(DateTime start, DateTime end)
         {
@@ -193,6 +241,8 @@ namespace SalesManagement.WinUI.ViewModels
             CurrentMonthData = await _reportService.GetRevenueCurrentMonthAsync();
             OnPropertyChanged(nameof(CurrentMonthData));
         }
+
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

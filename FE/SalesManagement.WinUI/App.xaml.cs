@@ -68,6 +68,8 @@ public partial class App : Application
 
 
 
+
+
         services.AddTransient<IApiService>(sp =>
     new ApiService(
         sp.GetRequiredService<IHttpClientFactory>(),
@@ -78,11 +80,18 @@ public partial class App : Application
         // ⭐ CATEGORY
         services.AddSingleton<ICategoryService, CategoryService>();
 
+
         // ================= VIEWMODELS =================
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainViewModel>();
         services.AddTransient<OrderViewModel>();
         services.AddSingleton<DashboardViewModel>();
+        services.AddTransient<PromotionViewModel>();
+        // ⭐ REPORT
+
+
+        services.AddTransient<ReportViewModel>();
+        services.AddTransient<CategoryManagementViewModel>();
        
        
 
@@ -111,6 +120,7 @@ public partial class App : Application
         services.AddTransient<ProductPage>();
 
         services.AddTransient<AddProductPage>();
+        services.AddTransient<CategoryManagementPage>();
 
         services.AddTransient<AddProductViewModel>();
 
@@ -118,6 +128,7 @@ public partial class App : Application
         // ⭐ THÊM DÒNG NÀY
         services.AddTransient<SettingsPage>();
 
+        services.AddTransient<PromotionPage>();
         return services.BuildServiceProvider();
     }
 
@@ -138,7 +149,7 @@ public partial class App : Application
         navService.NavigateTo(typeof(LoginPage));
     }
 
-}   
+}
 
 // Extension method to get services easily
 public static class ServiceProviderExtensions

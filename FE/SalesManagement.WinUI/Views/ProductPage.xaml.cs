@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.ViewModels;
@@ -28,6 +29,11 @@ namespace SalesManagement.WinUI.Views
             {
                 _navigationService.NavigateTo(typeof(DetailItemPage), product);
             }
+        }
+
+        private void OpenCategoryManagement_Click(object sender, RoutedEventArgs e)
+        {
+            _navigationService.NavigateTo(typeof(CategoryManagementPage));
         }
 
     }
