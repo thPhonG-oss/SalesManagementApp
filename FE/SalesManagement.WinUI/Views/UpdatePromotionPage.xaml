@@ -198,9 +198,10 @@
                                                FontSize="14"
                                                FontWeight="SemiBold"/>
                                 </StackPanel>
-                                <DatePicker x:Name="StartDatePicker"
-                                            HorizontalAlignment="Stretch"
-                                            CornerRadius="8"/>
+                                <DatePicker
+                                    Date="{Binding StartDate, Mode=TwoWay}"
+                                    HorizontalAlignment="Stretch"
+                                    CornerRadius="8"/>
                             </StackPanel>
 
                             <StackPanel Grid.Column="1" Spacing="4">
@@ -211,9 +212,10 @@
                                                FontSize="14"
                                                FontWeight="SemiBold"/>
                                 </StackPanel>
-                                <DatePicker x:Name="EndDatePicker"
-                                            HorizontalAlignment="Stretch"
-                                            CornerRadius="8"/>
+                                <DatePicker
+                                    Date="{Binding EndDate, Mode=TwoWay}"
+                                    HorizontalAlignment="Stretch"
+                                    CornerRadius="8"/>
                             </StackPanel>
                         </Grid>
 

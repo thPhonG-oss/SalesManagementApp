@@ -4,15 +4,17 @@ using Microsoft.UI.Xaml.Navigation;
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
 using System.Diagnostics;
+
 namespace SalesManagement.WinUI.Views
 {
     public sealed partial class UpdatePromotionPage : Page
     {
-        public PromotionResponse Promotion { get; private set; }
+        public UpdatePromotionViewModel ViewModel { get; private set; }
 
         public UpdatePromotionPage()
         {
             this.InitializeComponent();
+            ViewModel = new UpdatePromotionViewModel();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -21,15 +23,20 @@ namespace SalesManagement.WinUI.Views
 
             if (e.Parameter is PromotionResponse promotion)
             {
-                Promotion = promotion;
+                // Load dữ liệu vào ViewModel
+                ViewModel.LoadFrom(promotion);
 
-                // 🔥 SET DataContext để Binding hoạt động
-                DataContext = Promotion;
+                // Set DataContext
+                DataContext = ViewModel;
 
+                // Set giá trị cho các control không thể bind trực tiếp
                 DiscountValueBox.Value = (double)promotion.DiscountValue;
                 StartDatePicker.Date = new DateTimeOffset(promotion.StartDate);
                 EndDatePicker.Date = new DateTimeOffset(promotion.EndDate);
 
+                Debug.WriteLine($"✅ Loaded promotion: {promotion.PromotionName}");
+                Debug.WriteLine($"   StartDate: {promotion.StartDate}");
+                Debug.WriteLine($"   EndDate: {promotion.EndDate}");
             }
             else
             {
@@ -39,49 +46,92 @@ namespace SalesManagement.WinUI.Views
 
         private async void Save_Click(object sender, RoutedEventArgs e)
         {
-            if (Promotion == null) return;
+            if (ViewModel == null || string.IsNullOrEmpty(ViewModel.PromotionCode))
+            {
+                Debug.WriteLine("❌ ViewModel chưa được khởi tạo");
+                return;
+            }
 
-            var promotionService =
-                App.Services.GetService<IPromotionService>();
+            // Lấy giá trị từ DatePicker
+            var startDate = StartDatePicker.Date.DateTime;
+            var endDate = EndDatePicker.Date.DateTime;
+
+            // Validate
+            if (endDate < startDate)
+            {
+                var dialog = new ContentDialog
+                {
+                    Title = "Lỗi",
+                    Content = "Ngày kết thúc phải sau ngày bắt đầu",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await dialog.ShowAsync();
+                return;
+            }
+
+            var promotionService = App.Services.GetService<IPromotionService>();
 
             var request = new UpdatePromotionRequest
             {
-                PromotionName = Promotion.PromotionName,
-                Description = Promotion.Description,
-                DiscountType = Promotion.DiscountType,
+                PromotionName = ViewModel.PromotionName,
+                Description = ViewModel.Description,
+                DiscountType = ViewModel.DiscountType,
                 DiscountValue = DiscountValueBox.Value,
-                MinOrderValue = (double)Promotion.MinOrderAmount,
-                MaxDiscountValue = (double)Promotion.MaxDiscountValue,
-                UsageLimit = Promotion.UsageLimit,
-                Active = Promotion.IsActive
+                MinOrderValue = ViewModel.MinOrderValue,
+                MaxDiscountValue = ViewModel.MaxDiscountValue,
+                UsageLimit = (int)ViewModel.UsageLimit,
+                Active = ViewModel.IsActive,
+                StartDate = startDate,
+                EndDate = endDate
             };
 
+            Debug.WriteLine($"==== Updating Promotion ====");
+            Debug.WriteLine($"ID: {ViewModel.PromotionId}");
+            Debug.WriteLine($"Name: {request.PromotionName}");
+            Debug.WriteLine($"StartDate: {request.StartDate}");
+            Debug.WriteLine($"EndDate: {request.EndDate}");
 
-            Debug.WriteLine("==== " + Promotion.IsActive);
             var success = await promotionService.UpdatePromotionAsync(
-                Promotion.PromotionId,
+                ViewModel.PromotionId,
                 request
             );
 
             if (success)
             {
                 Debug.WriteLine("✅ Cập nhật promotion thành công");
+
+                var successDialog = new ContentDialog
+                {
+                    Title = "Thành công",
+                    Content = "Cập nhật khuyến mãi thành công!",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await successDialog.ShowAsync();
+
                 if (Frame.CanGoBack)
                     Frame.GoBack();
             }
             else
             {
                 Debug.WriteLine("❌ Cập nhật promotion thất bại");
+
+                var errorDialog = new ContentDialog
+                {
+                    Title = "Lỗi",
+                    Content = "Không thể cập nhật khuyến mãi. Vui lòng thử lại.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                };
+                await errorDialog.ShowAsync();
             }
         }
-
-
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             if (Frame.CanGoBack)
                 Frame.GoBack();
         }
-
     }
 }

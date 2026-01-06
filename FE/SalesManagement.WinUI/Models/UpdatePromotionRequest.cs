@@ -27,5 +27,8 @@ namespace SalesManagement.WinUI.Models
 
         [JsonPropertyName("isActive")]
         public bool Active { get; set; }
+
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }
