@@ -36,6 +36,7 @@ namespace SalesManagement.WinUI.Views
         private async void ChangePassword_Click(object sender, RoutedEventArgs e)
         {
             var userService = App.Services.GetRequiredService<IUserService>();
+            var authService = App.Services.GetRequiredService<IAuthService>();
 
             var dialog = new ChangePasswordDialog
             {
@@ -83,7 +84,24 @@ namespace SalesManagement.WinUI.Views
                     ConfirmNewPassword = dialog.ConfirmPassword
                 });
 
-                ViewModel.StatusMessage = "Đổi mật khẩu thành công";
+                // Thông báo thành công
+                await new ContentDialog
+                {
+                    Title = "Thành công",
+                    Content = "Đổi mật khẩu thành công. Vui lòng đăng nhập lại.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                }.ShowAsync();
+
+
+                await authService.LogoutAsync();
+                // Điều hướng về Login 
+                if (App.MainWindow.Content is Frame rootFrame)
+                {
+                    rootFrame.Navigate(typeof(LoginPage));
+                    rootFrame.BackStack.Clear();
+                }
+
             }
             catch (Exception ex)
             {
@@ -95,6 +113,7 @@ namespace SalesManagement.WinUI.Views
                     XamlRoot = this.XamlRoot
                 }.ShowAsync();
             }
+
         }
 
     }

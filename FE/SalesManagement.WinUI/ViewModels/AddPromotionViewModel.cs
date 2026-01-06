@@ -35,8 +35,28 @@ namespace SalesManagement.WinUI.ViewModels
         public double MaxDiscountValue { get; set; }
 
 
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        private DateTimeOffset _startDate;
+        public DateTimeOffset StartDate
+        {
+            get => _startDate;
+            set
+            {
+                _startDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private DateTimeOffset _endDate;
+        public DateTimeOffset EndDate
+        {
+            get => _endDate;
+            set
+            {
+                _endDate = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         public int UsageLimit { get; set; }
 
@@ -60,7 +80,6 @@ namespace SalesManagement.WinUI.ViewModels
 
                 UsageLimit = UsageLimit
             };
-
 
             return await _promotionService.CreatePromotionAsync(request);
         }
