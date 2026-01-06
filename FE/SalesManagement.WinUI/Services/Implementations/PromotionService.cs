@@ -115,8 +115,186 @@ namespace SalesManagement.WinUI.Services.Implementations
             {
                 return parsedDate >= DateTime.Now;
             }
-            
+
             return true;
         }
+
+        public async Task<List<PromotionResponse>> GetAllPromotionsAsync(
+            int page = 0,
+            int size = 100,
+            string sortBy = "createdAt",
+            string sortDir = "desc")
+        {
+            // 1. Gắn token
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            try
+            {
+                // 2. Build query string đúng swagger
+                var url =
+                    $"/api/v1/promotions?page={page}&size={size}&sortBy={sortBy}&sortDir={sortDir}";
+
+                var response = await _client.GetAsync(url);
+                var rawJson = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine($"[GET ALL PROMOTIONS ERROR] {response.StatusCode} - {rawJson}");
+                    return new List<PromotionResponse>();
+                }
+
+                // 3. Deserialize wrapper
+                var apiResponse =
+                    JsonSerializer.Deserialize<ApiResponse<PromotionListData>>(rawJson, _jsonOptions);
+
+                if (apiResponse == null || !apiResponse.Success || apiResponse.Data?.Promotions == null)
+                {
+                    Debug.WriteLine("[GET ALL PROMOTIONS] Invalid API response");
+                    return new List<PromotionResponse>();
+                }
+
+                Debug.WriteLine($"[GET ALL PROMOTIONS] Count: {apiResponse.Data.Promotions.Count}");
+
+                // 4. Mapping sang UI model
+                return apiResponse.Data.Promotions.Select(p => new PromotionResponse
+                {
+                    PromotionId = p.PromotionId,
+                    PromotionCode = p.PromotionCode,
+                    PromotionName = p.PromotionName,
+                    Description = p.Description,
+
+                    DiscountType = p.DiscountType,
+
+                    DiscountPercentage = p.DiscountPercentage,
+                    DiscountValue = p.DiscountValue,
+
+                    MinOrderAmount = p.MinOrderAmount,
+                    MaxDiscountValue = p.MaxDiscountValue,
+
+                    StartDate = p.StartDate,
+                    EndDate = p.EndDate,
+
+                    UsageLimit = p.UsageLimit,
+                    UsedCount = p.UsedCount,
+
+                    IsActive = p.IsActive,
+
+                    CreatedAt = p.CreatedAt,
+                    UpdatedAt = p.UpdatedAt
+                }).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[GET ALL PROMOTIONS EXCEPTION] {ex.Message}");
+                return new List<PromotionResponse>();
+            }
+        }
+
+        public async Task<bool> CreatePromotionAsync(CreatePromotionRequest request)
+        {
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            try
+            {
+                var json = JsonSerializer.Serialize(request);
+                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                var response = await _client.PostAsync("/api/v1/promotions", content);
+                var raw = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine($"[CREATE PROMOTION ERROR] {response.StatusCode} - {raw}");
+                    return false;
+                }
+
+                Debug.WriteLine("[CREATE PROMOTION] Success");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[CREATE PROMOTION EXCEPTION] {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdatePromotionAsync(long promotionId, UpdatePromotionRequest request)
+        {
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            try
+            {
+                var json = JsonSerializer.Serialize(request);
+                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                var response = await _client.PutAsync($"/api/v1/promotions/{promotionId}", content);
+                var raw = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine($"[UPDATE PROMOTION ERROR] {response.StatusCode} - {raw}");
+                    return false;
+                }
+
+                Debug.WriteLine("[UPDATE PROMOTION] Success");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[UPDATE PROMOTION EXCEPTION] {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> DeactivatePromotionAsync(long promotionId)
+        {
+            var token = _authService.GetAccessToken();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            try
+            {
+                var request = new HttpRequestMessage(
+                    HttpMethod.Patch,
+                    $"/api/v1/promotions/{promotionId}/deactivate");
+
+                var response = await _client.SendAsync(request);
+                var raw = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine($"[DEACTIVATE PROMOTION ERROR] {response.StatusCode} - {raw}");
+                    return false;
+                }
+
+                Debug.WriteLine("[DEACTIVATE PROMOTION] Success");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[DEACTIVATE PROMOTION EXCEPTION] {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }

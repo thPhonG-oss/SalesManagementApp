@@ -2,6 +2,7 @@
 using SalesManagement.WinUI.Services.Interfaces;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace SalesManagement.WinUI.ViewModels
@@ -10,7 +11,7 @@ namespace SalesManagement.WinUI.ViewModels
     {
         private readonly IPromotionService _promotionService;
 
-        public ObservableCollection<Promotion> Promotions { get; } = new();
+        public ObservableCollection<PromotionResponse> Promotions { get; } = new();
 
         private bool _isLoading;
         public bool IsLoading
@@ -29,14 +30,24 @@ namespace SalesManagement.WinUI.ViewModels
             IsLoading = true;
             Promotions.Clear();
 
-            var promotions = await _promotionService.GetActivePromotionsAsync();
+            var promotions = await _promotionService.GetAllPromotionsAsync();
             foreach (var promo in promotions)
             {
                 Promotions.Add(promo);
+                Debug.WriteLine(promo.DiscountValue);
+                Debug.WriteLine(promo.FormattedDiscount);
+
             }
 
             IsLoading = false;
         }
+
+        public async Task<bool> DeactivatePromotionAsync(long promotionId)
+        {
+            return await _promotionService.DeactivatePromotionAsync(promotionId);
+        }
+
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? name = null)

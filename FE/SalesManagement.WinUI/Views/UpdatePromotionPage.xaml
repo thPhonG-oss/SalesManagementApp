@@ -1,0 +1,85 @@
+<Page
+    x:Class="SalesManagement.WinUI.Views.UpdatePromotionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="24"
+          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===== HEADER ===== -->
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <Button Content="←"
+                    Width="40"
+                    Height="40"
+                    Click="Back_Click"/>
+
+            <TextBlock Text="Cập nhật khuyến mãi"
+                       FontSize="22"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- ===== FORM ===== -->
+        <ScrollViewer Grid.Row="1" Margin="0,20,0,0">
+            <StackPanel Spacing="16">
+
+                <TextBox Header="Tên khuyến mãi"
+                         Text="{Binding PromotionName, Mode=TwoWay}" />
+
+                <TextBox Header="Mã khuyến mãi"
+                         Text="{Binding PromotionCode, Mode=TwoWay}" />
+
+                <TextBox Header="Mô tả"
+                         Text="{Binding Description, Mode=TwoWay}"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"
+                         Height="100"/>
+
+                <ComboBox Header="Loại giảm giá"
+                          SelectedValue="{Binding DiscountType, Mode=TwoWay}"
+                          SelectedValuePath="Content">
+                    <ComboBoxItem Content="FIXED_AMOUNT"/>
+                    <ComboBoxItem Content="PERCENTAGE"/>
+                </ComboBox>
+
+                <NumberBox x:Name="DiscountValueBox"
+                           Header="Giá trị giảm"
+                           SpinButtonPlacementMode="Hidden"/>
+
+                <DatePicker x:Name="StartDatePicker"
+                            Header="Ngày bắt đầu"/>
+
+                <DatePicker x:Name="EndDatePicker"
+                            Header="Ngày kết thúc"/>
+
+
+                <NumberBox Header="Giới hạn sử dụng"
+                           Value="{Binding UsageLimit, Mode=TwoWay}" />
+
+                <!-- ACTIONS -->
+                <StackPanel Orientation="Horizontal"
+                            Spacing="12"
+                            Margin="0,20,0,0">
+                    <Button Content="Lưu thay đổi"
+                            MinWidth="120"
+                            Style="{ThemeResource AccentButtonStyle}"
+                            Click="Save_Click"/>
+
+                    <Button Content="Hủy"
+                            MinWidth="120"
+                            Click="Back_Click"/>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</Page>

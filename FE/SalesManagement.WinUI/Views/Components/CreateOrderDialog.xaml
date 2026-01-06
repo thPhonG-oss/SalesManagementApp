@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    
+
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:SalesManagement.WinUI.ViewModels"
     mc:Ignorable="d"
@@ -63,30 +63,30 @@
                                     <ColumnDefinition Width="50"/>
                                 </Grid.ColumnDefinitions>
 
-                                <ComboBox Grid.Column="0" 
+                                <ComboBox Grid.Column="0"
                                           ItemsSource="{x:Bind AvailableProducts}"
                                           SelectedItem="{x:Bind SelectedProduct, Mode=TwoWay}"
                                           DisplayMemberPath="ProductName"
                                           HorizontalAlignment="Stretch"
                                           PlaceholderText="Chọn sản phẩm..."/>
 
-                                <TextBox Grid.Column="1" 
+                                <TextBox Grid.Column="1"
                                          Text="{x:Bind PriceDisplay, Mode=OneWay}"
-                                         IsReadOnly="True" 
+                                         IsReadOnly="True"
                                          Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
 
-                                <NumberBox Grid.Column="2" 
+                                <NumberBox Grid.Column="2"
                                            Value="{x:Bind QuantityDouble, Mode=TwoWay}"
                                            SpinButtonPlacementMode="Inline"
                                            SmallChange="1" Minimum="1"/>
 
-                                <TextBox Grid.Column="3" 
+                                <TextBox Grid.Column="3"
                                          Text="{x:Bind TotalDisplay, Mode=OneWay}"
-                                         IsReadOnly="True" 
+                                         IsReadOnly="True"
                                          FontWeight="Bold"
                                          Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
 
-                                <Button Grid.Column="4" 
+                                <Button Grid.Column="4"
                                         Command="{Binding ElementName=RootDialog, Path=ViewModel.RemoveRowCommand}"
                                         CommandParameter="{x:Bind}"
                                         Background="Transparent" BorderThickness="0">
@@ -97,7 +97,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <Button Grid.Row="2" HorizontalAlignment="Stretch" 
+                <Button Grid.Row="2" HorizontalAlignment="Stretch"
                         Command="{x:Bind ViewModel.AddRowCommand}"
                         Background="Transparent" BorderThickness="1" BorderBrush="#DDDDDD">
                     <StackPanel Orientation="Horizontal" Spacing="8">
@@ -113,35 +113,35 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Spacing="12">
-                        <TextBox Header="Email khách hàng" 
-             PlaceholderText="Nhập email khách hàng (bắt buộc)"
-             Text="{x:Bind ViewModel.CustomerEmail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Header="Email khách hàng"
+                                 PlaceholderText="Nhập email khách hàng (bắt buộc)"
+                                 Text="{x:Bind ViewModel.CustomerEmail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <TextBox Header="Địa chỉ nhận hàng" 
-                 PlaceholderText="Nhập địa chỉ giao hàng (để trống nếu nhận tại quầy)"
-                 Text="{x:Bind ViewModel.ShipAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Header="Địa chỉ nhận hàng"
+                                 PlaceholderText="Nhập địa chỉ giao hàng (để trống nếu nhận tại quầy)"
+                                 Text="{x:Bind ViewModel.ShipAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <TextBox Header="Ghi chú đơn hàng" 
-                 PlaceholderText="Ví dụ: Giao giờ hành chính..."
-                 AcceptsReturn="True"
-                 TextWrapping="Wrap"
-                 Height="60"
-                 Text="{x:Bind ViewModel.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBox Header="Ghi chú đơn hàng"
+                                 PlaceholderText="Ví dụ: Giao giờ hành chính..."
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 Height="60"
+                                 Text="{x:Bind ViewModel.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <StackPanel Spacing="4">
                             <TextBlock Text="Khuyến mãi / Voucher" FontWeight="SemiBold" FontSize="14"/>
 
                             <ComboBox ItemsSource="{x:Bind ViewModel.Promotions, Mode=OneWay}"
-          SelectedItem="{x:Bind ViewModel.SelectedPromotion, Mode=TwoWay}"
-          HorizontalAlignment="Stretch"
-          DisplayMemberPath="DisplayName"
-          PlaceholderText="Chọn mã giảm giá"
-          
-          DropDownOpened="{x:Bind ViewModel.OpenPromotionList}" />
+                                      SelectedItem="{x:Bind ViewModel.SelectedPromotion, Mode=TwoWay}"
+                                      HorizontalAlignment="Stretch"
+                                      DisplayMemberPath="DisplayName"
+                                      PlaceholderText="Chọn mã giảm giá"
 
-                            <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" 
-                    CornerRadius="4" Padding="12" Margin="0,4,0,0"
-                    Visibility="{x:Bind ViewModel.PromotionInfoVisibility, Mode=OneWay}">
+                                      DropDownOpened="{x:Bind ViewModel.OpenPromotionList}" />
+
+                            <Border Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                                    CornerRadius="4" Padding="12" Margin="0,4,0,0"
+                                    Visibility="{x:Bind ViewModel.PromotionInfoVisibility, Mode=OneWay}">
                                 <StackPanel Spacing="4">
                                     <TextBlock Text="{x:Bind ViewModel.SelectedPromotion.PromotionName, Mode=OneWay, FallbackValue=''}" FontWeight="Bold"/>
                                     <TextBlock Text="{x:Bind ViewModel.SelectedPromotion.Description, Mode=OneWay, FallbackValue=''}" FontStyle="Italic" Foreground="Gray"/>
@@ -175,7 +175,7 @@
                             <Rectangle Grid.Row="2" Grid.ColumnSpan="2" Height="1" Fill="#E5E5E5" Margin="0,4"/>
 
                             <TextBlock Grid.Row="3" Grid.Column="0" Text="TỔNG THANH TOÁN" VerticalAlignment="Bottom" FontWeight="Bold"/>
-                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ViewModel.TotalAmountDisplay, Mode=OneWay}" 
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="{x:Bind ViewModel.TotalAmountDisplay, Mode=OneWay}"
                                        Foreground="{ThemeResource SystemAccentColor}" FontWeight="Bold" FontSize="20"/>
                         </Grid>
                     </Border>

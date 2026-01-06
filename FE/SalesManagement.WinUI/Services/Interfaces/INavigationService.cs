@@ -6,6 +6,5 @@ public interface INavigationService
     bool NavigateTo(Type pageType);
     bool NavigateTo(Type pageType, object? parameter);
     void SetHeader(string? header);
-
     void GoBack();
 }
