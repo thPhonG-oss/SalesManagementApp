@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Windows.Storage.Pickers;
 
 namespace SalesManagement.WinUI.ViewModels
@@ -179,6 +180,7 @@ namespace SalesManagement.WinUI.ViewModels
                 if (product.IsActive)
                 {
                     _allProducts.Add(product);
+                    Debug.WriteLine("------ " + product.SpecialPriceText);
                 }
             }
 

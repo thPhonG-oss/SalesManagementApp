@@ -143,15 +143,41 @@
                         </StackPanel>
 
                         <!-- Price -->
+                        <!-- Price -->
                         <StackPanel Spacing="6">
                             <TextBlock Text="Giá bán"
                                        FontSize="12"
                                        FontWeight="SemiBold"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            <TextBlock Text="{Binding PriceText}"
-                                       FontSize="32"
-                                       FontWeight="Bold"
-                                       Foreground="{ThemeResource SystemFillColorSuccessBrush}"/>
+
+                            <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                                <!-- Special Price (giá gốc bị gạch) -->
+                                <TextBlock Text="{Binding PriceText}"
+                                           FontSize="24"
+                                           FontWeight="SemiBold"
+                                           Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                           TextDecorations="Strikethrough"
+                                           VerticalAlignment="Center"
+                                           Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                <!-- Current Price (giá sau giảm) -->
+                                <TextBlock Text="{Binding SpecialPriceText}"
+                                           FontSize="32"
+                                           FontWeight="Bold"
+                                           Foreground="{ThemeResource SystemFillColorSuccessBrush}"/>
+
+                                <!-- Discount Badge -->
+                                <Border Background="#FF27AE60"
+                                        Padding="10,6"
+                                        CornerRadius="8"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <TextBlock Text="{Binding DiscountText}"
+                                               FontSize="14"
+                                               FontWeight="Bold"
+                                               Foreground="White"/>
+                                </Border>
+                            </StackPanel>
                         </StackPanel>
 
                         <!-- Description -->

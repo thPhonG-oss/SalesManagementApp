@@ -7,7 +7,7 @@ namespace SalesManagement.WinUI.Services.Interfaces
     {
         Task<ProductListData?> GetProductsAsync(
             int page = 1,
-            int size = 200,
+            int size = 2000,
             string sortBy = "productName",
             string sortDir = "asc");
         Task<bool> CreateProductAsync(CreateProductRequest request);
