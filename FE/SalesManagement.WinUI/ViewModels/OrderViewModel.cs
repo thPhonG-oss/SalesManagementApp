@@ -225,6 +225,8 @@ namespace SalesManagement.WinUI.ViewModels
         private readonly IOrderService _orderService;
         private readonly IDialogService _dialogService;
 
+        private readonly CreateOrderViewModel _createOrderVM;
+
 
         private List<OrderItemViewModel> _allOrders = new();
         private const int _pageSize = 7;
@@ -257,10 +259,12 @@ namespace SalesManagement.WinUI.ViewModels
         [ObservableProperty] private OrderItemViewModel? _selectedOrder;
         [ObservableProperty] private bool _isLoading;
 
-        public OrderViewModel(IOrderService orderService, IDialogService dialogService)
+        public OrderViewModel(IOrderService orderService, IDialogService dialogService, CreateOrderViewModel createOrderVM)
         {
             _orderService = orderService;
             _dialogService = dialogService;
+            
+            _createOrderVM = createOrderVM;
             LoadDataAsync(1);
         }
 
@@ -505,11 +509,11 @@ namespace SalesManagement.WinUI.ViewModels
         private async Task CreateNewOrder()
         {
             // Mở dialog
-            bool created = await _dialogService.ShowCreateOrderDialogAsync();
+            bool created = await _dialogService.ShowCreateOrderDialogAsync(_createOrderVM);
 
             if (created)
             {
-                // Reload lại danh sách sau khi tạo
+                _createOrderVM.ResetData();
                 LoadDataAsync();
             }
         }

@@ -26,7 +26,7 @@ namespace SalesManagement.WinUI.Models
         [JsonPropertyName("discountValue")]
         public decimal DiscountValue { get; set; }
 
-        [JsonPropertyName("minOrderAmount")]
+        [JsonPropertyName("minOrderValue")]
         public decimal MinOrderAmount { get; set; }
 
         [JsonPropertyName("maxDiscountValue")]
