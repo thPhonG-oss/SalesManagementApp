@@ -166,11 +166,46 @@ namespace SalesManagement.WinUI.Views
             if (result != ContentDialogResult.Primary)
                 return;
 
+            // ===== LOADING DIALOG =====
+            var loadingDialog = new ContentDialog
+            {
+                Title = "Đang tải ảnh lên",
+                Content = new StackPanel
+                {
+                    Spacing = 16,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Children =
+                    {
+                        new ProgressRing
+                        {
+                            IsActive = true,
+                            Width = 50,
+                            Height = 50
+                        },
+                        new TextBlock
+                        {
+                            Text = "Vui lòng đợi...",
+                            HorizontalAlignment = HorizontalAlignment.Center
+                        }
+                    }
+                },
+                XamlRoot = this.XamlRoot
+            };
+
+            // Hiển thị loading dialog không chặn (không await)
+            var loadingTask = loadingDialog.ShowAsync();
+
             // ===== UPLOAD =====
             var productService = App.Services.GetService<IProductService>();
-            if (productService == null) return;
+            bool success = false;
 
-            bool success = await productService.UploadImageAsync(product.ProductId, file);
+            if (productService != null)
+            {
+                success = await productService.UploadImageAsync(product.ProductId, file);
+            }
+
+            // Đóng loading dialog
+            loadingDialog.Hide();
 
             // ===== RESULT =====
             await new ContentDialog
@@ -181,14 +216,12 @@ namespace SalesManagement.WinUI.Views
                 XamlRoot = this.XamlRoot
             }.ShowAsync();
 
-            // (OPTIONAL) Reload images nếu bạn có API get images
-            // 👉 Sau khi bấm OK
+            // Quay về trang trước nếu thành công
             if (success && Frame.CanGoBack)
             {
-                Frame.GoBack(); // quay về trang Product
+                Frame.GoBack();
             }
         }
-
 
     }
 }

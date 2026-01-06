@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:SalesManagement.WinUI.Models"
     xmlns:vm="using:SalesManagement.WinUI.ViewModels"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d">
 
     <Grid>
@@ -15,21 +16,21 @@
                 <!-- Header & Filter Section -->
                 <StackPanel Spacing="12">
                     <TextBlock
-                        Text="Revenue &amp; Product Reports"
+                        Text="Báo cáo thống kê sản phẩm và doanh thu"
                         Style="{StaticResource TitleTextBlockStyle}"
                         FontWeight="Bold" />
 
                     <StackPanel Orientation="Horizontal" Spacing="12">
                         <DatePicker
-                            Header="Start Date"
+                            Header="Từ ngày"
                             Date="{x:Bind ViewModel.StartDate, Mode=TwoWay}"
                             MinWidth="180" />
                         <DatePicker
-                            Header="End Date"
+                            Header="Đến ngày"
                             Date="{x:Bind ViewModel.EndDate, Mode=TwoWay}"
                             MinWidth="180" />
                         <Button
-                            Content="Load Report"
+                            Content="Load Báo cáo"
                             Click="OnLoadClick"
                             Style="{StaticResource AccentButtonStyle}"
                             VerticalAlignment="Bottom"
@@ -44,313 +45,51 @@
                     Height="40"
                     HorizontalAlignment="Center" />
 
-                <!-- Current Year Summary -->
-                <StackPanel
-                    Spacing="12"
-                    Visibility="{x:Bind ViewModel.CurrentYearData, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+
+                <!-- ================= PRODUCT LINE CHART ================= -->
+                <StackPanel Spacing="8">
                     <TextBlock
-                        Text="📊 Current Year Summary"
+                        Text="📈 Xu hướng doanh số theo ngày"
                         Style="{StaticResource SubtitleTextBlockStyle}"
                         FontWeight="SemiBold" />
+                    <canvas:CanvasControl
+                        x:Name="ProductLineChart"
+                        Height="600"
+                        Draw="ProductLineChart_Draw"
+                        ClearColor="White" />
 
-                    <Grid ColumnSpacing="12">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Border
-                            Grid.Column="0"
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="8"
-                            Padding="16">
-                            <StackPanel Spacing="8">
-                                <TextBlock Text="Top Products" FontWeight="SemiBold" />
-                                <ItemsControl ItemsSource="{x:Bind ViewModel.CurrentYearData.TopProducts, Mode=OneWay}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="models:ReportTopProduct">
-                                            <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,4">
-                                                <TextBlock Text="{x:Bind ProductName}" Width="150" />
-                                                <TextBlock Text="{x:Bind QuantitySold}" Width="60" />
-                                                <TextBlock Text="{x:Bind Revenue, Converter={StaticResource CurrencyConverter}}" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
                 </StackPanel>
 
-                <!-- Revenue Reports Section -->
-                <StackPanel Spacing="16">
-                    <TextBlock
-                        Text="💰 Revenue Reports"
-                        Style="{StaticResource SubtitleTextBlockStyle}"
-                        FontWeight="SemiBold" />
 
-                    <!-- Revenue by Year -->
-                    <Expander Header="Revenue by Year" IsExpanded="True">
-                        <Border
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="8"
-                            Padding="16"
-                            Margin="0,8,0,0">
-                            <ListView ItemsSource="{x:Bind ViewModel.RevenueYear, Mode=OneWay}" SelectionMode="None">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:ReportRevenueYear">
-                                        <Grid ColumnSpacing="12" Padding="8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="100"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{x:Bind Year}" FontWeight="SemiBold" />
-                                            <TextBlock Grid.Column="1" Text="{x:Bind Revenue, Converter={StaticResource CurrencyConverter}}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Border>
-                    </Expander>
 
-                    <!-- Revenue by Month -->
-                    <Expander Header="Revenue by Month">
-                        <Border
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="8"
-                            Padding="16"
-                            Margin="0,8,0,0">
-                            <ListView ItemsSource="{x:Bind ViewModel.RevenueMonth, Mode=OneWay}" SelectionMode="None">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:ReportRevenueMonth">
-                                        <Grid ColumnSpacing="12" Padding="8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="100"/>
-                                                <ColumnDefinition Width="150"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{x:Bind Year}" />
-                                            <TextBlock Grid.Column="1" Text="{x:Bind MonthName}" FontWeight="SemiBold" />
-                                            <TextBlock Grid.Column="2" Text="{x:Bind Revenue, Converter={StaticResource CurrencyConverter}}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Border>
-                    </Expander>
+                <StackPanel Spacing="20">
 
-                    <!-- Revenue by Week -->
-                    <Expander Header="Revenue by Week">
-                        <Border
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="8"
-                            Padding="16"
-                            Margin="0,8,0,0">
-                            <ListView ItemsSource="{x:Bind ViewModel.RevenueWeekly, Mode=OneWay}" SelectionMode="None">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:ReportRevenueWeekly">
-                                        <Grid ColumnSpacing="12" Padding="8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="80"/>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{x:Bind Year}" />
-                                            <TextBlock Grid.Column="1" FontWeight="SemiBold">
-                                                <Run Text="Week " />
-                                                <Run Text="{x:Bind WeekNumber}" />
-                                            </TextBlock>
-                                            <TextBlock Grid.Column="2" Opacity="0.7">
-                                                <Run Text="{x:Bind WeekStart, Converter={StaticResource DateConverter}}" />
-                                                <Run Text=" - " />
-                                                <Run Text="{x:Bind WeekEnd, Converter={StaticResource DateConverter}}" />
-                                            </TextBlock>
-                                            <TextBlock Grid.Column="3" Text="{x:Bind Revenue, Converter={StaticResource CurrencyConverter}}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Border>
-                    </Expander>
+                    <TextBlock Text="🥧 Doanh thu theo ngày (Top 7)" FontWeight="SemiBold"/>
+                    <canvas:CanvasControl
+                        x:Name="RevenueDayPie"
+                        Height="320"
+                        Draw="RevenueDayPie_Draw"
+                        ClearColor="White"/>
 
-                    <!-- Revenue by Day -->
-                    <Expander Header="Revenue by Day">
-                        <Border
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="8"
-                            Padding="16"
-                            Margin="0,8,0,0">
-                            <ListView ItemsSource="{x:Bind ViewModel.RevenueDaily, Mode=OneWay}" SelectionMode="None">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:ReportRevenueDaily">
-                                        <Grid ColumnSpacing="12" Padding="8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="150"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{x:Bind Date, Converter={StaticResource DateConverter}}" FontWeight="SemiBold" />
-                                            <TextBlock Grid.Column="1" Text="{x:Bind Revenue, Converter={StaticResource CurrencyConverter}}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Border>
-                    </Expander>
+                    <TextBlock Text="🥧 Doanh thu theo tháng" FontWeight="SemiBold"/>
+                    <canvas:CanvasControl
+                        x:Name="RevenueMonthPie"
+                        Height="320"
+                        Draw="RevenueMonthPie_Draw"
+                        ClearColor="White"/>
+
+                    <TextBlock Text="🥧 Doanh thu theo năm" FontWeight="SemiBold"/>
+                    <canvas:CanvasControl
+                        x:Name="RevenueYearPie"
+                        Height="320"
+                        Draw="RevenueYearPie_Draw"
+                        ClearColor="White"/>
+
                 </StackPanel>
 
-                <!-- Product Reports Section -->
-                <StackPanel Spacing="16">
-                    <TextBlock
-                        Text="📦 Product Reports"
-                        Style="{StaticResource SubtitleTextBlockStyle}"
-                        FontWeight="SemiBold" />
-
-                    <!-- Product Sales Summary -->
-                    <Expander Header="Product Sales Summary" IsExpanded="True">
-                        <Border
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="8"
-                            Padding="16"
-                            Margin="0,8,0,0">
-                            <ListView ItemsSource="{x:Bind ViewModel.ProductSales, Mode=OneWay}" SelectionMode="None">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:ReportProductSales">
-                                        <Grid ColumnSpacing="12" Padding="8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="200"/>
-                                                <ColumnDefinition Width="100"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{x:Bind ProductName}" FontWeight="SemiBold" />
-                                            <TextBlock Grid.Column="1" Text="{x:Bind QuantitySold}" />
-                                            <TextBlock Grid.Column="2" Text="{x:Bind Revenue, Converter={StaticResource CurrencyConverter}}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Border>
-                    </Expander>
-
-                    <!-- Product by Year -->
-                    <Expander Header="Product Sales by Year">
-                        <Border
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="8"
-                            Padding="16"
-                            Margin="0,8,0,0">
-                            <ListView ItemsSource="{x:Bind ViewModel.ProductYear, Mode=OneWay}" SelectionMode="None">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:ReportProductYear">
-                                        <Grid ColumnSpacing="12" Padding="8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="80"/>
-                                                <ColumnDefinition Width="200"/>
-                                                <ColumnDefinition Width="100"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{x:Bind Year}" />
-                                            <TextBlock Grid.Column="1" Text="{x:Bind ProductName}" FontWeight="SemiBold" />
-                                            <TextBlock Grid.Column="2" Text="{x:Bind QuantitySold}" />
-                                            <TextBlock Grid.Column="3" Text="{x:Bind Revenue, Converter={StaticResource CurrencyConverter}}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Border>
-                    </Expander>
-
-                    <!-- Product by Month -->
-                    <Expander Header="Product Sales by Month">
-                        <Border
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="8"
-                            Padding="16"
-                            Margin="0,8,0,0">
-                            <ListView ItemsSource="{x:Bind ViewModel.ProductMonth, Mode=OneWay}" SelectionMode="None">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:ReportProductMonth">
-                                        <Grid ColumnSpacing="12" Padding="8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="80"/>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="180"/>
-                                                <ColumnDefinition Width="80"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{x:Bind Year}" />
-                                            <TextBlock Grid.Column="1" Text="{x:Bind MonthName}" />
-                                            <TextBlock Grid.Column="2" Text="{x:Bind ProductName}" FontWeight="SemiBold" />
-                                            <TextBlock Grid.Column="3" Text="{x:Bind QuantitySold}" />
-                                            <TextBlock Grid.Column="4" Text="{x:Bind Revenue, Converter={StaticResource CurrencyConverter}}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Border>
-                    </Expander>
-
-                    <!-- Product by Week -->
-                    <Expander Header="Product Sales by Week">
-                        <Border
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="8"
-                            Padding="16"
-                            Margin="0,8,0,0">
-                            <ListView ItemsSource="{x:Bind ViewModel.ProductWeekly, Mode=OneWay}" SelectionMode="None">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:ReportProductWeekly">
-                                        <Grid ColumnSpacing="12" Padding="8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="80"/>
-                                                <ColumnDefinition Width="80"/>
-                                                <ColumnDefinition Width="180"/>
-                                                <ColumnDefinition Width="80"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{x:Bind Year}" />
-                                            <TextBlock Grid.Column="1">
-                                                <Run Text="W" />
-                                                <Run Text="{x:Bind Week}" />
-                                            </TextBlock>
-                                            <TextBlock Grid.Column="2" Text="{x:Bind ProductName}" FontWeight="SemiBold" />
-                                            <TextBlock Grid.Column="3" Text="{x:Bind QuantitySold}" />
-                                            <TextBlock Grid.Column="4" Text="{x:Bind Revenue, Converter={StaticResource CurrencyConverter}}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Border>
-                    </Expander>
-
-                    <!-- Product by Day -->
-                    <Expander Header="Product Sales by Day">
-                        <Border
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="8"
-                            Padding="16"
-                            Margin="0,8,0,0">
-                            <ListView ItemsSource="{x:Bind ViewModel.ProductDaily, Mode=OneWay}" SelectionMode="None">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="models:ReportProductDaily">
-                                        <Grid ColumnSpacing="12" Padding="8">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="120"/>
-                                                <ColumnDefinition Width="200"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="{x:Bind Date, Converter={StaticResource DateConverter}}" />
-                                            <TextBlock Grid.Column="1" Text="{x:Bind ProductName}" FontWeight="SemiBold" />
-                                            <TextBlock Grid.Column="2" Text="{x:Bind QuantitySold}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Border>
-                    </Expander>
-                </StackPanel>
 
             </StackPanel>
+
         </ScrollViewer>
     </Grid>
 </Page>

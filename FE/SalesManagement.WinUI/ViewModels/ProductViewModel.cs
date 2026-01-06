@@ -1,11 +1,10 @@
-﻿// FE/SalesManagement.WinUI/ViewModels/ProductViewModel.cs
-// Cập nhật để sử dụng Settings
-
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Xaml.Controls;
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using Windows.Storage.Pickers;
 
 namespace SalesManagement.WinUI.ViewModels
 {
@@ -14,7 +13,7 @@ namespace SalesManagement.WinUI.ViewModels
         private readonly ICategoryService _categoryService;
         private readonly IProductService _productService;
         private readonly INavigationService _navigationService;
-        private readonly IStorageService _storageService; // ⭐ THÊM MỚI
+        private readonly IStorageService _storageService;
 
         // ===== CATEGORY =====
         public ObservableCollection<Category> Categories { get; } = new();
@@ -95,7 +94,6 @@ namespace SalesManagement.WinUI.ViewModels
             }
         }
 
-        // ⭐ THÊM MỚI - Dynamic Page Size
         private int _pageSize = 20;
         public int PageSize
         {
@@ -108,18 +106,19 @@ namespace SalesManagement.WinUI.ViewModels
         public RelayCommand PrevPageCommand { get; }
         public RelayCommand OpenAddProductCommand { get; }
         public IAsyncRelayCommand OpenCategoryDialogCommand { get; }
+        public IAsyncRelayCommand ImportProductsCommand { get; } // ⭐ NEW
 
         // ===== CTOR =====
         public ProductViewModel(
             ICategoryService categoryService,
             IProductService productService,
             INavigationService navigationService,
-            IStorageService storageService) // ⭐ INJECT MỚI
+            IStorageService storageService)
         {
             _categoryService = categoryService;
             _productService = productService;
             _navigationService = navigationService;
-            _storageService = storageService; // ⭐ LƯU
+            _storageService = storageService;
 
             PrevPageCommand = new RelayCommand(
                 () => Page--,
@@ -131,29 +130,25 @@ namespace SalesManagement.WinUI.ViewModels
 
             OpenAddProductCommand = new RelayCommand(OpenAddProduct);
             OpenCategoryDialogCommand = new AsyncRelayCommand(OpenCategoryDialogAsync);
+            ImportProductsCommand = new AsyncRelayCommand(ImportProductsAsync); // ⭐ NEW
 
-            _ = InitializeAsync(); // ⭐ THAY THẾ
+            _ = InitializeAsync();
         }
 
-        // ⭐ THÊM MỚI - Initialize với Settings
         private async Task InitializeAsync()
         {
-            // Load settings trước
             var settings = await _storageService.GetAppSettingsAsync();
             PageSize = settings.ItemsPerPage;
 
-            // Sau đó load data
             await LoadCategoriesAsync();
             await LoadProductsAsync();
         }
 
-        // ===== OPEN ADD PRODUCT PAGE =====
         private void OpenAddProduct()
         {
             _navigationService.NavigateTo(typeof(Views.AddProductPage));
         }
 
-        // ===== LOAD CATEGORY =====
         private async Task LoadCategoriesAsync()
         {
             var data = await _categoryService.GetAllAsync();
@@ -173,7 +168,6 @@ namespace SalesManagement.WinUI.ViewModels
             SelectedCategory = Categories.First();
         }
 
-        // ===== LOAD PRODUCT =====
         private async Task LoadProductsAsync()
         {
             var result = await _productService.GetProductsAsync();
@@ -186,6 +180,7 @@ namespace SalesManagement.WinUI.ViewModels
                 if (product.IsActive)
                 {
                     _allProducts.Add(product);
+                    Debug.WriteLine("------ " + product.SpecialPriceText);
                 }
             }
 
@@ -193,22 +188,18 @@ namespace SalesManagement.WinUI.ViewModels
             ApplyFilterAndPaging();
         }
 
-        // ===== FILTER + PAGING =====
         private void ApplyFilterAndPaging()
         {
             IEnumerable<Product> query = _allProducts;
 
-            // Filter by category
             if (SelectedCategory != null && SelectedCategory.CategoryId != -1)
                 query = query.Where(p => p.Category?.CategoryId == SelectedCategory.CategoryId);
 
-            // Filter by search
             if (!string.IsNullOrWhiteSpace(SearchText))
                 query = query.Where(p =>
                     p.ProductName != null &&
                     p.ProductName.Contains(SearchText, StringComparison.OrdinalIgnoreCase));
 
-            // Filter by price
             if (!string.IsNullOrEmpty(SelectedPriceFilter))
             {
                 var parts = SelectedPriceFilter.Split('-');
@@ -220,7 +211,6 @@ namespace SalesManagement.WinUI.ViewModels
                 }
             }
 
-            // ⭐ SỬ DỤNG PageSize ĐỘNG
             var count = query.Count();
             TotalPages = Math.Max(1, (int)Math.Ceiling(count / (double)PageSize));
 
@@ -240,12 +230,10 @@ namespace SalesManagement.WinUI.ViewModels
             NextPageCommand.NotifyCanExecuteChanged();
         }
 
-        // ================= OPEN CATEGORY PAGE (POPUP) =================
         private async Task OpenCategoryDialogAsync()
         {
             try
             {
-                // Tạo dialog chứa Page riêng
                 var dialog = new ContentDialog
                 {
                     Title = "📂 Quản lý danh mục",
@@ -264,6 +252,77 @@ namespace SalesManagement.WinUI.ViewModels
                 {
                     Title = "Lỗi",
                     Content = $"Không thể mở trang quản lý danh mục: {ex.Message}",
+                    CloseButtonText = "Đóng",
+                    XamlRoot = App.MainWindow.Content.XamlRoot
+                };
+                await errorDialog.ShowAsync();
+            }
+        }
+
+        // ⭐ NEW - Import Products from Excel
+        private async Task ImportProductsAsync()
+        {
+            try
+            {
+                var picker = new FileOpenPicker();
+
+                // Khởi tạo Window handle cho WinUI 3
+                var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+                picker.FileTypeFilter.Add(".xlsx");
+                picker.FileTypeFilter.Add(".xls");
+                picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+
+                var file = await picker.PickSingleFileAsync();
+                if (file == null) return;
+
+                // Show loading dialog
+                var loadingDialog = new ContentDialog
+                {
+                    Title = "Đang xử lý...",
+                    Content = "Đang import sản phẩm từ file Excel, vui lòng đợi...",
+                    XamlRoot = App.MainWindow.Content.XamlRoot
+                };
+
+                _ = loadingDialog.ShowAsync();
+
+                var success = await _productService.ImportProductsFromExcelAsync(file);
+
+                loadingDialog.Hide();
+
+                if (success)
+                {
+                    var successDialog = new ContentDialog
+                    {
+                        Title = "Thành công",
+                        Content = "Import sản phẩm thành công!",
+                        CloseButtonText = "Đóng",
+                        XamlRoot = App.MainWindow.Content.XamlRoot
+                    };
+                    await successDialog.ShowAsync();
+
+                    // Reload products
+                    await LoadProductsAsync();
+                }
+                else
+                {
+                    var errorDialog = new ContentDialog
+                    {
+                        Title = "Lỗi",
+                        Content = "Import sản phẩm thất bại. Vui lòng kiểm tra lại file Excel.",
+                        CloseButtonText = "Đóng",
+                        XamlRoot = App.MainWindow.Content.XamlRoot
+                    };
+                    await errorDialog.ShowAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorDialog = new ContentDialog
+                {
+                    Title = "Lỗi",
+                    Content = $"Có lỗi xảy ra: {ex.Message}",
                     CloseButtonText = "Đóng",
                     XamlRoot = App.MainWindow.Content.XamlRoot
                 };

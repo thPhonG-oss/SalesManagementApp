@@ -6,64 +6,198 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Padding="24"
+    <Grid Padding="32,24"
           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- ===== HEADER ===== -->
-        <StackPanel Orientation="Horizontal" Spacing="12">
-            <Button Content="←"
-                    Width="40"
-                    Height="40"
-                    Click="Back_Click"/>
-            <TextBlock Text="Cập nhật sản phẩm"
-                       FontSize="22"
-                       FontWeight="SemiBold"
-                       VerticalAlignment="Center"/>
-        </StackPanel>
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Width="44"
+                    Height="44"
+                    CornerRadius="22"
+                    Padding="0"
+                    VerticalAlignment="Center"
+                    Click="Back_Click">
+                <Button.Resources>
+                    <SolidColorBrush x:Key="ButtonBackground" Color="Transparent"/>
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#0A000000"/>
+                </Button.Resources>
+                <FontIcon Glyph="&#xE72B;" FontSize="16"/>
+            </Button>
+
+            <StackPanel Grid.Column="1"
+                        Spacing="4"
+                        Margin="16,0,0,0"
+                        VerticalAlignment="Center">
+                <TextBlock Text="Cập nhật sản phẩm"
+                           FontSize="28"
+                           FontWeight="Bold"/>
+                <TextBlock Text="Chỉnh sửa thông tin sản phẩm"
+                           FontSize="14"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+            </StackPanel>
+        </Grid>
 
         <!-- ===== FORM ===== -->
-        <ScrollViewer Grid.Row="1" Margin="0,20,0,0">
-            <StackPanel Spacing="16">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="20" MaxWidth="800" HorizontalAlignment="Center">
 
-                <TextBox Header="Tên sản phẩm"
-                         Text="{Binding ProductName, Mode=TwoWay}"/>
+                <!-- Basic Information Card -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        CornerRadius="12"
+                        Padding="24"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1">
+                    <Border.Shadow>
+                        <ThemeShadow />
+                    </Border.Shadow>
 
-                <TextBox Header="Tác giả / Nhà sản xuất"
-                         Text="{Binding Author, Mode=TwoWay}"/>
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Thông tin cơ bản"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"/>
 
-                <NumberBox Header="Giá bán"
-                           Value="{Binding PriceValue, Mode=TwoWay}" Grid.Row="5" Grid.Column="1"/>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Tên sản phẩm"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"/>
+                            <TextBox Text="{Binding ProductName, Mode=TwoWay}"
+                                     PlaceholderText="Nhập tên sản phẩm"
+                                     CornerRadius="8"/>
+                        </StackPanel>
 
-                <NumberBox Header="Số lượng tồn kho"
-                           Value="{Binding StockQuantity, Mode=TwoWay}" Grid.Row="5" Grid.Column="1"/>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Tác giả / Nhà sản xuất"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"/>
+                            <TextBox Text="{Binding Author, Mode=TwoWay}"
+                                     PlaceholderText="Nhập tên tác giả hoặc nhà sản xuất"
+                                     CornerRadius="8"/>
+                        </StackPanel>
 
-                <TextBox Header="Mô tả"
-                         Text="{Binding Description, Mode=TwoWay}"
-                         TextWrapping="Wrap"
-                         AcceptsReturn="True"
-                         Height="100"/>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Mô tả sản phẩm"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"/>
+                            <TextBox Text="{Binding Description, Mode=TwoWay}"
+                                     PlaceholderText="Nhập mô tả chi tiết về sản phẩm"
+                                     TextWrapping="Wrap"
+                                     AcceptsReturn="True"
+                                     Height="120"
+                                     CornerRadius="8"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
 
+                <!-- Pricing & Stock Card -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        CornerRadius="12"
+                        Padding="24"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1">
+                    <Border.Shadow>
+                        <ThemeShadow />
+                    </Border.Shadow>
 
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Giá và tồn kho"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"/>
+
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Price -->
+                            <StackPanel Grid.Column="0" Spacing="4">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE8EC;"
+                                              FontSize="14"
+                                              Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                    <TextBlock Text="Giá bán"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"/>
+                                </StackPanel>
+                                <NumberBox Value="{Binding PriceValue, Mode=TwoWay}"
+                                           PlaceholderText="0"
+                                           Minimum="0"
+                                           SpinButtonPlacementMode="Hidden"
+                                           CornerRadius="8"/>
+                                <TextBlock Text="Đơn vị: VNĐ"
+                                           FontSize="11"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <!-- Stock -->
+                            <StackPanel Grid.Column="1" Spacing="4">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <FontIcon Glyph="&#xE7B8;"
+                                              FontSize="14"
+                                              Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                    <TextBlock Text="Số lượng tồn kho"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"/>
+                                </StackPanel>
+                                <NumberBox Value="{Binding StockQuantity, Mode=TwoWay}"
+                                           PlaceholderText="0"
+                                           Minimum="0"
+                                           SpinButtonPlacementMode="Hidden"
+                                           CornerRadius="8"/>
+                                <TextBlock Text="Số lượng hiện có"
+                                           FontSize="11"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Action Buttons -->
                 <StackPanel Orientation="Horizontal"
                             Spacing="12"
-                            Margin="0,20,0,0">
-                    <Button Content="Lưu thay đổi"
-                            MinWidth="120"
-                            Style="{ThemeResource AccentButtonStyle}"
-                            Click="Save_Click"/>
+                            HorizontalAlignment="Right"
+                            Margin="0,8,0,0">
 
-                    <Button Content="Hủy"
-                            MinWidth="120"
-                            Click="Back_Click"/>
+                    <Button Content="Hủy bỏ"
+                            Width="120"
+                            Height="44"
+                            CornerRadius="10"
+                            FontWeight="SemiBold"
+                            Click="Back_Click">
+                        <Button.Resources>
+                            <SolidColorBrush x:Key="ButtonBackground" Color="Transparent"/>
+                            <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#0A000000"/>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Content="Lưu thay đổi"
+                            Width="160"
+                            Height="44"
+                            CornerRadius="10"
+                            FontWeight="SemiBold"
+                            Style="{ThemeResource AccentButtonStyle}"
+                            Click="Save_Click">
+                        <Button.Shadow>
+                            <ThemeShadow />
+                        </Button.Shadow>
+                    </Button>
                 </StackPanel>
 
             </StackPanel>
         </ScrollViewer>
-
     </Grid>
 </Page>

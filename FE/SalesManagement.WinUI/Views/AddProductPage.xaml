@@ -5,150 +5,312 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Padding="40">
+        <Grid Padding="32,24" MaxWidth="900" HorizontalAlignment="Center">
 
-            <!-- Card -->
-            <Border
-                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                CornerRadius="12"
-                Padding="30"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                BorderThickness="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <StackPanel Spacing="20">
+            <!-- Header Section -->
+            <Grid Grid.Row="0" Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                    <!-- Header -->
-                    <StackPanel Orientation="Horizontal"
-                                VerticalAlignment="Center"
-                                Spacing="12">
+                <Button Grid.Column="0"
+                        Width="44"
+                        Height="44"
+                        CornerRadius="22"
+                        Padding="0"
+                        VerticalAlignment="Center"
+                        Click="BackButton_Click">
+                    <Button.Resources>
+                        <SolidColorBrush x:Key="ButtonBackground" Color="Transparent"/>
+                        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#0A000000"/>
+                    </Button.Resources>
+                    <FontIcon Glyph="&#xE72B;" FontSize="16"/>
+                </Button>
 
-                        <Button Content="← Quay lại"
-                                Click="BackButton_Click"/>
-
-                        <TextBlock Text="Thêm sản phẩm mới"
-                                   FontSize="26"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                                   VerticalAlignment="Center"/>
-                    </StackPanel>
-
-                    <!-- Form -->
-                    <Grid ColumnSpacing="20" RowSpacing="14">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1.2*"/>
-                            <ColumnDefinition Width="3*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Tên -->
-                        <TextBlock Text="Tên sản phẩm:"
-                                   Grid.Row="0"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBox Text="{Binding ProductName, Mode=TwoWay}"
-                                 Grid.Row="0" Grid.Column="1"/>
-
-                        <!-- Tác giả -->
-                        <TextBlock Text="Tác giả:"
-                                   Grid.Row="1"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBox Text="{Binding Author, Mode=TwoWay}"
-                                 Grid.Row="1" Grid.Column="1"/>
-
-                        <!-- NXB -->
-                        <TextBlock Text="Nhà xuất bản:"
-                                   Grid.Row="2"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBox Text="{Binding Publisher, Mode=TwoWay}"
-                                 Grid.Row="2" Grid.Column="1"/>
-
-                        <!-- Năm -->
-                        <TextBlock Text="Năm xuất bản:"
-                                   Grid.Row="3"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBox Text="{Binding PublicationYear, Mode=TwoWay}"
-                                 Grid.Row="3" Grid.Column="1"
-                                 InputScope="Number"/>
-
-                        <!-- Mô tả -->
-                        <TextBlock Text="Mô tả:"
-                                   Grid.Row="4"
-                                   VerticalAlignment="Top"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBox Text="{Binding Description, Mode=TwoWay}"
-                                 Grid.Row="4" Grid.Column="1"
-                                 AcceptsReturn="True"
-                                 Height="100"
-                                 TextWrapping="Wrap"/>
-
-                        <!-- Giá -->
-                        <TextBlock Text="Giá:"
-                                   Grid.Row="5"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <NumberBox Value="{Binding Price, Mode=TwoWay}"
-                                   Grid.Row="5" Grid.Column="1"/>
-
-                        <!-- Số lượng -->
-                        <TextBlock Text="Số lượng tồn kho:"
-                                   Grid.Row="6"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBox Text="{Binding StockQuantity, Mode=TwoWay}"
-                                 Grid.Row="6" Grid.Column="1"
-                                 InputScope="Number"/>
-
-                        <!-- Tồn kho tối thiểu -->
-                        <TextBlock Text="Tồn kho tối thiểu:"
-                                   Grid.Row="7"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <TextBox Text="{Binding MinStockQuantity, Mode=TwoWay}"
-                                 Grid.Row="7" Grid.Column="1"
-                                 InputScope="Number"/>
-
-                        <!-- Danh mục -->
-                        <TextBlock Text="Danh mục:"
-                                   Grid.Row="8"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        <ComboBox ItemsSource="{Binding Categories}"
-                                  SelectedValue="{Binding SelectedCategoryId, Mode=TwoWay}"
-                                  SelectedValuePath="CategoryId"
-                                  DisplayMemberPath="CategoryName"
-                                  Grid.Row="8" Grid.Column="1"/>
-                    </Grid>
-
-                    <!-- Footer -->
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Right"
-                                Spacing="12">
-
-                        <!-- Error -->
-                        <TextBlock Text="{Binding Message}"
-                                   Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                                   Visibility="{Binding Message, Converter={StaticResource StringNotEmptyToVisibilityConverter}}"/>
-
-                        <!-- Success -->
-                        <TextBlock Text="{Binding MessageTrue}"
-                                   Foreground="{ThemeResource SystemFillColorSuccessBrush}"
-                                   Visibility="{Binding MessageTrue, Converter={StaticResource StringNotEmptyToVisibilityConverter}}"/>
-
-                        <Button Content="Thêm sản phẩm"
-                                Command="{Binding CreateProductCommand}"
-                                Style="{StaticResource AccentButtonStyle}"
-                                Width="160"
-                                Height="40"/>
-                    </StackPanel>
-
+                <StackPanel Grid.Column="1"
+                            Spacing="4"
+                            Margin="16,0,0,0"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="Thêm sản phẩm mới"
+                               FontSize="32"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="Điền thông tin chi tiết cho sản phẩm mới"
+                               FontSize="14"
+                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                 </StackPanel>
-            </Border>
+            </Grid>
+
+            <!-- Form Cards -->
+            <StackPanel Grid.Row="1" Spacing="20">
+
+                <!-- Basic Information Card -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        CornerRadius="12"
+                        Padding="24"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1">
+                    <Border.Shadow>
+                        <ThemeShadow />
+                    </Border.Shadow>
+
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Thông tin cơ bản"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"/>
+
+                        <Grid ColumnSpacing="16" RowSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Tên sản phẩm -->
+                            <TextBlock Text="Tên sản phẩm"
+                                       Grid.Row="0"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding ProductName, Mode=TwoWay}"
+                                     Grid.Row="0" Grid.Column="1"
+                                     PlaceholderText="Nhập tên sản phẩm"
+                                     CornerRadius="8"/>
+
+                            <!-- Tác giả -->
+                            <TextBlock Text="Tác giả"
+                                       Grid.Row="1"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding Author, Mode=TwoWay}"
+                                     Grid.Row="1" Grid.Column="1"
+                                     PlaceholderText="Nhập tên tác giả"
+                                     CornerRadius="8"/>
+
+                            <!-- Nhà xuất bản -->
+                            <TextBlock Text="Nhà xuất bản"
+                                       Grid.Row="2"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding Publisher, Mode=TwoWay}"
+                                     Grid.Row="2" Grid.Column="1"
+                                     PlaceholderText="Nhập nhà xuất bản"
+                                     CornerRadius="8"/>
+
+                            <!-- Năm xuất bản -->
+                            <TextBlock Text="Năm xuất bản"
+                                       Grid.Row="3"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding PublicationYear, Mode=TwoWay}"
+                                     Grid.Row="3" Grid.Column="1"
+                                     PlaceholderText="Ví dụ: 2024"
+                                     InputScope="Number"
+                                     CornerRadius="8"/>
+
+                            <!-- Mô tả -->
+                            <TextBlock Text="Mô tả"
+                                       Grid.Row="4"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Top"
+                                       Margin="0,8,0,0"/>
+                            <TextBox Text="{Binding Description, Mode=TwoWay}"
+                                     Grid.Row="4" Grid.Column="1"
+                                     PlaceholderText="Nhập mô tả chi tiết về sản phẩm"
+                                     AcceptsReturn="True"
+                                     Height="100"
+                                     TextWrapping="Wrap"
+                                     CornerRadius="8"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Pricing & Stock Card -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        CornerRadius="12"
+                        Padding="24"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1">
+                    <Border.Shadow>
+                        <ThemeShadow />
+                    </Border.Shadow>
+
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Giá và tồn kho"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"/>
+
+                        <Grid ColumnSpacing="16" RowSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Giá -->
+                            <StackPanel Grid.Row="0" VerticalAlignment="Center" Spacing="4">
+                                <TextBlock Text="Giá bán"
+                                           FontWeight="SemiBold"/>
+                                <TextBlock Text="(VNĐ)"
+                                           FontSize="11"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <NumberBox Value="{Binding Price, Mode=TwoWay}"
+                                       Grid.Row="0" Grid.Column="1"
+                                       PlaceholderText="0"
+                                       Minimum="0"
+                                       SpinButtonPlacementMode="Hidden"
+                                       CornerRadius="8"/>
+
+                            <!-- Số lượng tồn kho -->
+                            <StackPanel Grid.Row="1" VerticalAlignment="Center" Spacing="4">
+                                <TextBlock Text="Tồn kho"
+                                           FontWeight="SemiBold"/>
+                                <TextBlock Text="(Số lượng)"
+                                           FontSize="11"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <TextBox Text="{Binding StockQuantity, Mode=TwoWay}"
+                                     Grid.Row="1" Grid.Column="1"
+                                     PlaceholderText="0"
+                                     InputScope="Number"
+                                     CornerRadius="8"/>
+
+                            <!-- Tồn kho tối thiểu -->
+                            <StackPanel Grid.Row="2" VerticalAlignment="Center" Spacing="4">
+                                <TextBlock Text="Tồn kho tối thiểu"
+                                           FontWeight="SemiBold"/>
+                                <TextBlock Text="(Cảnh báo)"
+                                           FontSize="11"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Grid.Column="1" Spacing="4">
+                                <TextBox Text="{Binding MinStockQuantity, Mode=TwoWay}"
+                                         PlaceholderText="0"
+                                         InputScope="Number"
+                                         CornerRadius="8"/>
+                                <TextBlock Text="Hệ thống sẽ cảnh báo khi tồn kho xuống dưới mức này"
+                                           FontSize="12"
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Category Card -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        CornerRadius="12"
+                        Padding="24"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1">
+                    <Border.Shadow>
+                        <ThemeShadow />
+                    </Border.Shadow>
+
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Phân loại"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,8"/>
+
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Danh mục"
+                                       FontWeight="SemiBold"
+                                       VerticalAlignment="Center"/>
+                            <ComboBox ItemsSource="{Binding Categories}"
+                                      SelectedValue="{Binding SelectedCategoryId, Mode=TwoWay}"
+                                      SelectedValuePath="CategoryId"
+                                      DisplayMemberPath="CategoryName"
+                                      Grid.Column="1"
+                                      HorizontalAlignment="Stretch"
+                                      CornerRadius="8"
+                                      PlaceholderText="Chọn danh mục"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Action Footer -->
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Messages -->
+                    <StackPanel Grid.Column="0"
+                                VerticalAlignment="Center"
+                                Spacing="8">
+                        <!-- Error Message -->
+                        <Border Padding="12,8"
+                                CornerRadius="8"
+                                Background="#20FF0000"
+                                Visibility="{Binding Message, Converter={StaticResource StringNotEmptyToVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE783;"
+                                          FontSize="16"
+                                          Foreground="{ThemeResource SystemFillColorCriticalBrush}"/>
+                                <TextBlock Text="{Binding Message}"
+                                           Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Success Message -->
+                        <Border Padding="12,8"
+                                CornerRadius="8"
+                                Background="#2000FF00"
+                                Visibility="{Binding MessageTrue, Converter={StaticResource StringNotEmptyToVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE73E;"
+                                          FontSize="16"
+                                          Foreground="{ThemeResource SystemFillColorSuccessBrush}"/>
+                                <TextBlock Text="{Binding MessageTrue}"
+                                           Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Action Button -->
+                    <Button Grid.Column="1"
+                            Content="Thêm sản phẩm"
+                            Command="{Binding CreateProductCommand}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Width="180"
+                            Height="44"
+                            FontWeight="SemiBold"
+                            CornerRadius="10">
+                        <Button.Shadow>
+                            <ThemeShadow />
+                        </Button.Shadow>
+                    </Button>
+                </Grid>
+
+            </StackPanel>
         </Grid>
     </ScrollViewer>
 </Page>

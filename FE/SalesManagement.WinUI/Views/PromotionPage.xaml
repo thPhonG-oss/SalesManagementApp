@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:models="using:SalesManagement.WinUI.Models">
 
-    <Grid Padding="20" RowSpacing="16">
+    <Grid Padding="24" RowSpacing="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -25,16 +25,12 @@
                         <AdaptiveTrigger MinWindowWidth="768" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <!-- Giảm spacing -->
-                        <Setter Target="ContentGrid.ColumnSpacing" Value="12" />
-                        <!-- Điều chỉnh column widths -->
+                        <Setter Target="ContentGrid.ColumnSpacing" Value="16" />
                         <Setter Target="Col1.Width" Value="1.5*" />
                         <Setter Target="Col2.Width" Value="1.5*" />
                         <Setter Target="Col3.Width" Value="1.2*" />
-                        <!-- Giảm padding buttons -->
-                        <Setter Target="ActionStack.Spacing" Value="6" />
-                        <Setter Target="EditBtn.Width" Value="100" />
-                        <Setter Target="CancelBtn.Width" Value="100" />
+                        <Setter Target="ActionStack.Spacing" Value="8" />
+                        <Setter Target="EditBtn.Width" Value="110" />
                     </VisualState.Setters>
                 </VisualState>
 
@@ -44,288 +40,412 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <!-- Chuyển sang layout dọc -->
                         <Setter Target="ContentGrid.RowSpacing" Value="12" />
                         <Setter Target="ContentGrid.ColumnSpacing" Value="0" />
-
-                        <!-- Ẩn các columns không dùng -->
                         <Setter Target="Col1.Width" Value="*" />
                         <Setter Target="Col2.Width" Value="0" />
                         <Setter Target="Col3.Width" Value="0" />
                         <Setter Target="Col4.Width" Value="0" />
-
-                        <!-- Di chuyển Info sang Row layout -->
                         <Setter Target="InfoStack.Orientation" Value="Vertical" />
                         <Setter Target="DiscountStack.Visibility" Value="Collapsed" />
                         <Setter Target="TimeStack.Visibility" Value="Collapsed" />
                         <Setter Target="ActionStack.Visibility" Value="Collapsed" />
-
-                        <!-- Hiển thị mobile layout -->
                         <Setter Target="MobileLayout.Visibility" Value="Visible" />
-
-                        <!-- Giảm font size cho mobile -->
-                        <Setter Target="HeaderText.FontSize" Value="22" />
-                        <Setter Target="AddButton.Padding" Value="10,4" />
+                        <Setter Target="HeaderText.FontSize" Value="24" />
+                        <Setter Target="AddButton.Padding" Value="12,6" />
+                        <Setter Target="MainGrid.Padding" Value="16" />
+                        <Setter Target="MainGrid.RowSpacing" Value="16" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <!-- ================= HEADER ================= -->
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" ColumnSpacing="16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock
-                x:Name="HeaderText"
-                Text="Quản lý khuyến mãi"
-                FontSize="28"
-                FontWeight="Bold"
-                VerticalAlignment="Center" />
+            <StackPanel Spacing="4">
+                <TextBlock
+                    x:Name="HeaderText"
+                    Text="Quản lý khuyến mãi"
+                    FontSize="32"
+                    FontWeight="Bold"
+                    VerticalAlignment="Center" />
+                <TextBlock
+                    Text="Tạo và quản lý các chương trình khuyến mãi"
+                    FontSize="14"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    VerticalAlignment="Center" />
+            </StackPanel>
 
             <Button
                 x:Name="AddButton"
                 Grid.Column="1"
                 Content="+ Thêm khuyến mãi"
-                Padding="14,6"
-                CornerRadius="6"
+                Padding="16,8"
+                CornerRadius="8"
                 FontWeight="SemiBold"
-                Click="AddButton_Click"/>
-
+                FontSize="14"
+                Background="{ThemeResource AccentFillColorDefaultBrush}"
+                Foreground="White"
+                Click="AddButton_Click">
+                <Button.Shadow>
+                    <ThemeShadow />
+                </Button.Shadow>
+            </Button>
         </Grid>
 
         <!-- ================= LIST PROMOTION ================= -->
-        <ListView
-            Grid.Row="1"
-            ItemsSource="{Binding Promotions}"
-            SelectionMode="None"
-            HorizontalContentAlignment="Stretch">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ListView
+                ItemsSource="{Binding Promotions}"
+                SelectionMode="None"
+                HorizontalContentAlignment="Stretch"
+                Padding="0"
+                Margin="0">
 
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="models:PromotionResponse">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:PromotionResponse">
 
-                    <Border
-                        Margin="0,6"
-                        Padding="14"
-                        CornerRadius="10"
-                        BorderThickness="1"
-                        BorderBrush="{ThemeResource CardStrokeColorDefault}"
-                        Background="{ThemeResource CardBackgroundFillColorDefault}">
+                        <Border
+                            Margin="0,8"
+                            Padding="20"
+                            CornerRadius="12"
+                            BorderThickness="1"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
 
-                        <Grid>
-                            <!-- Layout Desktop/Tablet -->
-                            <Grid x:Name="ContentGrid" ColumnSpacing="20">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition x:Name="Col1" Width="2*" />
-                                    <ColumnDefinition x:Name="Col2" Width="2*" />
-                                    <ColumnDefinition x:Name="Col3" Width="1.3*" />
-                                    <ColumnDefinition x:Name="Col4" Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                            <Border.Shadow>
+                                <ThemeShadow />
+                            </Border.Shadow>
 
-                                <!-- ===== CỘT 1: THÔNG TIN ===== -->
-                                <StackPanel x:Name="InfoStack" Spacing="6">
-                                    <TextBlock
-                                        Text="{Binding PromotionName}"
-                                        FontSize="16"
-                                        FontWeight="SemiBold" />
+                            <Grid>
+                                <!-- Layout Desktop/Tablet -->
+                                <Grid x:Name="ContentGrid" ColumnSpacing="24">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition x:Name="Col1" Width="2*" MinWidth="200" />
+                                        <ColumnDefinition x:Name="Col2" Width="1.2*" MinWidth="140" />
+                                        <ColumnDefinition x:Name="Col3" Width="1.5*" MinWidth="180" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition x:Name="Col4" Width="Auto" />
+                                    </Grid.ColumnDefinitions>
 
-                                    <TextBlock
-                                        Text="{Binding PromotionCode}"
-                                        FontSize="12"
-                                        Foreground="Gray" />
+                                    <!-- ===== CỘT 1: THÔNG TIN ===== -->
+                                    <StackPanel x:Name="InfoStack" Spacing="8">
+                                        <TextBlock
+                                            Text="{Binding PromotionName}"
+                                            FontSize="18"
+                                            FontWeight="Bold"
+                                            TextTrimming="CharacterEllipsis" />
 
+                                        <Border
+                                            Padding="8,4"
+                                            CornerRadius="6"
+                                            HorizontalAlignment="Left"
+                                            Background="{ThemeResource SubtleFillColorSecondaryBrush}">
+                                            <TextBlock
+                                                Text="{Binding PromotionCode}"
+                                                FontSize="12"
+                                                FontWeight="SemiBold"
+                                                FontFamily="Consolas"
+                                                Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                        </Border>
+
+                                        <TextBlock
+                                            Text="{Binding Description}"
+                                            TextWrapping="Wrap"
+                                            MaxLines="2"
+                                            FontSize="14"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            LineHeight="20" />
+                                    </StackPanel>
+
+                                    <!-- ===== CỘT 2: GIẢM GIÁ ===== -->
+                                    <Border
+                                        x:Name="DiscountStack"
+                                        Grid.Column="1"
+                                        Padding="16,12"
+                                        CornerRadius="10"
+                                        Background="{ThemeResource LayerFillColorDefaultBrush}">
+                                        <StackPanel Spacing="6">
+                                            <TextBlock
+                                                Text="GIẢM GIÁ"
+                                                FontSize="11"
+                                                FontWeight="Bold"
+                                                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+
+                                            <TextBlock
+                                                Text="{Binding FormattedDiscount}"
+                                                FontSize="22"
+                                                FontWeight="Bold"
+                                                Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+
+                                            <TextBlock
+                                                Text="{Binding FormattedDiscountRange}"
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                TextWrapping="Wrap"
+                                                LineHeight="18" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- ===== CỘT 3: THỜI GIAN ===== -->
+                                    <StackPanel x:Name="TimeStack" Grid.Column="2" Spacing="10">
+                                        <!-- Badge trạng thái -->
+                                        <Border
+                                            Padding="12,6"
+                                            CornerRadius="16"
+                                            HorizontalAlignment="Left"
+                                            Background="{Binding StatusBrush}">
+                                            <TextBlock
+                                                Text="{Binding StatusText}"
+                                                Foreground="White"
+                                                FontSize="12"
+                                                FontWeight="Bold" />
+                                        </Border>
+
+                                        <StackPanel Spacing="8">
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <FontIcon
+                                                    Glyph="&#xE787;"
+                                                    FontSize="14"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                <TextBlock
+                                                    Text="{Binding FormattedDateRange}"
+                                                    FontSize="13"
+                                                    TextWrapping="Wrap"
+                                                    LineHeight="18" />
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <FontIcon
+                                                    Glyph="&#xE8EF;"
+                                                    FontSize="14"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                <TextBlock FontSize="13">
+                                                    <Run Text="Đã dùng:" />
+                                                    <Run Text="{Binding UsedCount}" FontWeight="SemiBold" />
+                                                    <Run Text="/" />
+                                                    <Run Text="{Binding UsageLimit}" FontWeight="SemiBold" />
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- ===== CỘT 4: ACTION ===== -->
+                                    <StackPanel
+                                        x:Name="ActionStack"
+                                        Grid.Column="4"
+                                        VerticalAlignment="Center"
+                                        Spacing="10">
+
+                                        <Button
+                                            x:Name="EditBtn"
+                                            Content="Chỉnh sửa"
+                                            Width="140"
+                                            Padding="12,8"
+                                            CornerRadius="8"
+                                            FontWeight="SemiBold"
+                                            HorizontalAlignment="Stretch"
+                                            Click="EditPromotion_Click">
+                                            <Button.Resources>
+                                                <SolidColorBrush x:Key="ButtonBackground" Color="Transparent"/>
+                                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#0A000000"/>
+                                            </Button.Resources>
+                                        </Button>
+
+                                        <Button
+                                            x:Name="CancelBtn"
+                                            Content="Hủy khuyến mãi"
+                                            Width="140"
+                                            Padding="12,8"
+                                            CornerRadius="8"
+                                            FontWeight="SemiBold"
+                                            Background="#FFE74C3C"
+                                            Foreground="White"
+                                            HorizontalAlignment="Stretch"
+                                            Click="CancelPromotion_Click"
+                                            Visibility="{x:Bind statusBool, Mode=OneWay}">
+                                            <Button.Resources>
+                                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#FFC0392B"/>
+                                                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#FFA93226"/>
+                                            </Button.Resources>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Layout Mobile (Collapsed by default) -->
+                                <StackPanel x:Name="MobileLayout" Spacing="16" Visibility="Collapsed">
+                                    <!-- Header với status badge -->
+                                    <Grid>
+                                        <StackPanel Spacing="6">
+                                            <TextBlock
+                                                Text="{Binding PromotionName}"
+                                                FontSize="18"
+                                                FontWeight="Bold"
+                                                TextWrapping="Wrap" />
+
+                                            <Border
+                                                Padding="8,4"
+                                                CornerRadius="6"
+                                                HorizontalAlignment="Left"
+                                                Background="{ThemeResource SubtleFillColorSecondaryBrush}">
+                                                <TextBlock
+                                                    Text="{Binding PromotionCode}"
+                                                    FontSize="11"
+                                                    FontWeight="SemiBold"
+                                                    FontFamily="Consolas"
+                                                    Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                            </Border>
+                                        </StackPanel>
+
+                                        <Border
+                                            Padding="10,5"
+                                            CornerRadius="14"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top"
+                                            Background="{Binding StatusBrush}">
+                                            <TextBlock
+                                                Text="{Binding StatusText}"
+                                                Foreground="White"
+                                                FontSize="11"
+                                                FontWeight="Bold" />
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Description -->
                                     <TextBlock
                                         Text="{Binding Description}"
                                         TextWrapping="Wrap"
-                                        MaxLines="2"
-                                        FontSize="13" />
-                                </StackPanel>
-
-                                <!-- ===== CỘT 2: GIẢM GIÁ ===== -->
-                                <StackPanel x:Name="DiscountStack" Grid.Column="1" Spacing="6">
-                                    <TextBlock Text="Giảm giá" FontWeight="SemiBold" />
-
-                                    <TextBlock
-                                        Text="{Binding FormattedDiscount}"
+                                        MaxLines="3"
                                         FontSize="14"
-                                        FontWeight="SemiBold" />
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        LineHeight="20" />
 
-                                    <TextBlock
-                                        Text="{Binding FormattedDiscountRange}"
-                                        FontSize="12"
-                                        Foreground="Gray"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
+                                    <!-- Info Grid -->
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
 
-                                <!-- ===== CỘT 3: THỜI GIAN ===== -->
-                                <StackPanel x:Name="TimeStack" Grid.Column="2" Spacing="6">
-                                    <!-- Badge trạng thái -->
-                                    <Border
-                                        Padding="10,4"
-                                        CornerRadius="14"
-                                        HorizontalAlignment="Left"
-                                        Background="{Binding StatusBrush}">
+                                        <!-- Discount -->
+                                        <Border
+                                            Padding="12,10"
+                                            CornerRadius="8"
+                                            Background="{ThemeResource LayerFillColorDefaultBrush}">
+                                            <StackPanel Spacing="4">
+                                                <TextBlock
+                                                    Text="GIẢM GIÁ"
+                                                    FontSize="10"
+                                                    FontWeight="Bold"
+                                                    Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                                                <TextBlock
+                                                    Text="{Binding FormattedDiscount}"
+                                                    FontSize="18"
+                                                    FontWeight="Bold"
+                                                    Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                                                <TextBlock
+                                                    Text="{Binding FormattedDiscountRange}"
+                                                    FontSize="11"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    TextWrapping="Wrap" />
+                                            </StackPanel>
+                                        </Border>
 
-                                        <TextBlock
-                                            Text="{Binding StatusText}"
-                                            Foreground="White"
-                                            FontSize="12"
-                                            FontWeight="SemiBold" />
-                                    </Border>
+                                        <!-- Usage -->
+                                        <Border
+                                            Grid.Column="1"
+                                            Padding="12,10"
+                                            CornerRadius="8"
+                                            Background="{ThemeResource LayerFillColorDefaultBrush}">
+                                            <StackPanel Spacing="4">
+                                                <TextBlock
+                                                    Text="SỬ DỤNG"
+                                                    FontSize="10"
+                                                    FontWeight="Bold"
+                                                    Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                                    <TextBlock
+                                                        Text="{Binding UsedCount}"
+                                                        FontSize="18"
+                                                        FontWeight="Bold" />
+                                                    <TextBlock
+                                                        Text="/"
+                                                        FontSize="18"
+                                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                                    <TextBlock
+                                                        Text="{Binding UsageLimit}"
+                                                        FontSize="18"
+                                                        FontWeight="Bold" />
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
 
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <TextBlock Text="Thời gian:" />
+                                    <!-- Date Range -->
+                                    <StackPanel Spacing="6">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon
+                                                Glyph="&#xE787;"
+                                                FontSize="14"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                            <TextBlock
+                                                Text="Thời gian áp dụng"
+                                                FontSize="12"
+                                                FontWeight="SemiBold"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                        </StackPanel>
                                         <TextBlock
                                             Text="{Binding FormattedDateRange}"
-                                            FontWeight="SemiBold" />
+                                            FontSize="14"
+                                            TextWrapping="Wrap"
+                                            LineHeight="20"
+                                            Margin="20,0,0,0" />
                                     </StackPanel>
 
-                                    <StackPanel Orientation="Horizontal" Spacing="6">
-                                        <TextBlock Text="Sử dụng:" />
-                                        <TextBlock Text="{Binding UsedCount}" />
-                                        <TextBlock Text="/" />
-                                        <TextBlock Text="{Binding UsageLimit}" />
-                                    </StackPanel>
-                                </StackPanel>
+                                    <!-- Actions -->
+                                    <Grid ColumnSpacing="10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
 
-                                <!-- ===== CỘT 4: ACTION ===== -->
-                                <StackPanel
-                                    x:Name="ActionStack"
-                                    Grid.Column="3"
-                                    VerticalAlignment="Center"
-                                    Spacing="8">
+                                        <Button
+                                            Content="Chỉnh sửa"
+                                            HorizontalAlignment="Stretch"
+                                            Padding="10,8"
+                                            CornerRadius="8"
+                                            FontWeight="SemiBold"
+                                            Click="EditPromotion_Click" />
 
-                                    <Button
-                                        x:Name="EditBtn"
-                                        Content="Sửa"
-                                        Width="130"
-                                        Padding="10,4"
-                                        CornerRadius="6"
-                                        Click="EditPromotion_Click"/>
-
-                                    <Button
-                                        Content="Hủy khuyến mãi"
-                                        Click="CancelPromotion_Click"
-                                        Background="#FFE5533D"
-                                        Foreground="White"
-                                        Visibility="{x:Bind statusBool, Mode=OneWay}" />
-
+                                        <Button
+                                            Grid.Column="1"
+                                            Content="Hủy"
+                                            HorizontalAlignment="Stretch"
+                                            Padding="10,8"
+                                            CornerRadius="8"
+                                            FontWeight="SemiBold"
+                                            Background="#FFE74C3C"
+                                            Foreground="White"
+                                            Click="CancelPromotion_Click"
+                                            Visibility="{x:Bind statusBool, Mode=OneWay}">
+                                            <Button.Resources>
+                                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#FFC0392B"/>
+                                            </Button.Resources>
+                                        </Button>
+                                    </Grid>
                                 </StackPanel>
                             </Grid>
+                        </Border>
 
-                            <!-- Layout Mobile (Collapsed by default) -->
-                            <StackPanel x:Name="MobileLayout" Spacing="12" Visibility="Collapsed">
-                                <!-- Header với status badge -->
-                                <Grid>
-                                    <StackPanel Spacing="4">
-                                        <TextBlock
-                                            Text="{Binding PromotionName}"
-                                            FontSize="16"
-                                            FontWeight="SemiBold"
-                                            TextWrapping="Wrap" />
-
-                                        <TextBlock
-                                            Text="{Binding PromotionCode}"
-                                            FontSize="12"
-                                            Foreground="Gray" />
-                                    </StackPanel>
-
-                                    <Border
-                                        Padding="8,3"
-                                        CornerRadius="12"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Top"
-                                        Background="{Binding StatusBrush}">
-                                        <TextBlock
-                                            Text="{Binding StatusText}"
-                                            Foreground="White"
-                                            FontSize="11"
-                                            FontWeight="SemiBold" />
-                                    </Border>
-                                </Grid>
-
-                                <!-- Description -->
-                                <TextBlock
-                                    Text="{Binding Description}"
-                                    TextWrapping="Wrap"
-                                    MaxLines="3"
-                                    FontSize="13" />
-
-                                <!-- Info Grid -->
-                                <Grid ColumnSpacing="12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-
-                                    <!-- Discount -->
-                                    <StackPanel Spacing="4">
-                                        <TextBlock Text="Giảm giá" FontSize="12" Foreground="Gray" />
-                                        <TextBlock
-                                            Text="{Binding FormattedDiscount}"
-                                            FontSize="14"
-                                            FontWeight="SemiBold" />
-                                        <TextBlock
-                                            Text="{Binding FormattedDiscountRange}"
-                                            FontSize="11"
-                                            Foreground="Gray"
-                                            TextWrapping="Wrap" />
-                                    </StackPanel>
-
-                                    <!-- Usage -->
-                                    <StackPanel Grid.Column="1" Spacing="4">
-                                        <TextBlock Text="Sử dụng" FontSize="12" Foreground="Gray" />
-                                        <StackPanel Orientation="Horizontal" Spacing="4">
-                                            <TextBlock Text="{Binding UsedCount}" FontWeight="SemiBold" />
-                                            <TextBlock Text="/" />
-                                            <TextBlock Text="{Binding UsageLimit}" FontWeight="SemiBold" />
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Grid>
-
-                                <!-- Date Range -->
-                                <StackPanel Spacing="4">
-                                    <TextBlock Text="Thời gian" FontSize="12" Foreground="Gray" />
-                                    <TextBlock
-                                        Text="{Binding FormattedDateRange}"
-                                        FontSize="13"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
-
-                                <!-- Actions -->
-                                <Grid ColumnSpacing="8">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-
-                                    <Button
-                                        Content="Sửa"
-                                        HorizontalAlignment="Stretch"
-                                        Padding="8,4"
-                                        CornerRadius="6"
-                                        Click="EditPromotion_Click"/>
-
-                                    <Button
-                                        Grid.Column="1"
-                                        Content="Hủy"
-                                        HorizontalAlignment="Stretch"
-                                        Padding="8,4"
-                                        CornerRadius="6"
-                                        Background="#FFE5533D"
-                                        Foreground="White"
-                                        Click="CancelPromotion_Click"
-                                        Visibility="{x:Bind statusBool, Mode=OneWay}" />
-                                </Grid>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollViewer>
 
     </Grid>
 </Page>
