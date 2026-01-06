@@ -49,7 +49,7 @@ CREATE TABLE product_images (
 CREATE TABLE customers (
     customer_id INT AUTO_INCREMENT PRIMARY KEY,
     customer_name VARCHAR(100) NOT NULL,
-    phone VARCHAR(20) UNIQUE NOT NULL,
+    phone VARCHAR(20) UNIQUE,
     email VARCHAR(100),
     address TEXT,
     total_orders INT DEFAULT 0,
