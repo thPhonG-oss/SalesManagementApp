@@ -83,18 +83,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Views\UpdatePromotionPage.xaml">
-	  <Page Update="Views\Components\CustomerDialog.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
+      <Page Update="Views\UpdatePromotionPage.xaml" />
+      <Page Update="Views\Components\CustomerDialog.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
 
-	<ItemGroup>
-	  <Page Update="Views\AddPromotionPage.xaml">
-	  <Page Update="Views\CustomerPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
+    <ItemGroup>
+      <Page Update="Views\AddPromotionPage.xaml" />
+      <Page Update="Views\CustomerPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
+    </ItemGroup>
 
 	<ItemGroup>
 	  <Page Update="Views\PromotionPage.xaml">
