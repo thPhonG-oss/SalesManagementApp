@@ -43,9 +43,9 @@ services:
       SECRET_KEY: 5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
 
       # Cloudinary Configuration (Thay thế bằng thông tin thực của bạn)
-      CLOUD_NAME: dskkfgi5d
-      CLOUD_API_KEY: 572584323293987
-      CLOUD_API_SECRET: ElWebeGif-Vyoh6dZAgd8p9azq0
+      CLOUD_NAME: ${CLOUD_NAME}
+      CLOUD_API_KEY: ${CLOUD_API_KEY}
+      CLOUD_API_SECRET: ${CLOUD_API_SECRET}
 
       # Spring Profile
       SPRING_PROFILES_ACTIVE: docker
