@@ -87,7 +87,7 @@ namespace SalesManagement.WinUI.Views
                 var ds = args.DrawingSession;
                 ds.Antialiasing = Microsoft.Graphics.Canvas.CanvasAntialiasing.Antialiased;
 
-                // ===== CLEAR BACKGROUND =====
+                // Clear background
                 ds.Clear(Colors.White);
 
                 var data = ViewModel.ProductDaily;
@@ -104,9 +104,11 @@ namespace SalesManagement.WinUI.Views
 
                 Debug.WriteLine($"ProductLineChart_Draw: Drawing {data.Count} items");
 
-                float margin = 60;
+                float marginLeft = 60;
+                float marginRight = 40;
+                float marginTop = 60; // Tăng lên để có chỗ cho label trục Y ở trên
 
-                // ===== Group data =====
+                // Group data
                 var products = data
                     .Select(p => p.ProductName)
                     .Distinct()
@@ -130,18 +132,23 @@ namespace SalesManagement.WinUI.Views
 
                 Debug.WriteLine($"Products: {productCount}, Dates: {dateCount}");
 
-                // ===== LEGEND HEIGHT (DYNAMIC) =====
-                float legendItemHeight = 18;
-                float legendPaddingTop = 20;
-                float legendPaddingBottom = 10;
+                // Tính toán marginBottom cho legend (dạng danh sách bullet)
+                float legendItemHeight = 25;
+                float marginBottom = 80 + (productCount * legendItemHeight);
 
-                float legendHeight =
-                    legendPaddingTop +
-                    productCount * legendItemHeight +
-                    legendPaddingBottom;
+                // Tính chiều cao cần thiết cho canvas
+                float requiredHeight = 400 + marginTop + marginBottom;
 
-                float width = (float)sender.ActualWidth - margin * 2;
-                float height = (float)sender.ActualHeight - margin * 2 - legendHeight;
+                // Tự động điều chỉnh chiều cao canvas nếu cần
+                if (sender.Height < requiredHeight)
+                {
+                    sender.Height = requiredHeight;
+                    return; // Return để trigger redraw với chiều cao mới
+                }
+
+                float canvasWidth = (float)sender.ActualWidth;
+                float width = canvasWidth - marginLeft - marginRight;
+                float height = (float)sender.ActualHeight - marginTop - marginBottom;
 
                 if (width <= 0 || height <= 0)
                 {
@@ -149,103 +156,166 @@ namespace SalesManagement.WinUI.Views
                     return;
                 }
 
-                // ===== Max Y =====
+                // Tính Max Y (QuantitySold)
                 int maxY = data.Max(p => p.QuantitySold);
-                if (maxY <= 0) maxY = 1;
+                if (maxY <= 0) maxY = 10;
 
-                Debug.WriteLine($"MaxY: {maxY}, Width: {width}, Height: {height}");
+                // Làm tròn maxY lên
+                int yAxisMax = maxY + 1; // Thêm 1 để có khoảng trống ở trên
 
-                // ===== Axes =====
-                ds.DrawLine(margin, margin, margin, margin + height, Colors.Black, 2);
-                ds.DrawLine(margin, margin + height, margin + width, margin + height, Colors.Black, 2);
+                Debug.WriteLine($"MaxY: {maxY}, YAxisMax: {yAxisMax}");
 
-                // ===== Y-axis labels =====
+                // Tọa độ gốc (origin)
+                float originX = marginLeft;
+                float originY = marginTop + height;
 
-                // ===== X-axis labels =====
-                float stepX = width / dateCount;
+                // Vẽ trục X và Y
+                ds.DrawLine(originX, originY, originX, marginTop, Colors.Black, 2); // Trục Y
+                ds.DrawLine(originX, originY, originX + width, originY, Colors.Black, 2); // Trục X
+
+                // Vẽ grid lines và Y-axis labels (QuantitySold - mỗi khoảng 1 đơn vị)
+                for (int i = 0; i <= yAxisMax; i++)
+                {
+                    float y = originY - (height / yAxisMax) * i;
+
+                    // Grid line ngang
+                    ds.DrawLine(originX, y, originX + width, y, Colors.LightGray, 1);
+
+                    // Y label (QuantitySold)
+                    ds.DrawText(
+                        i.ToString(),
+                        new Vector2(originX - 30, y - 8),
+                        Colors.Black,
+                        new Microsoft.Graphics.Canvas.Text.CanvasTextFormat { FontSize = 12 });
+                }
+
+                // Nhãn trục Y - đặt ở trên cùng
+                ds.DrawText(
+                    "Số lượng bán",
+                    new Vector2(originX - 50, marginTop - 30),
+                    Colors.Black,
+                    new Microsoft.Graphics.Canvas.Text.CanvasTextFormat
+                    {
+                        FontSize = 13,
+                    });
+
+                // Vẽ X-axis labels (Dates - dd/MM/yyyy)
+                float stepX = dateCount > 1 ? width / (dateCount - 1) : width / 2;
 
                 for (int i = 0; i < dateCount; i++)
                 {
-                    float centerX = margin + i * stepX + stepX / 2;
+                    float x = originX + i * stepX;
+
+                    // Vertical grid line
+                    if (i > 0)
+                    {
+                        ds.DrawLine(x, marginTop, x, originY, Colors.LightGray, 1);
+                    }
+
+                    // X label (Date)
+                    string dateLabel = dates[i].ToString("dd/MM/yyyy");
+                    var textFormat = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat
+                    {
+                        FontSize = 11
+                    };
 
                     ds.DrawText(
-                        dates[i].ToString("dd/MM"),
-                        new Vector2(centerX - 18, margin + height + 8),
-                        Colors.Black);
+                        dateLabel,
+                        new Vector2(x - 30, originY + 8),
+                        Colors.Black,
+                        textFormat);
                 }
 
-                // ===== Bar sizing =====
-                float groupWidth = stepX * 0.8f;
-                float barWidth = groupWidth / productCount;
-
-                Debug.WriteLine($"StepX: {stepX}, GroupWidth: {groupWidth}, BarWidth: {barWidth}");
-
-                // ===== Draw bars =====
-                int barsDrawn = 0;
-                for (int d = 0; d < dateCount; d++)
-                {
-                    float groupStartX = margin + d * stepX + (stepX - groupWidth) / 2;
-
-                    for (int p = 0; p < productCount; p++)
+                // Nhãn trục X
+                ds.DrawText(
+                    "Ngày",
+                    new Vector2(originX + width / 2 - 15, originY + 32),
+                    Colors.Black,
+                    new Microsoft.Graphics.Canvas.Text.CanvasTextFormat
                     {
-                        string product = products[p];
+                        FontSize = 13,
+                    });
 
-                        if (!_colorMap.TryGetValue(product, out var color))
-                        {
-                            color = Color.FromArgb(
-                                255,
-                                (byte)_rand.Next(50, 230),
-                                (byte)_rand.Next(50, 230),
-                                (byte)_rand.Next(50, 230));
+                // Vẽ các đường line cho mỗi sản phẩm
+                foreach (var product in products)
+                {
+                    // Lấy màu cho sản phẩm
+                    if (!_colorMap.TryGetValue(product, out var color))
+                    {
+                        color = Color.FromArgb(
+                            255,
+                            (byte)_rand.Next(50, 230),
+                            (byte)_rand.Next(50, 230),
+                            (byte)_rand.Next(50, 230));
 
-                            _colorMap[product] = color;
-                        }
+                        _colorMap[product] = color;
+                    }
 
+                    // Thu thập tất cả các điểm cho sản phẩm này
+                    var points = new List<Vector2>();
+
+                    for (int d = 0; d < dateCount; d++)
+                    {
                         var item = data.FirstOrDefault(x =>
                             x.ProductName == product &&
                             x.Date.Date == dates[d]);
 
-                        int value = item?.QuantitySold ?? 0;
+                        int quantitySold = item?.QuantitySold ?? 0;
 
-                        if (value <= 0)
-                            continue;
+                        float x = originX + d * stepX;
+                        // Y tính từ gốc tọa độ (originY) đi lên
+                        float y = originY - (quantitySold / (float)yAxisMax) * height;
 
-                        float barHeight = (value / (float)maxY) * height;
+                        points.Add(new Vector2(x, y));
+                    }
 
-                        float x = groupStartX + p * barWidth;
-                        float y = margin + height - barHeight;
+                    // Vẽ đường line
+                    if (points.Count > 1)
+                    {
+                        for (int i = 0; i < points.Count - 1; i++)
+                        {
+                            ds.DrawLine(points[i], points[i + 1], color, 3);
+                        }
+                    }
 
-                        ds.FillRectangle(x, y, barWidth - 2, barHeight, color);
-                        barsDrawn++;
+                    // Vẽ các điểm trên đường
+                    foreach (var point in points)
+                    {
+                        ds.FillCircle(point, 5, color);
+                        ds.DrawCircle(point, 5, Colors.White, 2);
                     }
                 }
 
-                Debug.WriteLine($"Bars drawn: {barsDrawn}");
-
-                // ===== LEGEND (BOTTOM – ONE COLUMN) =====
-                float legendX = margin;
-                float legendY = margin + height + legendPaddingTop + 30;
+                // Vẽ legend (bên dưới đồ thị, dạng danh sách bullet)
+                float legendStartX = marginLeft;
+                float legendY = originY + 55;
 
                 var legendTextFormat = new Microsoft.Graphics.Canvas.Text.CanvasTextFormat
                 {
-                    FontSize = 12,
-                    WordWrapping = Microsoft.Graphics.Canvas.Text.CanvasWordWrapping.NoWrap
+                    FontSize = 12
                 };
 
-                foreach (var product in products)
+                for (int i = 0; i < products.Count; i++)
                 {
+                    var product = products[i];
+
                     if (!_colorMap.TryGetValue(product, out var color))
                         continue;
 
-                    ds.FillRectangle(legendX, legendY + 3, 10, 10, color);
+                    float currentLegendY = legendY + i * legendItemHeight;
 
+                    // Vẽ bullet (dấu chấm tròn)
+                    ds.FillCircle(new Vector2(legendStartX, currentLegendY + 7), 4, color);
+
+                    // Vẽ line mẫu nhỏ
+                    ds.DrawLine(legendStartX + 8, currentLegendY + 7, legendStartX + 28, currentLegendY + 7, color, 3);
+
+                    // Tên sản phẩm
                     ds.DrawText(
                         product,
-                        new Vector2(legendX + 16, legendY),
+                        new Vector2(legendStartX + 35, currentLegendY),
                         Colors.Black,
                         legendTextFormat);
-
-                    legendY += legendItemHeight;
                 }
 
                 Debug.WriteLine("ProductLineChart_Draw: Completed successfully");
