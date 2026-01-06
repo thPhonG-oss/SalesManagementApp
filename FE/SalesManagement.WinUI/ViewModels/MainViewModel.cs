@@ -46,7 +46,7 @@ public partial class MainViewModel : ObservableObject
         MainMenuItems.Add(new AppMenuItem
         {
             Title = "Sản phẩm",
-            Icon = Symbol.Tag,
+            Icon = Symbol.Library,
             PageType = typeof(ProductPage),
             ShowHeader = false
         });

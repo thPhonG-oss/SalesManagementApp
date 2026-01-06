@@ -92,7 +92,8 @@ namespace SalesManagement.WinUI.Views
             {
                 CategoryName = EditCategoryNameTextBox.Text.Trim(),
                 Description = EditDescriptionTextBox.Text.Trim(),
-                IsActive = EditIsActiveToggle.IsOn
+                //IsActive = EditIsActiveToggle.IsOn
+                IsActive = true
             };
 
             bool success = await ViewModel.UpdateCategoryAsync(_editingCategory.CategoryId, request);
@@ -127,7 +128,7 @@ namespace SalesManagement.WinUI.Views
 
                 EditCategoryNameTextBox.Text = category.CategoryName;
                 EditDescriptionTextBox.Text = category.Description;
-                EditIsActiveToggle.IsOn = category.IsActive;
+                //EditIsActiveToggle.IsOn = category.IsActive;
 
                 await EditCategoryDialog.ShowAsync();
             }

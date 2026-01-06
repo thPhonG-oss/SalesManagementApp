@@ -186,10 +186,6 @@
                             <TextBox Text="{Binding UsageLimit, Mode=TwoWay}"
                                      PlaceholderText="Nhập số lượt sử dụng tối đa"
                                      CornerRadius="8"/>
-                            <TextBlock Text="Để trống nếu không giới hạn số lượt sử dụng"
-                                       FontSize="12"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       Margin="0,4,0,0"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>

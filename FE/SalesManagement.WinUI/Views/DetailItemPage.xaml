@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Padding="24"
+    <Grid Padding="32,24"
           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <Grid.RowDefinitions>
@@ -15,130 +15,214 @@
         </Grid.RowDefinitions>
 
         <!-- ===== HEADER ===== -->
-        <StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="12">
-                <Button Width="40"
-                        Height="40"
-                        Content="←"
-                        Click="Back_Click"/>
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
+            <Button Grid.Column="0"
+                    Width="44"
+                    Height="44"
+                    CornerRadius="22"
+                    Padding="0"
+                    VerticalAlignment="Center"
+                    Click="Back_Click">
+                <Button.Resources>
+                    <SolidColorBrush x:Key="ButtonBackground" Color="Transparent"/>
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#0A000000"/>
+                </Button.Resources>
+                <FontIcon Glyph="&#xE72B;" FontSize="16"/>
+            </Button>
+
+            <StackPanel Grid.Column="1"
+                        Spacing="4"
+                        Margin="16,0,0,0"
+                        VerticalAlignment="Center">
                 <TextBlock Text="Chi tiết sản phẩm"
-                           FontSize="22"
-                           FontWeight="SemiBold"
-                           VerticalAlignment="Center"/>
+                           FontSize="28"
+                           FontWeight="Bold"/>
+                <TextBlock Text="Xem và chỉnh sửa thông tin sản phẩm"
+                           FontSize="14"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
             </StackPanel>
-
-            <Rectangle Height="1"
-                       Margin="0,12,0,0"
-                       Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>
-        </StackPanel>
+        </Grid>
 
         <!-- ===== CONTENT ===== -->
-        <ScrollViewer Grid.Row="1" Margin="0,16,0,0">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    CornerRadius="16"
-                    Padding="24">
+                    CornerRadius="12"
+                    Padding="32"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    MaxWidth="1200"
+                    HorizontalAlignment="Center">
+                <Border.Shadow>
+                    <ThemeShadow />
+                </Border.Shadow>
 
-                <Grid ColumnSpacing="32">
+                <Grid ColumnSpacing="40">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="260"/>
+                        <ColumnDefinition Width="320"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- IMAGE SLIDESHOW -->
-                    <StackPanel>
-                        <FlipView
-                            ItemsSource="{Binding DisplayImages}"
-                            Width="260"
-                            Height="360"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-
-                            <FlipView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border
-                                        Width="260"
-                                        Height="360"
-                                        CornerRadius="16"
-                                        Background="{ThemeResource SubtleFillColorSecondaryBrush}">
-                                        <Image
-                                            Source="{Binding ImageUrl}"
-                                            Stretch="UniformToFill"/>
-                                    </Border>
-                                </DataTemplate>
-                            </FlipView.ItemTemplate>
-                        </FlipView>
-                        <!-- BUTTON UPLOAD IMAGE -->
-                        <Button
-                            Content="Tải thêm ảnh"
-                            Width="160"
-                            HorizontalAlignment="Center"
-                            Click="UploadImage_Click"/>
-                    </StackPanel>
-
-
-
-                    <!-- INFO -->
-                    <StackPanel Grid.Column="1" Spacing="14">
-
-                        <TextBlock Text="{Binding ProductName}"
-                                   FontSize="24"
-                                   FontWeight="Bold"/>
-
-                        <StackPanel>
-                            <TextBlock Text="Danh mục: "/>
-                            <TextBlock Text="{Binding Category.CategoryName}"
-                                       FontSize="18"
-                                       FontWeight="SemiBold"/>
-                        </StackPanel>
-
-
-                        <TextBlock Text="{Binding Author}"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-
-                        <TextBlock Text="{Binding PriceText}"
-                                   FontSize="22"
-                                   FontWeight="SemiBold"
-                                   Foreground="{ThemeResource SystemFillColorSuccessBrush}"/>
-
-                        <Border Padding="12"
-                                CornerRadius="10"
-                                Background="{ThemeResource SubtleFillColorSecondaryBrush}">
-                            <TextBlock Text="{Binding Description}"
-                                       TextWrapping="Wrap"/>
+                    <!-- LEFT COLUMN: IMAGE SLIDESHOW -->
+                    <StackPanel Spacing="16">
+                        <!-- Image Viewer -->
+                        <Border CornerRadius="12"
+                                BorderThickness="1"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                            <FlipView ItemsSource="{Binding DisplayImages}"
+                                      Width="320"
+                                      Height="420"
+                                      CornerRadius="12">
+                                <FlipView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border CornerRadius="12"
+                                                Background="{ThemeResource SubtleFillColorSecondaryBrush}">
+                                            <Image Source="{Binding ImageUrl}"
+                                                   Stretch="UniformToFill"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </FlipView.ItemTemplate>
+                            </FlipView>
                         </Border>
 
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <!-- Label -->
-                            <TextBlock
-                                Text="Số lượng tồn kho:"
-                                FontSize="13"
-                                FontWeight="SemiBold"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <!-- Upload Button -->
+                        <Button HorizontalAlignment="Stretch"
+                                Height="44"
+                                CornerRadius="10"
+                                Click="UploadImage_Click">
+                            <Button.Resources>
+                                <SolidColorBrush x:Key="ButtonBackground" Color="Transparent"/>
+                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#0A000000"/>
+                            </Button.Resources>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE8B9;" FontSize="16"/>
+                                <TextBlock Text="Tải thêm ảnh" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
 
-                            <!-- Value -->
-                            <TextBlock
-                                Text="{Binding StockText}"
-                                FontSize="13"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <!-- RIGHT COLUMN: PRODUCT INFO -->
+                    <StackPanel Grid.Column="1" Spacing="24">
+
+                        <!-- Product Name -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="{Binding ProductName}"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       TextWrapping="Wrap"/>
+
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Border Padding="10,5"
+                                        CornerRadius="8"
+                                        Background="{ThemeResource AccentFillColorDefaultBrush}">
+                                    <TextBlock Text="{Binding Category.CategoryName}"
+                                               FontSize="13"
+                                               FontWeight="SemiBold"
+                                               Foreground="White"/>
+                                </Border>
+                            </StackPanel>
                         </StackPanel>
 
+                        <!-- Author -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Tác giả"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon Glyph="&#xE77B;"
+                                          FontSize="16"
+                                          Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock Text="{Binding Author}"
+                                           FontSize="16"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Price -->
+                        <StackPanel Spacing="6">
+                            <TextBlock Text="Giá bán"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            <TextBlock Text="{Binding PriceText}"
+                                       FontSize="32"
+                                       FontWeight="Bold"
+                                       Foreground="{ThemeResource SystemFillColorSuccessBrush}"/>
+                        </StackPanel>
+
+                        <!-- Description -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Mô tả sản phẩm"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"/>
+                            <Border Padding="16"
+                                    CornerRadius="10"
+                                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                                <TextBlock Text="{Binding Description}"
+                                           TextWrapping="Wrap"
+                                           LineHeight="24"
+                                           FontSize="14"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Stock Info -->
+                        <Border Padding="16"
+                                CornerRadius="10"
+                                Background="{ThemeResource SubtleFillColorSecondaryBrush}">
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <FontIcon Glyph="&#xE7B8;"
+                                          FontSize="18"
+                                          Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                                <TextBlock Text="Tồn kho:"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding StockText}"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
 
                         <!-- ACTION BUTTONS -->
                         <StackPanel Orientation="Horizontal"
                                     Spacing="12"
                                     Margin="0,16,0,0">
 
-                            <Button Content="Cập nhật"
-                                    MinWidth="120"
+                            <Button Content="Cập nhật sản phẩm"
+                                    Width="180"
+                                    Height="44"
+                                    CornerRadius="10"
+                                    FontWeight="SemiBold"
                                     Style="{ThemeResource AccentButtonStyle}"
-                                    Click="Update_Click"/>
+                                    Click="Update_Click">
+                                <Button.Shadow>
+                                    <ThemeShadow />
+                                </Button.Shadow>
+                            </Button>
 
-                            <Button Content="Xóa"
-                                    MinWidth="120"
-                                    Background="{ThemeResource SystemFillColorCriticalBrush}"
+                            <Button Width="140"
+                                    Height="44"
+                                    CornerRadius="10"
+                                    FontWeight="SemiBold"
+                                    Background="#FFE74C3C"
                                     Foreground="White"
-                                    Click="Delete_Click"/>
+                                    Click="Delete_Click">
+                                <Button.Resources>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#FFC0392B"/>
+                                    <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#FFA93226"/>
+                                </Button.Resources>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <FontIcon Glyph="&#xE74D;" FontSize="16"/>
+                                    <TextBlock Text="Xóa sản phẩm"/>
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
 
                     </StackPanel>
