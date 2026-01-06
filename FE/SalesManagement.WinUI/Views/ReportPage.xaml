@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:SalesManagement.WinUI.Models"
     xmlns:vm="using:SalesManagement.WinUI.ViewModels"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d">
 
     <Grid>
@@ -43,6 +44,27 @@
                     Width="40"
                     Height="40"
                     HorizontalAlignment="Center" />
+
+
+                <!-- ================= PRODUCT LINE CHART ================= -->
+                <StackPanel Spacing="8">
+                    <TextBlock
+                        Text="📈 Xu hướng doanh số theo ngày"
+                        Style="{StaticResource SubtitleTextBlockStyle}"
+                        FontWeight="SemiBold" />
+
+                    <Border
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        CornerRadius="8"
+                        Padding="120">
+
+                        <canvas:CanvasControl
+                            x:Name="ProductLineChart"
+                            Height="400"
+                            Draw="ProductLineChart_Draw"
+                            ClearColor="White" />
+                    </Border>
+                </StackPanel>
 
                 <!-- Current Year Summary -->
                 <StackPanel
@@ -351,6 +373,7 @@
                 </StackPanel>
 
             </StackPanel>
+
         </ScrollViewer>
     </Grid>
 </Page>
