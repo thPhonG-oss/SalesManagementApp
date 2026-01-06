@@ -52,12 +52,26 @@ public class OrderServiceImpl implements OrderService {
     ProductRepository productRepository;
     OrderItemRepository orderItemRepository;
     CustomerService customerService;
+
     @Transactional
     @Override
     public OrderResponse createOrder(OrderRequest orderRequest) {
         Order order = orderMapper.toOrder(orderRequest);
-        Customer customer=customerRepository.findByEmail(orderRequest.getEmail()).orElseThrow(()->new AppException(ErrorCode.CUSTOMER_NOT_EXIST));
-        order.setCustomer(customer);
+
+        // if customer not exist, create new customer
+        Customer customer = customerRepository.findByEmail(orderRequest.getEmail()).orElse(null);
+
+        if(customer != null){
+            order.setCustomer(customer);
+        } else {
+            Customer newCustomer= Customer.builder()
+                    .customerName(orderRequest.getCustomerName())
+                    .email(orderRequest.getEmail())
+                    .build();
+            Customer savedCustomer=customerRepository.save(newCustomer);
+            order.setCustomer(savedCustomer);
+        }
+
         Promotion promotion=promotionRepository.findById(orderRequest.getPromotionId())
                 .orElseThrow(() -> new AppException(ErrorCode.PROMOTION_NOT_EXIST));
         order.setPromotion(promotion);
