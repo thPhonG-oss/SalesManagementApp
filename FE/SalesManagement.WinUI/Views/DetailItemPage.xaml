@@ -143,7 +143,6 @@
                         </StackPanel>
 
                         <!-- Price -->
-                        <!-- Price -->
                         <StackPanel Spacing="6">
                             <TextBlock Text="Giá bán"
                                        FontSize="12"

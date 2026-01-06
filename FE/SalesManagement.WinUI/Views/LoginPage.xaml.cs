@@ -1,8 +1,10 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using SalesManagement.WinUI.Services.Interfaces;
 using SalesManagement.WinUI.ViewModels;
-using System.Threading.Tasks;
+using SalesManagement.WinUI.Views.Dialogs;
 using Windows.System;
 
 namespace SalesManagement.WinUI.Views;
@@ -68,4 +70,16 @@ public sealed partial class LoginPage : Page
             }
         }
     }
+
+    private async void OnServerConfigClicked(object sender, RoutedEventArgs e)
+    {
+        var dialog = new ServerConfigDialog(
+            App.Services.GetRequiredService<IAppSettingsService>())
+        {
+            XamlRoot = this.XamlRoot
+        };
+
+        await dialog.ShowAsync();
+    }
+
 }

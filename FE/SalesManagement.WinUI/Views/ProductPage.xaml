@@ -260,19 +260,18 @@
                                         <!-- PRICE ROW -->
                                         <!-- PRICE ROW -->
                                         <StackPanel Orientation="Horizontal" Spacing="10">
-                                            <!-- Special Price (giá gốc bị gạch) -->
+                                            <!-- Special Price (giá sau giảm) -->
                                             <TextBlock Text="{Binding SpecialPriceText}"
                                                            FontSize="16"
-                                                           Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                                           FontWeight="Bold"
                                                            VerticalAlignment="Center"
                                                            Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                                            <!-- Current Price (giá sau giảm) -->
+                                            <!-- Current Price (giá gốc) -->
                                             <TextBlock Text="{Binding PriceText}"
                                                            FontSize="18"
-                                                           FontWeight="Bold"
-                                                           Foreground="{Binding PriceColor}"
-                                                           TextDecorations="{Binding PriceDecorations}"
+                                                           Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                                           TextDecorations="Strikethrough"
                                                            VerticalAlignment="Center"/>
 
                                             <!-- Discount badge -->

@@ -1,20 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using SalesManagement.WinUI.Models;
+using SalesManagement.WinUI.Services.Interfaces;
 using SalesManagement.WinUI.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
+using SalesManagement.WinUI.Views.Dialogs;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -42,5 +32,70 @@ namespace SalesManagement.WinUI.Views
                 throw;
             }
         }
+
+        private async void ChangePassword_Click(object sender, RoutedEventArgs e)
+        {
+            var userService = App.Services.GetRequiredService<IUserService>();
+
+            var dialog = new ChangePasswordDialog
+            {
+                XamlRoot = this.XamlRoot
+            };
+
+            var result = await dialog.ShowAsync();
+
+            if (result != ContentDialogResult.Primary)
+                return;
+
+            // Validate
+            if (string.IsNullOrWhiteSpace(dialog.OldPassword) ||
+                string.IsNullOrWhiteSpace(dialog.NewPassword) ||
+                string.IsNullOrWhiteSpace(dialog.ConfirmPassword))
+            {
+                await new ContentDialog
+                {
+                    Title = "Lỗi",
+                    Content = "Vui lòng nhập đầy đủ thông tin",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                }.ShowAsync();
+                return;
+            }
+
+            if (dialog.NewPassword != dialog.ConfirmPassword)
+            {
+                await new ContentDialog
+                {
+                    Title = "Lỗi",
+                    Content = "Mật khẩu xác nhận không khớp",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                }.ShowAsync();
+                return;
+            }
+
+            try
+            {
+                await userService.ChangePasswordAsync(new ChangePasswordRequest
+                {
+                    OldPassword = dialog.OldPassword,
+                    NewPassword = dialog.NewPassword,
+                    ConfirmNewPassword = dialog.ConfirmPassword
+                });
+
+                ViewModel.StatusMessage = "Đổi mật khẩu thành công";
+            }
+            catch (Exception ex)
+            {
+                await new ContentDialog
+                {
+                    Title = "Lỗi",
+                    Content = ex.Message,
+                    CloseButtonText = "OK",
+                    XamlRoot = this.XamlRoot
+                }.ShowAsync();
+            }
+        }
+
     }
 }

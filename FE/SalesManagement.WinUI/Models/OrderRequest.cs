@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace SalesManagement.WinUI.Models
 {
     public class CreateOrderRequest
     {
-      
+        [JsonPropertyName("customerName")]
+        public string CustomerName { get; set; } = string.Empty;
+
         [JsonPropertyName("email")]
         public string Email { get; set; } = string.Empty;
 

@@ -139,10 +139,19 @@ namespace SalesManagement.WinUI.Models
 
         public string PriceText => Price.ToString("N0") + " đ";
 
-        public string SpecialPriceText =>
-            IsDiscounted && SpecialPrice.HasValue
-                ? SpecialPrice.Value.ToString("N0") + " đ"
-                : "";
+        public string SpecialPriceText
+        {
+            get
+            {
+                if (!IsDiscounted)
+                    return PriceText;
+
+                return SpecialPrice.HasValue
+                    ? SpecialPrice.Value.ToString("N0") + " đ"
+                    : "";
+            }
+        }
+
 
         public Visibility DiscountVisibility =>
             IsDiscounted ? Visibility.Visible : Visibility.Collapsed;

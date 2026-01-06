@@ -4,14 +4,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using SalesManagement.WinUI.Models;
 using SalesManagement.WinUI.Services.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace SalesManagement.WinUI.ViewModels
 {
@@ -29,6 +24,8 @@ namespace SalesManagement.WinUI.ViewModels
             _filteredProducts = new ObservableCollection<Product>(AvailableProducts);
             Debug.WriteLine($"CreateOrderDetailViewModel initialized with {AvailableProducts.Count} products");
         }
+
+
 
         [ObservableProperty]
         private Product? _selectedProduct;
@@ -55,7 +52,7 @@ namespace SalesManagement.WinUI.ViewModels
             try
             {
                 Debug.WriteLine($"OnSearchTextChanged called. Reason: {args.Reason}");
-                
+
                 if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
                 {
                     var query = sender.Text.ToLower().Trim();
@@ -89,7 +86,7 @@ namespace SalesManagement.WinUI.ViewModels
             try
             {
                 Debug.WriteLine("OnGotFocus called");
-                
+
                 if (sender is AutoSuggestBox box)
                 {
                     if (FilteredProducts == null || !FilteredProducts.Any())
@@ -143,7 +140,7 @@ namespace SalesManagement.WinUI.ViewModels
             try
             {
                 Debug.WriteLine("OnSuggestionChosen called");
-                
+
                 if (args.SelectedItem is Product product)
                 {
                     SelectedProduct = product;
@@ -166,7 +163,7 @@ namespace SalesManagement.WinUI.ViewModels
         public decimal Total => Quantity * Price;
         public string TotalDisplay => Total.ToString("N0");
         public string PriceDisplay => Price.ToString("N0");
-    } 
+    }
 
 
     public partial class CreateOrderViewModel : ObservableObject
@@ -192,6 +189,11 @@ namespace SalesManagement.WinUI.ViewModels
         [ObservableProperty] private decimal _subTotalAmount;
         [ObservableProperty] private decimal _discountAmount;
         [ObservableProperty] private decimal _totalAmount;
+
+
+        // ✅ THÊM PROPERTY MỚI
+        [ObservableProperty]
+        private string _customerName = string.Empty;
 
         [ObservableProperty]
         private string _shipAddress = string.Empty;
@@ -219,7 +221,7 @@ namespace SalesManagement.WinUI.ViewModels
 
         private async void LoadData()
         {
-            
+
             var productRes = await _productService.GetProductsAsync(1, 1000);
             if (productRes?.Products != null)
             {
@@ -238,6 +240,7 @@ namespace SalesManagement.WinUI.ViewModels
             AddRow(); // Thêm lại 1 dòng trống mặc định
 
             // 2. Xóa thông tin nhập liệu
+            CustomerName = string.Empty;
             CustomerEmail = string.Empty;
             ShipAddress = string.Empty;
             Note = string.Empty;
@@ -292,8 +295,8 @@ namespace SalesManagement.WinUI.ViewModels
                 return p.MinOrderAmount <= SubTotalAmount;
             }).ToList();
 
-            foreach ( var item in validPromotions)
-                            {
+            foreach (var item in validPromotions)
+            {
                 Debug.WriteLine($"[Valid Promotion] {item.PromotionId} - MinOrder: {item.MinOrderAmount}, SubTotal: {SubTotalAmount}");
             }
 
@@ -319,8 +322,8 @@ namespace SalesManagement.WinUI.ViewModels
 
         partial void OnSelectedPromotionChanged(Promotion? value)
         {
-            OnPropertyChanged(nameof(PromotionInfoVisibility)); 
-            CalculateTotal();                                   
+            OnPropertyChanged(nameof(PromotionInfoVisibility));
+            CalculateTotal();
         }
 
         private void OnItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -334,8 +337,8 @@ namespace SalesManagement.WinUI.ViewModels
             SubTotalAmount = Items.Sum(x => x.Total);
 
             // --- LOGIC MỚI: Tự động hủy Voucher nếu không còn đủ điều kiện ---
-            if(SelectedPromotion != null)
-    {
+            if (SelectedPromotion != null)
+            {
                 // Kiểm tra ngay lập tức: Tiền có đủ không?
                 if (SubTotalAmount < SelectedPromotion.MinOrderAmount)
                 {
@@ -402,10 +405,11 @@ namespace SalesManagement.WinUI.ViewModels
             // 2. Tạo Request theo mẫu mới
             var request = new CreateOrderRequest
             {
+                CustomerName = CustomerName,  // ✅ Thêm trường này
                 Email = CustomerEmail, // ✅ Gán Email từ UI
 
                 PromotionId = (SelectedPromotion == null || SelectedPromotion.PromotionId == 0) ? null : SelectedPromotion.PromotionId,
-              
+
                 Notes = Note,
                 ShippingAddress = string.IsNullOrWhiteSpace(ShipAddress) ? "Tại cửa hàng" : ShipAddress,
                 PaymentMethod = "CASH_ON_DELIVERY",

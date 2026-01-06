@@ -66,9 +66,8 @@ public partial class App : Application
         services.AddSingleton<ICustomerService, CustomerService>();
         services.AddTransient<CustomerViewModel>();
 
-
-
-
+        services.AddSingleton<IAppSettingsService, AppSettingsService>();
+        services.AddSingleton<IUserService, UserService>();
 
         services.AddTransient<IApiService>(sp =>
     new ApiService(
@@ -87,13 +86,14 @@ public partial class App : Application
         services.AddTransient<OrderViewModel>();
         services.AddSingleton<DashboardViewModel>();
         services.AddTransient<PromotionViewModel>();
+        services.AddTransient<LoginViewModel>();
         // ⭐ REPORT
 
 
         services.AddTransient<ReportViewModel>();
         services.AddTransient<CategoryManagementViewModel>();
-       
-       
+
+
 
 
         services.AddTransient<ReportViewModel>();
@@ -104,7 +104,7 @@ public partial class App : Application
         services.AddSingleton<IProductService, ProductService>();
         services.AddTransient<ProductViewModel>();
 
-        
+
 
         // ⭐ THÊM MỚI - Settings
         services.AddTransient<SettingsViewModel>();
