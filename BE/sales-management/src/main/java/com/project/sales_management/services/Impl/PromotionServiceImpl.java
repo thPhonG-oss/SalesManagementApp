@@ -35,6 +35,8 @@ public class PromotionServiceImpl implements PromotionService {
         Promotion promotion = promotionMapper.toPromotion(promotionCreationRequestDTO);
 
         promotion.setPromotionCode(generateUniquePromotionCode());
+        promotion.setStartDate(promotionCreationRequestDTO.getStartDate());
+        promotion.setEndDate(promotionCreationRequestDTO.getEndDate());
         promotion.setCreatedAt(LocalDateTime.now());
         promotion.setIsActive(true);
 
@@ -104,6 +106,8 @@ public class PromotionServiceImpl implements PromotionService {
         promotion.setUsageLimit(promotionUpdateRequestDTO.getUsageLimit());
         promotion.setIsActive(promotionUpdateRequestDTO.getIsActive());
         promotion.setUpdatedAt(LocalDateTime.now());
+        promotion.setStartDate(promotionUpdateRequestDTO.getStartDate());
+        promotion.setEndDate(promotionUpdateRequestDTO.getEndDate());
 
         Promotion updatedPromotion = promotionRepository.save(promotion);
 
