@@ -4,25 +4,30 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Windows.Storage;
 
 namespace SalesManagement.WinUI.Services.Implementations;
 
 public class StorageService : IStorageService
 {
-
-
-    private const string CredentialsFileName = "credentials.dat";
+    private const string CredentialsFileName = "credentials.json";
     private const string SettingsFileName = "settings.json";
     private const string AppSettingsFileName = "app_settings.json";
-    private readonly ApplicationDataContainer _localSettings;
-    private readonly StorageFolder _localFolder;
+
+    private readonly string _appFolderPath;
 
     public StorageService()
     {
-        _localSettings = ApplicationData.Current.LocalSettings;
-        _localFolder = ApplicationData.Current.LocalFolder;
+        _appFolderPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "SalesManagement");
+
+        Directory.CreateDirectory(_appFolderPath);
     }
+
+    private string GetFilePath(string fileName)
+        => Path.Combine(_appFolderPath, fileName);
+
+    // ================= CREDENTIALS =================
 
     public async Task SaveCredentialsAsync(string username, string password, bool rememberMe)
     {
@@ -41,153 +46,112 @@ public class StorageService : IStorageService
         };
 
         var json = JsonSerializer.Serialize(credentials);
-        var file = await _localFolder.CreateFileAsync(CredentialsFileName, CreationCollisionOption.ReplaceExisting);
-        await FileIO.WriteTextAsync(file, json);
+        await File.WriteAllTextAsync(GetFilePath(CredentialsFileName), json);
     }
 
     public async Task<StoredCredentials?> GetStoredCredentialsAsync()
     {
+        var path = GetFilePath(CredentialsFileName);
+        if (!File.Exists(path))
+            return null;
+
         try
         {
-            var file = await _localFolder.GetFileAsync(CredentialsFileName);
-            var json = await FileIO.ReadTextAsync(file);
+            var json = await File.ReadAllTextAsync(path);
             var credentials = JsonSerializer.Deserialize<StoredCredentials>(json);
 
-            if (credentials != null && credentials.RememberMe)
+            if (credentials?.RememberMe == true)
             {
-                // Decrypt password
-                credentials.EncryptedPassword = DecryptPassword(credentials.EncryptedPassword);
+                credentials.EncryptedPassword =
+                    DecryptPassword(credentials.EncryptedPassword);
                 return credentials;
             }
         }
-        catch (FileNotFoundException)
-        {
-            // File doesn't exist
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error loading credentials: {ex.Message}");
-        }
+        catch { }
 
         return null;
     }
 
-    public async Task ClearCredentialsAsync()
+    public Task ClearCredentialsAsync()
     {
-        try
-        {
-            var file = await _localFolder.GetFileAsync(CredentialsFileName);
-            await file.DeleteAsync();
-        }
-        catch (FileNotFoundException)
-        {
-            // Already cleared
-        }
-    }
+        var path = GetFilePath(CredentialsFileName);
+        if (File.Exists(path))
+            File.Delete(path);
 
-    public async Task<bool> HasStoredCredentialsAsync()
-    {
-        try
-        {
-            await _localFolder.GetFileAsync(CredentialsFileName);
-            return true;
-        }
-        catch (FileNotFoundException)
-        {
-            return false;
-        }
-    }
-
-    public Task SaveSettingAsync(string key, string value)
-    {
-        _localSettings.Values[key] = value;
         return Task.CompletedTask;
     }
 
-    public Task<string?> GetSettingAsync(string key)
+    public Task<bool> HasStoredCredentialsAsync()
+        => Task.FromResult(File.Exists(GetFilePath(CredentialsFileName)));
+
+    // ================= SETTINGS =================
+
+    public async Task SaveSettingAsync(string key, string value)
     {
-        if (_localSettings.Values.TryGetValue(key, out var value))
-        {
-            return Task.FromResult(value?.ToString());
-        }
-        return Task.FromResult<string?>(null);
+        var settings = await LoadSettingsAsync();
+        settings[key] = value;
+
+        await File.WriteAllTextAsync(
+            GetFilePath(SettingsFileName),
+            JsonSerializer.Serialize(settings));
+    }
+
+    public async Task<string?> GetSettingAsync(string key)
+    {
+        var settings = await LoadSettingsAsync();
+        return settings.TryGetValue(key, out var value) ? value : null;
     }
 
     public Task SaveLastScreenAsync(string screenName)
-    {
-        return SaveSettingAsync("LastScreen", screenName);
-    }
+        => SaveSettingAsync("LastScreen", screenName);
 
     public Task<string?> GetLastScreenAsync()
+        => GetSettingAsync("LastScreen");
+
+    private async Task<Dictionary<string, string>> LoadSettingsAsync()
     {
-        return GetSettingAsync("LastScreen");
+        var path = GetFilePath(SettingsFileName);
+        if (!File.Exists(path))
+            return new Dictionary<string, string>();
+
+        var json = await File.ReadAllTextAsync(path);
+        return JsonSerializer.Deserialize<Dictionary<string, string>>(json)
+               ?? new Dictionary<string, string>();
     }
+
+    // ================= APP SETTINGS =================
 
     public async Task SaveAppSettingsAsync(AppSettings settings)
     {
-        try
+        var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions
         {
-            var json = JsonSerializer.Serialize(settings, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            WriteIndented = true
+        });
 
-            var file = await _localFolder.CreateFileAsync(
-                AppSettingsFileName,
-                CreationCollisionOption.ReplaceExisting
-            );
-
-            await FileIO.WriteTextAsync(file, json);
-
-            System.Diagnostics.Debug.WriteLine($"✅ Saved settings: ItemsPerPage={settings.ItemsPerPage}");
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"❌ Error saving app settings: {ex.Message}");
-        }
+        await File.WriteAllTextAsync(GetFilePath(AppSettingsFileName), json);
     }
 
     public async Task<AppSettings> GetAppSettingsAsync()
     {
-        try
-        {
-            var file = await _localFolder.GetFileAsync(AppSettingsFileName);
-            var json = await FileIO.ReadTextAsync(file);
+        var path = GetFilePath(AppSettingsFileName);
+        if (!File.Exists(path))
+            return new AppSettings();
 
-            var settings = JsonSerializer.Deserialize<AppSettings>(json);
-            if (settings != null)
-            {
-                System.Diagnostics.Debug.WriteLine($"✅ Loaded settings: ItemsPerPage={settings.ItemsPerPage}");
-                return settings;
-            }
-        }
-        catch (FileNotFoundException)
-        {
-            System.Diagnostics.Debug.WriteLine("⚠️ Settings file not found, using default");
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"❌ Error loading app settings: {ex.Message}");
-        }
-
-        // Trả về mặc định nếu không load được
-        return new AppSettings();
+        var json = await File.ReadAllTextAsync(path);
+        return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
     }
 
-    public async Task ResetAppSettingsAsync()
+    public Task ResetAppSettingsAsync()
     {
-        try
-        {
-            var file = await _localFolder.GetFileAsync(AppSettingsFileName);
-            await file.DeleteAsync();
-        }
-        catch (FileNotFoundException) { }
+        var path = GetFilePath(AppSettingsFileName);
+        if (File.Exists(path))
+            File.Delete(path);
 
-        // Save lại settings mặc định
-        await SaveAppSettingsAsync(new AppSettings());
+        return Task.CompletedTask;
     }
 
-    // Simple encryption using Data Protection API
+    // ================= SECURITY =================
+
     private string EncryptPassword(string password)
     {
         try
@@ -198,7 +162,7 @@ public class StorageService : IStorageService
         }
         catch
         {
-            return password; // Fallback
+            return password;
         }
     }
 
@@ -212,7 +176,7 @@ public class StorageService : IStorageService
         }
         catch
         {
-            return encryptedPassword; // Fallback
+            return encryptedPassword;
         }
     }
 }

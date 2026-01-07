@@ -3,6 +3,8 @@ using SalesManagement.WinUI.Services.Interfaces;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
 
 namespace SalesManagement.WinUI.Services.Implementations;
 
@@ -11,6 +13,8 @@ public class AuthService : IAuthService
     private readonly IHttpClientFactory _httpClientFactory;
     private UserResponse? _currentUser;
     private string? _accessToken;
+
+
 
     public AuthService(IHttpClientFactory httpClientFactory)
     {
@@ -31,10 +35,24 @@ public class AuthService : IAuthService
                 Password = password
             };
 
-            var response = await client.PostAsJsonAsync(
+            //var response = await client.PostAsJsonAsync(
+            //    "/api/v1/auth/login",
+            //    loginRequest
+            //);
+            var json = JsonSerializer.Serialize(loginRequest, JsonHelper.Default);
+
+
+
+
+            var content = new StringContent(
+                json,
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await client.PostAsync(
                 "/api/v1/auth/login",
-                loginRequest
-            );
+                content);
+
 
             Console.WriteLine($"Status: {(int)response.StatusCode} - {response.ReasonPhrase}");
 
@@ -47,7 +65,13 @@ public class AuthService : IAuthService
                 return (false, $"Login failed: {response.StatusCode}", null);
             }
 
-            var user = await response.Content.ReadFromJsonAsync<UserResponse>();
+            //var user = await response.Content.ReadFromJsonAsync<UserResponse>();
+            var responseJson = await response.Content.ReadAsStringAsync();
+
+            var user = JsonSerializer.Deserialize<UserResponse>(
+                responseJson,
+                JsonHelper.Default);
+
             if (user == null)
                 return (false, "Invalid response from server", null);
             _currentUser = user;
@@ -70,7 +94,10 @@ public class AuthService : IAuthService
             var client = _httpClientFactory.CreateClient("API");
 
             var request = new { token };
-            var response = await client.PostAsJsonAsync("/api/v1/auth/authenticate", request);
+            //var response = await client.PostAsJsonAsync("/api/v1/auth/authenticate", request);
+            var json = JsonSerializer.Serialize(new { token }, JsonHelper.Default);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("/api/v1/auth/authenticate", content);
 
             if (response.IsSuccessStatusCode)
             {

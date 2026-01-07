@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using SalesManagement.WinUI.Services;
 using SalesManagement.WinUI.Services.Implementations;
 using SalesManagement.WinUI.Services.Interfaces;
 using SalesManagement.WinUI.ViewModels;
 using SalesManagement.WinUI.Views;
-
+using System.IO;
 using System.Net.Http;
 
 namespace SalesManagement.WinUI;
@@ -136,18 +137,27 @@ public partial class App : Application
     {
         s_mainWindow = new MainWindow();
 
-        var rootFrame = new Microsoft.UI.Xaml.Controls.Frame();
-
+        var rootFrame = new Frame();
         s_mainWindow.Content = rootFrame;
+
         s_mainWindow.Activate();
 
-        // Gán Frame cho NavigationService
-        var navService = Services.GetRequiredService<INavigationService>();
-        navService.SetFrame(rootFrame);
-
-        // Mở trang Login
-        navService.NavigateTo(typeof(LoginPage));
+        rootFrame.Loaded += (_, __) =>
+        {
+            try
+            {
+                var navService = Services.GetRequiredService<INavigationService>();
+                navService.SetFrame(rootFrame);
+                navService.NavigateTo(typeof(LoginPage));
+            }
+            catch (Exception ex)
+            {
+                File.WriteAllText("nav_error.log", ex.ToString());
+                Environment.FailFast(ex.ToString());
+            }
+        };
     }
+
 
 }
 

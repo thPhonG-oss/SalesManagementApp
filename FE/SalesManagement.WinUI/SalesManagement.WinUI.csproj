@@ -3,12 +3,19 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+
 		<RootNamespace>SalesManagement.WinUI</RootNamespace>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+
 		<Platforms>x86;x64;ARM64</Platforms>
 		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
 		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
+
 		<UseWinUI>true</UseWinUI>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+		<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+
+		<SelfContained>true</SelfContained>
 		<WinUISDKReferences>false</WinUISDKReferences>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<Nullable>enable</Nullable>
@@ -40,7 +47,7 @@
 
 	<ItemGroup>
 		<Content Include="appsettings.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Assets\SplashScreen.scale-200.png" />
 		<Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -78,42 +85,41 @@
 
 	<ItemGroup>
 		<Folder Include="Behaviors\" />
-		<Folder Include="Helpers\" />
 		<Folder Include="Config\" />
 		<Folder Include="Resources\Images\" />
 		<Folder Include="Resources\Styles\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Views\Dialogs\ChangePasswordDialog.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Views\Dialogs\ChangePasswordDialog.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Views\Dialogs\ServerConfigDialog.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Views\Dialogs\ServerConfigDialog.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 	</ItemGroup>
 
 	<ItemGroup>
-      <Page Update="Views\UpdatePromotionPage.xaml" />
-      <Page Update="Views\Components\CustomerDialog.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Page Update="Views\AddPromotionPage.xaml" />
-      <Page Update="Views\CustomerPage.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </Page>
-    </ItemGroup>
+		<Page Update="Views\UpdatePromotionPage.xaml" />
+		<Page Update="Views\Components\CustomerDialog.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Views\PromotionPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
+		<Page Update="Views\AddPromotionPage.xaml" />
+		<Page Update="Views\CustomerPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Update="Views\PromotionPage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\RevenueChart.xaml" />
 		<Page Update="Views\SettingsPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
@@ -162,8 +168,10 @@
 
 	<PropertyGroup>
 		<PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
-		<PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
 		<PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
-		<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+
+		<PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
+		<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">False</PublishTrimmed>
+
 	</PropertyGroup>
 </Project>

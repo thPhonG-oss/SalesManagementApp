@@ -46,12 +46,21 @@ public partial class LoginViewModel : ObservableObject
     // Event for navigation
     public event EventHandler<bool>? LoginCompleted;
 
+    [ObservableProperty]
+    private bool _showDebugInfo = false;
+
+    [ObservableProperty]
+    private string _loginRequestDebug = string.Empty;
+
     [RelayCommand]
     private async Task LoginAsync()
     {
         // Clear previous errors
         ErrorMessage = string.Empty;
         HasError = false;
+
+
+        ShowDebugInfo = true;
 
         // Validate input
         if (string.IsNullOrWhiteSpace(Username))
@@ -73,6 +82,7 @@ public partial class LoginViewModel : ObservableObject
         try
         {
             var (success, errorMessage, user) = await _authService.LoginAsync(Username, Password);
+
 
             if (success && user != null)
             {
