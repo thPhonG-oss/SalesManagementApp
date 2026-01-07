@@ -22,22 +22,22 @@ INSERT INTO products (category_id, product_name, description, author, publisher,
 (1, 'Cây Cam Ngọt Của Tôi', 'Câu chuyện cảm động về chú bé Zezé.', 'José Mauro de Vasconcelos', 'NXB Hội Nhà Văn', 2021, 108000, 80),
 (1, 'Hoàng Tử Bé', 'Một câu chuyện triết lý nhẹ nhàng dành cho cả người lớn và trẻ em.', 'Antoine De Saint-Exupéry', 'NXB Kim Đồng', 2019, 50000, 150),
 (1, 'Mắt Biếc', 'Một tác phẩm nổi tiếng của Nguyễn Nhật Ánh được chuyển thể thành phim.', 'Nguyễn Nhật Ánh', 'NXB Trẻ', 2019, 110000, 200),
-(1, 'Rừng Na Uy', 'Tiểu thuyết nổi tiếng nhất của Haruki Murakami.', 'Haruki Murakami', 'NXB Hội Nhà Văn', 2021, 155000, 60),
+(1, 'Rừng Na Uy', 'Tiểu thuyết nổi tiếng nhất của Haruki Murakami.', 'Haruki Murakami', 'NXB Hội Nhà Văn', 2021, 155000, 7),
 (1, 'Số Đỏ', 'Kiệt tác văn học hiện thực phê phán Việt Nam.', 'Vũ Trọng Phụng', 'NXB Văn Học', 2018, 65000, 90),
 (1, 'Tắt Đèn', 'Tác phẩm hiện thực xuất sắc của Ngô Tất Tố.', 'Ngô Tất Tố', 'NXB Văn Học', 2017, 55000, 100),
 (1, 'Chí Phèo', 'Tập truyện ngắn kinh điển của Nam Cao.', 'Nam Cao', 'NXB Văn Học', 2020, 60000, 120),
 (1, 'Dế Mèn Phiêu Lưu Ký', 'Tác phẩm văn học thiếu nhi kinh điển của Việt Nam.', 'Tô Hoài', 'NXB Kim Đồng', 2022, 45000, 300),
-(1, 'Hai Số Phận', 'Câu chuyện về hai người đàn ông sinh cùng ngày nhưng khác số phận.', 'Jeffrey Archer', 'NXB Văn Học', 2018, 189000, 50),
-(1, 'Bố Già', 'Tiểu thuyết tội phạm kinh điển.', 'Mario Puzo', 'NXB Văn Học', 2020, 145000, 75),
+(1, 'Hai Số Phận', 'Câu chuyện về hai người đàn ông sinh cùng ngày nhưng khác số phận.', 'Jeffrey Archer', 'NXB Văn Học', 2018, 189000, 3),
+(1, 'Bố Già', 'Tiểu thuyết tội phạm kinh điển.', 'Mario Puzo', 'NXB Văn Học', 2020, 145000, 8),
 (1, 'Tuổi Thơ Dữ Dội', 'Ký ức về những chiến sĩ nhỏ tuổi.', 'Phùng Quán', 'NXB Kim Đồng', 2021, 130000, 90),
 (1, 'Ông Già Và Biển Cả', 'Tác phẩm đoạt giải Nobel của Hemingway.', 'Ernest Hemingway', 'NXB Văn Học', 2019, 50000, 80),
 (1, 'Không Gia Đình', 'Hành trình của cậu bé Remi.', 'Hector Malot', 'NXB Văn Học', 2020, 120000, 100),
 (1, 'Những Người Khốn Khổ', 'Kiệt tác văn học Pháp.', 'Victor Hugo', 'NXB Văn Học', 2019, 350000, 30),
-(1, 'Đất Rừng Phương Nam', 'Vẻ đẹp thiên nhiên và con người Nam Bộ.', 'Đoàn Giỏi', 'NXB Kim Đồng', 2020, 70000, 110),
+(1, 'Đất Rừng Phương Nam', 'Vẻ đẹp thiên nhiên và con người Nam Bộ.', 'Đoàn Giỏi', 'NXB Kim Đồng', 2020, 70000, 9),
 (1, 'Tiếng Gọi Nơi Hoang Dã', 'Câu chuyện về chú chó Buck.', 'Jack London', 'NXB Văn Học', 2018, 60000, 90),
 (1, 'Trăm Năm Cô Đơn', 'Kiệt tác của chủ nghĩa hiện thực huyền ảo.', 'Gabriel Garcia Marquez', 'NXB Văn Học', 2021, 160000, 40),
 (1, 'Đồi Gió Hú', 'Câu chuyện tình yêu và thù hận.', 'Emily Bronte', 'NXB Văn Học', 2019, 95000, 60),
-(1, 'Kiêu Hãnh Và Định Kiến', 'Tác phẩm kinh điển về tình yêu và hôn nhân.', 'Jane Austen', 'NXB Văn Học', 2020, 98000, 85);
+(1, 'Kiêu Hãnh Và Định Kiến', 'Tác phẩm kinh điển về tình yêu và hôn nhân.', 'Jane Austen', 'NXB Văn Học', 2020, 98000, 10);
 
 -- === NHÓM 2: KINH TẾ (Category ID = 2) ===
 INSERT INTO products (category_id, product_name, description, author, publisher, publication_year, price, stock_quantity) VALUES
@@ -70,7 +70,7 @@ INSERT INTO products (category_id, product_name, description, author, publisher,
 (3, 'Design Patterns', 'Các mẫu thiết kế hướng đối tượng tái sử dụng.', 'Erich Gamma', 'Addison-Wesley', 2017, 400000, 30),
 (3, 'Head First Java', 'Học Java theo phong cách trực quan.', 'Kathy Sierra', 'O Reilly', 2019, 320000, 60),
 (3, 'Code Dạo Ký Sự', 'Chuyện nghề lập trình tại Việt Nam.', 'Phạm Huy Hoàng', 'NXB Thanh Niên', 2018, 110000, 150),
-(3, 'Tớ Học Lập Trình', 'Sách lập trình Scratch cho trẻ em.', 'Nhiều tác giả', 'NXB Kim Đồng', 2021, 80000, 100),
+(3, 'Tớ Học Lập Trình', 'Sách lập trình Scratch cho trẻ em.', 'Nhiều tác giả', 'NXB Kim Đồng', 2021, 80000, 6),
 (3, 'Spring in Action', 'Hướng dẫn toàn diện về Spring Framework.', 'Craig Walls', 'Manning', 2020, 500000, 25),
 (3, 'You Don\'t Know JS', 'Hiểu sâu về JavaScript.', 'Kyle Simpson', 'O Reilly', 2019, 250000, 45),
 (3, 'Clean Architecture', 'Kiến trúc phần mềm bền vững.', 'Robert C. Martin', 'Prentice Hall', 2018, 380000, 35),
@@ -80,7 +80,7 @@ INSERT INTO products (category_id, product_name, description, author, publisher,
 (3, 'Effective Java', 'Các phương pháp hay nhất khi code Java.', 'Joshua Bloch', 'Addison-Wesley', 2018, 360000, 40),
 (3, 'Cracking the Coding Interview', '189 câu hỏi phỏng vấn lập trình.', 'Gayle Laakmann McDowell', 'CareerCup', 2020, 450000, 50),
 (3, 'Python Crash Course', 'Học nhanh lập trình Python.', 'Eric Matthes', 'No Starch Press', 2019, 350000, 65),
-(3, 'Database System Concepts', 'Kiến thức nền tảng về cơ sở dữ liệu.', 'Abraham Silberschatz', 'McGraw-Hill', 2020, 600000, 15),
+(3, 'Database System Concepts', 'Kiến thức nền tảng về cơ sở dữ liệu.', 'Abraham Silberschatz', 'McGraw-Hill', 2020, 600000, 3),
 (3, 'Docker Deep Dive', 'Hiểu sâu về Container và Docker.', 'Nigel Poulton', 'Independently', 2021, 300000, 40),
 (3, 'Kubernetes: Up and Running', 'Vận hành hệ thống với K8s.', 'Kelsey Hightower', 'O Reilly', 2019, 380000, 20),
 (3, 'Soft Skills', 'Cẩm nang kỹ năng mềm cho lập trình viên.', 'John Sonmez', 'Manning', 2017, 250000, 80);
@@ -106,7 +106,7 @@ INSERT INTO products (category_id, product_name, description, author, publisher,
 (4, 'Nóng Giận Là Bản Năng Tĩnh Lặng Là Bản Lĩnh', 'Tu dưỡng tâm tính.', 'Tống Mặc', 'NXB Thế Giới', 2020, 89000, 125),
 (4, 'Thao Túng Tâm Lý', 'Nhận diện và phòng tránh.', 'Shannon Thomas', 'NXB Lao Động', 2021, 149000, 95),
 (4, 'Đừng Lựa Chọn An Nhàn Khi Còn Trẻ', 'Động lực phấn đấu.', 'Cảnh Thiên', 'NXB Thế Giới', 2019, 82000, 180),
-(4, 'Phụ Nữ Thông Minh Phải Biết Tiêu Tiền', 'Quản lý tài chính cá nhân cho nữ.', 'Lois P. Frankel', 'NXB Lao Động', 2020, 110000, 70);
+(4, 'Phụ Nữ Thông Minh Phải Biết Tiêu Tiền', 'Quản lý tài chính cá nhân cho nữ.', 'Lois P. Frankel', 'NXB Lao Động', 2020, 110000, 1);
 
 -- === NHÓM 5: THIẾU NHI (Category ID = 5) ===
 INSERT INTO products (category_id, product_name, description, author, publisher, publication_year, price, stock_quantity) VALUES

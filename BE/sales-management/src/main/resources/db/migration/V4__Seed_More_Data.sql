@@ -74,7 +74,7 @@ INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price
 
 -- Order 2: Mua ít
 INSERT INTO orders (customer_id, order_code, order_date, status, subtotal, discount_amount, total_amount, payment_method, shipping_address)
-VALUES (2, 'ORD-AUTO-002', '2025-10-06 20:04:02', 'PAID', 120000, 0, 120000, 'CREDIT_CARD', '59 Điện Biên Phủ, Q1, Hà Nội');
+VALUES (2, 'ORD-AUTO-002', '2026-01-06 20:04:02', 'PAID', 120000, 0, 120000, 'CREDIT_CARD', '59 Điện Biên Phủ, Q1, Hà Nội');
 SET @ord_id = LAST_INSERT_ID();
 INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price) VALUES
 (@ord_id, 77, 1, 120000, 120000);
@@ -112,7 +112,7 @@ INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price
 
 -- Order 6
 INSERT INTO orders (customer_id, order_code, order_date, status, subtotal, discount_amount, total_amount, payment_method, shipping_address)
-VALUES (8, 'ORD-AUTO-006', '2025-10-13 01:41:33', 'PAID', 1380000, 0, 1380000, 'CASH_ON_DELIVERY', '119 Pasteur, Bình Thạnh, Hải Phòng');
+VALUES (8, 'ORD-AUTO-006', '2026-01-03 01:41:33', 'PAID', 1380000, 0, 1380000, 'CASH_ON_DELIVERY', '119 Pasteur, Bình Thạnh, Hải Phòng');
 SET @ord_id = LAST_INSERT_ID();
 INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price) VALUES
 (@ord_id, 19, 3, 95000, 285000),
@@ -221,7 +221,7 @@ INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price
 
 -- Order 18: Giảm giá 50k
 INSERT INTO orders (customer_id, order_code, order_date, status, subtotal, discount_amount, total_amount, payment_method, shipping_address)
-VALUES (44, 'ORD-AUTO-018', '2025-10-23 13:04:26', 'PAID', 870000, 50000, 820000, 'BANK_TRANSFER', '870 Hai Bà Trưng, Q1, TP.HCM');
+VALUES (44, 'ORD-AUTO-018', '2026-01-07 13:04:26', 'PAID', 870000, 50000, 820000, 'BANK_TRANSFER', '870 Hai Bà Trưng, Q1, TP.HCM');
 SET @ord_id = LAST_INSERT_ID();
 INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price) VALUES
 (@ord_id, 85, 3, 80000, 240000),
