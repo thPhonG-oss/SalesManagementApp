@@ -32,7 +32,6 @@ services:
     container_name: sales-management-backend
     environment:
       # Port
-#      PORT: 8081
 
       # Database Configuration
       DATABASE_URL: jdbc:mysql://mysql:3306/sales_management_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
